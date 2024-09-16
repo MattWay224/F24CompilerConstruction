@@ -7,9 +7,10 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         File text = new File("src/test.txt");
-        File out = new File("src/output.txt");
+        File outL = new File("src/output.txt");
+        //File outSA = new File("src/outputSA.txt");
 
-        try (Scanner scanner = new Scanner(text); FileWriter writer = new FileWriter(out)) {
+        try (Scanner scanner = new Scanner(text); FileWriter writerL = new FileWriter(outL)) {
             StringBuilder input = new StringBuilder();
             while (scanner.hasNext()) {
                 input.append(scanner.nextLine()).append("\n");
@@ -23,12 +24,42 @@ public class Main {
                 output.append(token.toString()).append("\n");
             }
 
-            writer.write(output.toString());
+            writerL.write(output.toString());
 
+            FSyntaxAnalysis fSyntaxAnalysis = new FSyntaxAnalysis(tokens);
+
+            List<ASTNode> ast = fSyntaxAnalysis.parse();
+
+            for (ASTNode node : ast) {
+                printAST(node, 0);  //each node starting at depth 0
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error: " + e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
+    static void printAST(ASTNode node, int depth) {
+        for (int i = 0; i < depth; i++) System.out.print("  ");
+
+        //current node
+        System.out.println(node);
+
+        // print children with recursion
+        if (node instanceof FunctionNode) {
+            FunctionNode func = (FunctionNode) node;
+            printAST(func.body, depth + 1);
+        } else if (node instanceof AssignmentNode) {
+            AssignmentNode assign = (AssignmentNode) node;
+            printAST(assign.value, depth + 1);
+        } else if (node instanceof ConditionNode) {
+            ConditionNode cond = (ConditionNode) node;
+            for (ConditionBranch branch : cond.branches) {
+                printAST(branch.condition, depth + 1);
+                printAST(branch.action, depth + 1);
+            }
+        }
+    }
+
 }
