@@ -53,13 +53,11 @@ public class Flexer {
         XOR,
         NOT,
         EVAL,
-        QUOTEDLIST, //NO NEED TO EVALUATE
-        QUOTEDATOM, //NO NEED TO EVALUATE
-        QUOTEDLITERAL, //NO NEED TO EVALUATE
+        QUOTE, //NO NEED TO EVALUATE
         EOF//end of file
     }
 
-    class Token {
+    public class Token {
         TokenType type;
         String value;
 
@@ -90,7 +88,7 @@ public class Flexer {
                     pos++;
                     break;
                 case '\'':
-                    tokens.add(parseQuote());
+                    tokens.add(new Token(TokenType.QUOTE, "'"));
                     //single quote in front of element is the short form of function
                     //prevents evaluating
                     pos++;
@@ -112,7 +110,7 @@ public class Flexer {
     }
 
     //parse numbers
-    private Token parseNumber() {
+    public Token parseNumber() throws Exception {
         StringBuilder num = new StringBuilder();
         boolean isReal = false;
         boolean isNegative = false;
@@ -120,8 +118,14 @@ public class Flexer {
         if (input.charAt(pos) == '-') {
             isNegative = true;
             pos++;
+            if (!Character.isDigit(input.charAt(pos))) {
+                throw new Exception("UNEXPECTED CHARACTER: -");
+            }
         } else if (input.charAt(pos) == '+') {
             pos++;
+            if (!Character.isDigit(input.charAt(pos))) {
+                throw new Exception("UNEXPECTED CHARACTER: +");
+            }
         }
         while (pos < length && (Character.isDigit(input.charAt(pos)) || input.charAt(pos) == '.')) {
             if (input.charAt(pos) == '.') {
@@ -222,49 +226,11 @@ public class Flexer {
                 return new Token(TokenType.BOOLEAN, id);
             case "false":
                 return new Token(TokenType.BOOLEAN, id);
+            case "quote":
+                return new Token(TokenType.QUOTE, id);
             default:
                 return new Token(TokenType.ATOM, id);
         }
-    }
-
-    private Token parseQuote() throws Exception {
-        pos++;
-        if (pos < length) {
-            if (input.charAt(pos) == '(') {
-                // quoted list
-                return new Token(TokenType.QUOTEDLIST, "'" + parseList());
-            } else if (Character.isLetter(input.charAt(pos))) {
-                // quoted atom
-                return new Token(TokenType.QUOTEDATOM, "'" + parseIdOrKeyword().value);
-            } else if (Character.isDigit(input.charAt(pos))) {
-                // quoted literal
-                return new Token(TokenType.QUOTEDLITERAL, "'" + parseNumber().value);
-            }
-        }
-        throw new Exception("Unexpected input after quote.");
-    }
-
-    private String parseList() throws Exception {
-        StringBuilder list = new StringBuilder();
-        int openParens = 0;
-
-        while (pos < length) {
-            char currentChar = input.charAt(pos);
-            list.append(tokenize());
-
-            if (currentChar == '(') {
-                openParens++;
-            } else if (currentChar == ')') {
-                openParens--;
-                if (openParens == 0) {
-                    pos++;
-                    break;
-                }
-            }
-            pos++;
-        }
-
-        return list.toString();
     }
 }
 
