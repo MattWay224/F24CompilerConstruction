@@ -1,3 +1,7 @@
+import ast.ASTNodeFactory;
+import ast.nodes.*;
+import visitors.PrettyVisitor;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,7 +30,10 @@ public class Main {
 
             writerL.write(output.toString());
 
-            FSyntaxAnalysis fSyntaxAnalysis = new FSyntaxAnalysis(tokens);
+            ASTNodeFactory factory = new ASTNodeFactory();
+            PrettyVisitor visitor = new PrettyVisitor();
+
+            FSyntaxAnalysis fSyntaxAnalysis = new FSyntaxAnalysis(tokens, visitor, factory);
 
             List<ASTNode> ast = fSyntaxAnalysis.parse();
 
@@ -39,7 +46,7 @@ public class Main {
             throw new RuntimeException(e);
         }
     }
-
+    // Нужно переписать
     static void printAST(ASTNode node, int depth) {
         for (int i = 0; i < depth; i++) System.out.print("  ");
 
@@ -48,13 +55,13 @@ public class Main {
 
         // print children with recursion
         if (node instanceof FunctionNode func) {
-            printAST(func.body, depth + 1);
+            printAST(func.getBody(), depth + 1);
         } else if (node instanceof AssignmentNode assign) {
-            printAST(assign.value, depth + 1);
+            printAST(assign.getValue(), depth + 1);
         } else if (node instanceof ConditionNode cond) {
-            for (ConditionBranch branch : cond.branches) {
-                printAST(branch.condition, depth + 1);
-                printAST(branch.action, depth + 1);
+            for (ConditionBranch branch : cond.getBranches()) {
+                printAST(branch.getCondition(), depth + 1);
+                printAST(branch.getAction(), depth + 1);
             }
         }
     }

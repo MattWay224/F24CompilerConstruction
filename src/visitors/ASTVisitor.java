@@ -1,6 +1,6 @@
 package visitors;
 
-import ast.*;
+import ast.nodes.*;
 
 public interface ASTVisitor<R> {
 	R visitAssignmentNode(AssignmentNode node);

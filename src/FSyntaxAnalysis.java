@@ -1,18 +1,28 @@
+import ast.ASTNodeFactory;
+import ast.nodes.ASTNode;
+import visitors.PrettyVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class FSyntaxAnalysis {
-    private List<Flexer.Token> tokens;
+    private final List<Flexer.Token> tokens;
     private int currentPos = 0;
     private boolean insideCond = false;
+    private final PrettyVisitor visitor;
+    private final ASTNodeFactory factory;
 
-    public FSyntaxAnalysis(List<Flexer.Token> tokens) {
+    public FSyntaxAnalysis(List<Flexer.Token> tokens, PrettyVisitor visitor, ASTNodeFactory factory) {
         this.tokens = tokens;
+        this.visitor = visitor;
+        this.factory = factory;
     }
 
     public List<ASTNode> parse() throws Exception {
         List<ASTNode> statements = new ArrayList<>();
         while (!isAtEnd()) {
+            ASTNode node = parseExpr();
+            System.out.println(node.accept(visitor)); // Use the PrettyVisitor here to print
             statements.add(parseExpr());
         }
         return statements;
@@ -21,35 +31,24 @@ public class FSyntaxAnalysis {
     private ASTNode parseExpr() throws Exception {
         Flexer.Token currentToken = peek();
 
-        switch (currentToken.type) {
-            case LPAREN:
-                return parseParenthesizedExpr();
-            case QUOTE:
-                advance();
-                return parseExpr();
-            case INTEGER:
-            case REAL:
-            case BOOLEAN:
-                advance();
-                return new LiteralNode(currentToken.value);
-            case ATOM:
-                advance();
-                return new AtomNode(currentToken.value);
-            case LESS:
-            case LESSEQ:
-            case GREATER:
-            case GREATEREQ:
-            case EQUAL:
-            case NONEQUAL:
-                return parseComparison(currentToken.value);
-            case PLUS:
-            case MINUS:
-            case TIMES:
-            case DIVIDE:
-                return parseOperation(currentToken.value);
-            default:
-                throw new Exception("UNEXPECTED TOKEN: " + currentToken);
-        }
+		return switch (currentToken.type) {
+			case LPAREN -> parseParenthesizedExpr();
+			case QUOTE -> {
+				advance();
+				yield parseExpr();
+			}
+			case INTEGER, REAL, BOOLEAN -> {
+				advance();
+				yield factory.createLiteralNode(currentToken.value);
+			}
+			case ATOM -> {
+				advance();
+				yield factory.createAtomNode(currentToken.value);
+			}
+			case LESS, LESSEQ, GREATER, GREATEREQ, EQUAL, NONEQUAL -> parseComparison(currentToken.value);
+			case PLUS, MINUS, TIMES, DIVIDE -> parseOperation(currentToken.value);
+			default -> throw new Exception("UNEXPECTED TOKEN: " + currentToken);
+		};
     }
 
     private Flexer.Token peek() {
@@ -92,63 +91,31 @@ public class FSyntaxAnalysis {
             return parseLiteralList();
         }
 
-        switch (operatorToken.value) {
-            case "setq":
-                return parseSETQ();
-            case "func":
-                return parseFUNC();
-            case "cond":
-                return parseCOND();
-            case "prog":
-                return parsePROG();
-            case "plus":
-            case "minus":
-            case "times":
-            case "divide":
-                return parseOperation(operatorToken.value);
-            case "head":
-                return parseHeadOrTail("head");
-            case "tail":
-                return parseHeadOrTail("tail");
-            case "cons":
-                return parseCons();
-            case "while":
-                return parseWHILE();
-            case "return":
-                return parseRETURN();
-            case "break":
-                return parseBREAK();
-            case "isint":
-            case "isreal":
-            case "isbool":
-            case "isnull":
-            case "isatom":
-            case "islist":
-                return parsePredicate(operatorToken.value);
-            case "equal":
-            case "nonequal":
-            case "less":
-            case "lesseq":
-            case "greater":
-            case "greatereq":
-                return parseComparison(operatorToken.value);
-            case "and":
-            case "or":
-            case "xor":
-                return parseLogicalOperator(operatorToken.value);
-            case "not":
-                return parseNot();
-            case "lambda":
-                return parseLambda();
-            default:
-                throw new Exception("UNEXPECTED OPERATOR: " + operatorToken.value);
-        }
+		return switch (operatorToken.value) {
+			case "setq" -> parseSETQ();
+			case "func" -> parseFUNC();
+			case "cond" -> null; //parseCOND();
+			case "prog" -> parsePROG();
+			case "plus", "minus", "times", "divide" -> parseOperation(operatorToken.value);
+			case "head" -> parseHeadOrTail("head");
+			case "tail" -> parseHeadOrTail("tail");
+			case "cons" -> parseCons();
+			case "while" -> parseWHILE();
+			case "return" -> parseRETURN();
+			case "break" -> parseBREAK();
+			case "isint", "isreal", "isbool", "isnull", "isatom", "islist" -> parsePredicate(operatorToken.value);
+			case "equal", "nonequal", "less", "lesseq", "greater", "greatereq" -> parseComparison(operatorToken.value);
+			case "and", "or", "xor" -> parseLogicalOperator(operatorToken.value);
+			case "not" -> parseNot();
+			case "lambda" -> parseLambda();
+			default -> throw new Exception("UNEXPECTED OPERATOR: " + operatorToken.value);
+		};
     }
 
     private ASTNode parseBREAK() throws Exception {
         advance();
         consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER BREAK");
-        return new BreakNode();
+        return factory.createBreakNode();
     }
 
     private ASTNode parseRETURN() throws Exception {
@@ -156,7 +123,7 @@ public class FSyntaxAnalysis {
         ASTNode returnValue = parseExpr();
         consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER RETURN");
         advance();
-        return new ReturnNode(returnValue);
+        return factory.createReturnNode(returnValue);
     }
 
     private ASTNode parseWHILE() throws Exception {
@@ -165,7 +132,7 @@ public class FSyntaxAnalysis {
         ASTNode condition = parseExpr();
         ASTNode body = parseExpr();
         consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER WHILE BODY");
-        return new WhileNode(condition, body);
+        return factory.createWhileNode(condition, body);
     }
 
     private ASTNode parsePROG() throws Exception {
@@ -180,7 +147,7 @@ public class FSyntaxAnalysis {
         consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER PROG STATEMENTS");
         ASTNode finalExpression = parseExpr();
         consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER FINAL EXPRESSION");
-        return new ProgNode(statements, finalExpression);
+        return factory.createProgNode(statements, finalExpression);
     }
 
     private ASTNode parseLiteralList() throws Exception {
@@ -189,7 +156,7 @@ public class FSyntaxAnalysis {
             elements.add(parseExpr()); // add each literal to list
         }
         consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER LITERAL LIST");
-        return new ListNode(elements);
+        return factory.createListNode(elements);
     }
 
     private ASTNode parseLambda() throws Exception {
@@ -197,7 +164,7 @@ public class FSyntaxAnalysis {
         List<String> parameters = parseParameterList();
         ASTNode body = parseExpr();
         consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER LAMBDA BODY");
-        return new LambdaNode(parameters, body);
+        return factory.createLambdaNode(parameters, body);
     }
 
     private ASTNode parseLogicalOperator(String operator) throws Exception {
@@ -205,14 +172,14 @@ public class FSyntaxAnalysis {
         ASTNode leftElement = parseExpr();
         ASTNode rightElement = parseExpr();
         consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER " + operator);
-        return new LogicalOperationNode(operator, leftElement, rightElement);
+        return factory.createLogicalOperationNode(operator, leftElement, rightElement);
     }
 
     private ASTNode parseNot() throws Exception {
         advance();
         ASTNode element = parseExpr();
         consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER NOT");
-        return new NotNode(element);
+        return factory.createNotNode(element);
     }
 
     private ASTNode parseComparison(String comparison) throws Exception {
@@ -220,7 +187,7 @@ public class FSyntaxAnalysis {
         ASTNode leftElement = parseExpr();
         ASTNode rightElement = parseExpr();
         consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER " + comparison);
-        return new ComparisonNode(comparison, leftElement, rightElement);
+        return factory.createComparisonNode(comparison, leftElement, rightElement);
     }
 
     //issmth
@@ -229,7 +196,7 @@ public class FSyntaxAnalysis {
         ASTNode element = parseExpr();
         consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER " + predicate);
 
-        return new PredicateNode(predicate, element);
+        return factory.createPredicateNode(predicate, element);
     }
 
     private ASTNode parseHeadOrTail(String type) throws Exception {
@@ -237,9 +204,9 @@ public class FSyntaxAnalysis {
         ASTNode listExpr = parseExpr();
         consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER " + type);
         if (type.equals("head")) {
-            return new HeadNode(listExpr);
+            return factory.createHeadNode(listExpr);
         } else {
-            return new TailNode(listExpr);
+            return factory.createTailNode(listExpr);
         }
     }
 
@@ -248,10 +215,10 @@ public class FSyntaxAnalysis {
         ASTNode item = parseExpr();//what to add
         ASTNode list = parseExpr();//to list
         consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER CONS");
-        return new ConsNode(item, list);
+        return factory.createConsNode(item, list);
     }
 
-    private OperationNode parseOperation(String operator) throws Exception {
+    private ASTNode parseOperation(String operator) throws Exception {
         List<ASTNode> operands = new ArrayList<>();
         advance();
         while (!check(Flexer.TokenType.RPAREN)) {
@@ -263,27 +230,27 @@ public class FSyntaxAnalysis {
             System.out.println(insideCond);
             throw new Exception("IMPOSSIBLE OPERATION");
         }
-        return new OperationNode(operator, operands, false);
+        return factory.createOperationNode(operator, operands, false);
     }
 
-    private AssignmentNode parseSETQ() throws Exception {
+    private ASTNode parseSETQ() throws Exception {
         advance();
         String variable = consume(Flexer.TokenType.ATOM, "EXPECTED VARIABLE FOR SETQ").value;
         ASTNode value = parseExpr();
         consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER SETQ ASSIGNMENT");
-        return new AssignmentNode(variable, value);
+        return factory.createAssignmentNode(variable, value);
     }
 
-    private FunctionNode parseFUNC() throws Exception {
+    private ASTNode parseFUNC() throws Exception {
         advance();
         String functionName = consume(Flexer.TokenType.ATOM, "MISSING FUNCTION NAME").value;
         List<String> parameters = parseParameterList();
         ASTNode body = parseExpr();
         consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER FUNCTION BODY");
-        return new FunctionNode(functionName, parameters, body);
+        return factory.createFunctionNode(functionName, parameters, body);
     }
-
-    private ConditionNode parseCOND() throws Exception {
+/*
+    private ASTNode parseCOND() throws Exception {
         advance();
         List<ConditionBranch> branches = new ArrayList<>();
 
@@ -329,6 +296,7 @@ public class FSyntaxAnalysis {
         consume(Flexer.TokenType.RPAREN, "MISSING ) AFTER COND EXPR");
         return new ConditionNode(branches, defaultAction);
     }
+*/
 
     private List<String> parseParameterList() throws Exception {
         List<String> parameters = new ArrayList<>();

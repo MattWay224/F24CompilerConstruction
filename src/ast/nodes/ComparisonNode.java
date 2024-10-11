@@ -1,25 +1,25 @@
-package ast;
+package ast.nodes;
 
 import visitors.ASTVisitor;
 
-public class LogicalOperationNode extends ASTNode {
-	String operator;
+public class ComparisonNode extends ASTNode {
+	String comparison;
 	ASTNode leftElement;
 	ASTNode rightElement;
 
-	public LogicalOperationNode(String operator, ASTNode leftElement, ASTNode rightElement) {
-		this.operator = operator;
+	public ComparisonNode(String comparison, ASTNode leftElement, ASTNode rightElement) {
+		this.comparison = comparison;
 		this.leftElement = leftElement;
 		this.rightElement = rightElement;
 	}
 
 	@Override
 	public <R> R accept(ASTVisitor<R> visitor) {
-		return visitor.visitLogicalOperationNode(this);
+		return visitor.visitComparisonNode(this);
 	}
 
-	public String getOperator() {
-		return operator;
+	public String getComparison() {
+		return comparison;
 	}
 
 	public ASTNode getLeftElement() {

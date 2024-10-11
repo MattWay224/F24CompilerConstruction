@@ -1,6 +1,6 @@
 package visitors;
 
-import ast.*;
+import ast.nodes.*;
 
 import java.util.stream.Collectors;
 

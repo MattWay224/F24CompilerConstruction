@@ -1,18 +1,18 @@
-package ast;
+package ast.nodes;
 
 import visitors.ASTVisitor;
 
-//atom
-public class AtomNode extends ASTNode {
+//literals
+public class LiteralNode extends ASTNode {
 	String value;
 
-	public AtomNode(String value) {
+	public LiteralNode(String value) {
 		this.value = value;
 	}
 
 	@Override
 	public <R> R accept(ASTVisitor<R> visitor) {
-		return visitor.visitAtomNode(this);
+		return visitor.visitLiteralNode(this);
 	}
 
 	public String getValue() {

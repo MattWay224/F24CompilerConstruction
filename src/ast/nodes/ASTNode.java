@@ -1,4 +1,4 @@
-package ast;
+package ast.nodes;
 
 
 // Base class for AST nodes
