@@ -5,6 +5,60 @@ import ast.*;
 import java.util.stream.Collectors;
 
 public class PrettyVisitor implements ASTVisitor<String> {
+
+	@Override
+	public String visitAssignmentNode(AssignmentNode node) {
+		return "AssignmentNode(variable=" + node.getVariable() + ", value=" + node.getValue() + ")";
+	}
+
+	@Override
+	public String visitAtomNode(AtomNode node) {
+		return "AtomNode(" + node.getValue() + ")";
+	}
+
+	@Override
+	public String visitBreakNode(BreakNode node) {
+		return "BreakNode()";
+	}
+
+	@Override
+	public String visitComparisonNode(ComparisonNode node) {
+		String left = node.getLeftElement().accept(this);
+		String right = node.getRightElement().accept(this);
+
+		return "ComparisonNode(comparison=" + node.getComparison() +
+				", leftElement=" + left + ", rightElement=" + right + ")";
+	}
+
+	@Override
+	public String visitConditionBranch(ConditionBranch branch) {
+		String condition = branch.getCondition().accept(this);
+		String action = branch.getAction().accept(this);
+
+		return "ConditionBranch(condition=" + condition + ", action=" + action + ")";
+	}
+
+	@Override
+	public String visitConditionNode(ConditionNode node) {
+		String branchesStr = node.getBranches().stream()
+				.map(branch -> branch.accept(this))
+				.collect(Collectors.joining(", "));
+
+		String defaultActionStr = node.getDefaultAction() != null
+				? node.getDefaultAction().accept(this)
+				: "null";
+
+		return "ConditionNode(branches=[" + branchesStr + "], defaultAction=[" + defaultActionStr + "])";
+	}
+
+	@Override
+	public String visitConsNode(ConsNode node) {
+		String head = node.getHead().accept(this);
+		String tail = node.getTail().accept(this);
+
+		return "ConsNode(head=" + head + ", tail=" + tail + ")";
+	}
+
 	@Override
 	public String visitFunctionNode(FunctionNode node) {
 		String params = String.join(", ", node.getParameters());
@@ -98,58 +152,5 @@ public class PrettyVisitor implements ASTVisitor<String> {
 		String condition = node.getCondition().accept(this);
 		String body = node.getBody().accept(this);
 		return "WhileNode(condition=" + condition + ", body=" + body + ")";
-	}
-
-	@Override
-	public String visitAssignmentNode(AssignmentNode node) {
-		return "AssignmentNode(variable=" + node.getVariable() + ", value=" + node.getValue() + ")";
-	}
-
-	@Override
-	public String visitAtomNode(AtomNode node) {
-		return "AtomNode(" + node.getValue() + ")";
-	}
-
-	@Override
-	public String visitBreakNode(BreakNode node) {
-		return "BreakNode()";
-	}
-
-	public String visitComparisonNode(ComparisonNode node) {
-		String left = node.getLeftElement().accept(this);
-		String right = node.getRightElement().accept(this);
-
-		return "ComparisonNode(comparison=" + node.getComparison() +
-				", leftElement=" + left + ", rightElement=" + right + ")";
-	}
-
-	@Override
-	public String visitConditionNode(ConditionNode node) {
-		String branchesStr = node.getBranches().stream()
-				.map(branch -> branch.accept(this))
-				.collect(Collectors.joining(", "));
-
-		// Visit the default action, if it exists
-		String defaultActionStr = node.getDefaultAction() != null
-				? node.getDefaultAction().accept(this)
-				: "null";
-
-		return "ConditionNode(branches=[" + branchesStr + "], defaultAction=[" + defaultActionStr + "])";
-	}
-
-	@Override
-	public String visitConditionBranch(ConditionBranch branch) {
-		String condition = branch.getCondition().accept(this);
-		String action = branch.getAction().accept(this);
-
-		return "ConditionBranch(condition=" + condition + ", action=" + action + ")";
-	}
-
-	@Override
-	public String visitConsNode(ConsNode node) {
-		String head = node.getHead().accept(this);
-		String tail = node.getTail().accept(this);
-
-		return "ConsNode(head=" + head + ", tail=" + tail + ")";
 	}
 }
