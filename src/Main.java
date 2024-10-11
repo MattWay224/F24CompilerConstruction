@@ -1,5 +1,7 @@
 import ast.ASTNodeFactory;
 import ast.nodes.*;
+import steps.FSyntaxAnalysis;
+import steps.Flexer;
 import visitors.PrettyVisitor;
 
 import java.io.File;

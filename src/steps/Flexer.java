@@ -1,11 +1,13 @@
+package steps;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Flexer {
 
-    private String input;
+    private final String input;
     private int pos;
-    private int length;
+    private final int length;
 
     public Flexer(String input) {
         this.input = input;

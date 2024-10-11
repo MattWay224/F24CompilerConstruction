@@ -1,5 +1,8 @@
+package steps;
+
 import ast.ASTNodeFactory;
 import ast.nodes.ASTNode;
+import steps.Flexer;
 import visitors.PrettyVisitor;
 
 import java.util.ArrayList;
