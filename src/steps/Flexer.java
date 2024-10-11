@@ -4,14 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Flexer {
-
-	private final String input;
+	private static Flexer instance = new Flexer();
+	private String input;
 	private int pos;
-	private final int length;
+	private int length;
 
-	public Flexer(String input) {
+	private Flexer() {}
+
+	public static Flexer getInstance() {
+		if (instance == null) {
+			instance = new Flexer();
+		}
+		return instance;
+	}
+
+	public void setInput(String input) {
 		this.input = input;
-		this.pos = 0; //curr position
+		this.pos = 0;
 		this.length = input.length();
 	}
 

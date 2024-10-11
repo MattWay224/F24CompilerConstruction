@@ -20,7 +20,8 @@ public class FlexerTest {
 		while (scanner.hasNext()) {
 			input.append(scanner.nextLine()).append("\n");
 		}
-		this.lexer = new Flexer(input.toString());
+		this.lexer = Flexer.getInstance();
+		this.lexer.setInput(input.toString());
 		try {
 			List<Flexer.Token> tokens = lexer.tokenize();
 

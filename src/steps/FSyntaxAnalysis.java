@@ -8,13 +8,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FSyntaxAnalysis {
-	private final List<Flexer.Token> tokens;
+	private static FSyntaxAnalysis instance = new FSyntaxAnalysis();
+	private List<Flexer.Token> tokens;
 	private int currentPos = 0;
 	private boolean insideCond = false;
-	private final PrettyVisitor visitor;
-	private final ASTNodeFactory factory;
+	private PrettyVisitor visitor;
+	private ASTNodeFactory factory;
 
-	public FSyntaxAnalysis(List<Flexer.Token> tokens, PrettyVisitor visitor, ASTNodeFactory factory) {
+	private FSyntaxAnalysis() {}
+
+	public static FSyntaxAnalysis getInstance() {
+		if (instance == null) {
+			instance = new FSyntaxAnalysis();
+		}
+		return instance;
+	}
+
+	public void setter(List<Flexer.Token> tokens, PrettyVisitor visitor, ASTNodeFactory factory) {
 		this.tokens = tokens;
 		this.visitor = visitor;
 		this.factory = factory;
@@ -49,7 +59,7 @@ public class FSyntaxAnalysis {
 			}
 			case LESS, LESSEQ, GREATER, GREATEREQ, EQUAL, NONEQUAL -> parseComparison(currentToken.value);
 			case PLUS, MINUS, TIMES, DIVIDE -> parseOperation(currentToken.value);
-			case EOF -> null;
+			case EOF, RPAREN -> null; // create parser for that
 			default -> throw new Exception("UNEXPECTED TOKEN: " + currentToken);
 		};
 	}

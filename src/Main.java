@@ -14,6 +14,9 @@ public class Main {
 	public static void main(String[] args) {
 		ASTNodeFactory factory = new ASTNodeFactory();
 		PrettyVisitor visitor = new PrettyVisitor();
+		Flexer lexer = Flexer.getInstance();
+		FSyntaxAnalysis fSyntaxAnalysis = FSyntaxAnalysis.getInstance();
+
 		for (int i = 1; i < 10; i++) {
 			File text = new File("src/testing/inputs/test" + i + ".txt");
 			File outL = new File("src/testing/flexer/outputs/output" + i + ".txt");
@@ -28,19 +31,17 @@ public class Main {
 					input.append(scanner.nextLine()).append("\n");
 				}
 
-				Flexer lexer = new Flexer(input.toString());
+				lexer.setInput(input.toString());
 				List<Flexer.Token> tokens = lexer.tokenize();
 
 				StringBuilder output = new StringBuilder();
 				for (Flexer.Token token : tokens) {
 					output.append(token.toString()).append("\n");
 				}
-
 				writerL.write(output.toString());
-				FSyntaxAnalysis fSyntaxAnalysis = new FSyntaxAnalysis(tokens, visitor, factory);
 
+				fSyntaxAnalysis.setter(tokens, visitor, factory);
 				List<ASTNode> ast = fSyntaxAnalysis.parse();
-
 				for (ASTNode node : ast) {
 					printAST(node, 0);  //each node starting at depth 0
 				}
