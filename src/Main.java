@@ -47,14 +47,11 @@ public class Main {
         System.out.println(node);
 
         // print children with recursion
-        if (node instanceof FunctionNode) {
-            FunctionNode func = (FunctionNode) node;
+        if (node instanceof FunctionNode func) {
             printAST(func.body, depth + 1);
-        } else if (node instanceof AssignmentNode) {
-            AssignmentNode assign = (AssignmentNode) node;
+        } else if (node instanceof AssignmentNode assign) {
             printAST(assign.value, depth + 1);
-        } else if (node instanceof ConditionNode) {
-            ConditionNode cond = (ConditionNode) node;
+        } else if (node instanceof ConditionNode cond) {
             for (ConditionBranch branch : cond.branches) {
                 printAST(branch.condition, depth + 1);
                 printAST(branch.action, depth + 1);
