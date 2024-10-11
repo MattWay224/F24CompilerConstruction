@@ -11,61 +11,65 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
-        File text = new File("src/test.txt");
-        File outL = new File("src/output.txt");
-        //File outSA = new File("src/outputSA.txt");
+	public static void main(String[] args) {
+		ASTNodeFactory factory = new ASTNodeFactory();
+		PrettyVisitor visitor = new PrettyVisitor();
+		for (int i = 1; i < 10; i++) {
+			File text = new File("src/testing/inputs/test" + i + ".txt");
+			File outL = new File("src/testing/flexer/outputs/output" + i + ".txt");
+			File outSA = new File("src/testing/syntax/outputs/output" + i + ".txt");
 
-        try (Scanner scanner = new Scanner(text); FileWriter writerL = new FileWriter(outL)) {
-            StringBuilder input = new StringBuilder();
-            while (scanner.hasNext()) {
-                input.append(scanner.nextLine()).append("\n");
-            }
+			try (Scanner scanner = new Scanner(text);
+				 FileWriter writerL = new FileWriter(outL);
+				 FileWriter writerSA = new FileWriter(outSA)) {
 
-            Flexer lexer = new Flexer(input.toString());
-            List<Flexer.Token> tokens = lexer.tokenize();
+				StringBuilder input = new StringBuilder();
+				while (scanner.hasNext()) {
+					input.append(scanner.nextLine()).append("\n");
+				}
 
-            StringBuilder output = new StringBuilder();
-            for (Flexer.Token token : tokens) {
-                output.append(token.toString()).append("\n");
-            }
+				Flexer lexer = new Flexer(input.toString());
+				List<Flexer.Token> tokens = lexer.tokenize();
 
-            writerL.write(output.toString());
+				StringBuilder output = new StringBuilder();
+				for (Flexer.Token token : tokens) {
+					output.append(token.toString()).append("\n");
+				}
 
-            ASTNodeFactory factory = new ASTNodeFactory();
-            PrettyVisitor visitor = new PrettyVisitor();
+				writerL.write(output.toString());
+				FSyntaxAnalysis fSyntaxAnalysis = new FSyntaxAnalysis(tokens, visitor, factory);
 
-            FSyntaxAnalysis fSyntaxAnalysis = new FSyntaxAnalysis(tokens, visitor, factory);
+				List<ASTNode> ast = fSyntaxAnalysis.parse();
 
-            List<ASTNode> ast = fSyntaxAnalysis.parse();
+				for (ASTNode node : ast) {
+					printAST(node, 0);  //each node starting at depth 0
+				}
+			} catch (IOException e) {
+				System.err.println("Error: " + e.getMessage());
+			} catch (Exception e) {
+				System.out.println(i);
+				throw new RuntimeException(e);
+			}
+		}
+	}
 
-            for (ASTNode node : ast) {
-                printAST(node, 0);  //each node starting at depth 0
-            }
-        } catch (IOException e) {
-            System.err.println("Error: " + e.getMessage());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-    // Нужно переписать
-    static void printAST(ASTNode node, int depth) {
-        for (int i = 0; i < depth; i++) System.out.print("  ");
+	// Нужно переписать для работы с filewriter и подумать про visitor, чтобы не импортить сюда все ноды
+	static void printAST(ASTNode node, int depth) {
+		for (int i = 0; i < depth; i++) System.out.print("  ");
 
-        //current node
-        System.out.println(node);
+		//current node
+		System.out.println(node);
 
-        // print children with recursion
-        if (node instanceof FunctionNode func) {
-            printAST(func.getBody(), depth + 1);
-        } else if (node instanceof AssignmentNode assign) {
-            printAST(assign.getValue(), depth + 1);
-        } else if (node instanceof ConditionNode cond) {
-            for (ConditionBranch branch : cond.getBranches()) {
-                printAST(branch.getCondition(), depth + 1);
-                printAST(branch.getAction(), depth + 1);
-            }
-        }
-    }
-
+		// print children with recursion
+		if (node instanceof FunctionNode func) {
+			printAST(func.getBody(), depth + 1);
+		} else if (node instanceof AssignmentNode assign) {
+			printAST(assign.getValue(), depth + 1);
+		} else if (node instanceof ConditionNode cond) {
+			for (ConditionBranch branch : cond.getBranches()) {
+				printAST(branch.getCondition(), depth + 1);
+				printAST(branch.getAction(), depth + 1);
+			}
+		}
+	}
 }

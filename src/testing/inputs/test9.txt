@@ -1,4 +1,4 @@
-(setq double (lambda (x) (times x 2))) ; Define an unnamed function to double its argument
+(setq double (lambda (x) (times x 2)))
 (double 4)
 
 (setq increment (lambda (x) (plus x 1)))
