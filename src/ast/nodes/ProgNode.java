@@ -6,9 +6,9 @@ import java.util.List;
 
 public class ProgNode extends ASTNode {
 	private final List<ASTNode> statements;
-	private final ASTNode finalExpression;
+	private final List<ASTNode> finalExpression;
 
-	public ProgNode(List<ASTNode> statements, ASTNode finalExpression) {
+	public ProgNode(List<ASTNode> statements, List<ASTNode> finalExpression) {
 		this.statements = statements;
 		this.finalExpression = finalExpression;
 	}
@@ -22,7 +22,7 @@ public class ProgNode extends ASTNode {
 		return statements;
 	}
 
-	public ASTNode getFinalExpression() {
+	public List<ASTNode> getFinalExpression() {
 		return finalExpression;
 	}
 }

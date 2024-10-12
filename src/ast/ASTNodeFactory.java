@@ -53,7 +53,7 @@ public class ASTNodeFactory {
 		return new BreakNode();
 	}
 
-	public ProgNode createProgNode(List<ASTNode> statements, ASTNode finalExpression) {
+	public ProgNode createProgNode(List<ASTNode> statements, List<ASTNode> finalExpression) {
 		return new ProgNode(statements, finalExpression);
 	}
 

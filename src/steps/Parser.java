@@ -155,7 +155,11 @@ public class Parser {
 		while (!check(TokenType.RPAREN)) {
 			statements.add(parseExpr());
 		}
-		ASTNode finalExpression = parseExpr();
+
+		List<ASTNode> finalExpression = new ArrayList<>();
+		while (!check(TokenType.RPAREN)) {
+			finalExpression.add(parseExpr());
+		}
 		consume(TokenType.RPAREN, "EXPECTED ) AFTER FINAL EXPRESSION");
 
 		return factory.createProgNode(statements, finalExpression);

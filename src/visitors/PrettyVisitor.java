@@ -135,7 +135,9 @@ public class PrettyVisitor implements ASTVisitor<String> {
 				.map(statement -> statement.accept(this))
 				.collect(Collectors.joining(", "));
 
-		String finalExpressionStr = node.getFinalExpression().accept(this);
+		String finalExpressionStr = node.getStatements().stream()
+				.map(statement -> statement.accept(this))
+				.collect(Collectors.joining(", "));
 		return "ProgNode(statements=[" + statementsStr + "], finalExpression=" + finalExpressionStr + ")";
 	}
 
