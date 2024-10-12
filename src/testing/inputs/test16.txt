@@ -1,0 +1,22 @@
+(func factorial (n)
+  (cond
+    (equal n 0) 1
+    (true (times n (factorial (minus n 1))))))
+(factorial 5)
+(factorial 6)
+
+(func fibonacci (n)
+  (cond
+    (less n 2) n
+    (true (plus (fibonacci (minus n 1)) (fibonacci (minus n 2))))))
+
+(fibonacci 5)
+(fibonacci 8)
+
+(func sumToN (n)
+  (cond
+    (equal n 0) 0
+    (true (plus n (sumToN (minus n 1))))))
+
+(sumToN 5)
+(sumToN 10)
