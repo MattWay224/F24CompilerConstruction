@@ -5,7 +5,6 @@
 (factorial 5)
 (factorial 6)
 
-; Fibonacci function using recursion
 (func fibonacci (n)
   (cond
     (less n 2) n
@@ -14,7 +13,6 @@
 (fibonacci 5)
 (fibonacci 8)
 
-; Sum of first n natural numbers using recursion
 (func sumToN (n)
   (cond
     (equal n 0) 0
