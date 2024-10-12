@@ -140,7 +140,10 @@ public class Parser {
 		advance();
 		consume(TokenType.LPAREN, "EXPECTED ( AFTER WHILE");
 		ASTNode condition = parseExpr();
-		ASTNode body = parseExpr();
+		List<ASTNode> body = new ArrayList<>();
+		while (!check(TokenType.RPAREN)) {
+			body.add(parseExpr());
+		}
 		consume(TokenType.RPAREN, "EXPECTED ) AFTER WHILE BODY");
 		return factory.createWhileNode(condition, body);
 	}
@@ -250,6 +253,7 @@ public class Parser {
 		consume(TokenType.RPAREN, "EXPECTED ) AFTER OPERATION");
 		return factory.createFunctionCallNode(functionName, operands);
 	}
+
 	private ASTNode parseSETQ() throws Exception {
 		advance();
 		String variable = consume(TokenType.ATOM, "EXPECTED VARIABLE FOR SETQ").value;
@@ -271,22 +275,17 @@ public class Parser {
 		advance();
 		List<ConditionBranch> branches = new ArrayList<>();
 
-		// loop thr condition-action pairs
-		while (!check(TokenType.RPAREN)) {
-			if (isAtEnd()) throw new Exception("Unexpected end of input while parsing condition-action pairs.");
-			ASTNode condition = parseExpr();
+		if (isAtEnd()) throw new Exception("Unexpected end of input while parsing condition-action pairs.");
+		ASTNode condition = parseExpr();
 
-			if (isAtEnd()) throw new Exception("Expected action after condition, but reached end of input.");
-			ASTNode action = parseExpr();
-			branches.add(factory.createConditionBranch(condition, action));
-		}
+		if (isAtEnd()) throw new Exception("Expected action after condition, but reached end of input.");
+		ASTNode action = parseExpr();
+		branches.add(factory.createConditionBranch(condition, action));
 
 		//default case
 		ASTNode defaultAction = null;
 		if (check(TokenType.LPAREN)) {
-			advance();
 			defaultAction = parseExpr();
-			consume(TokenType.RPAREN, "EXPECTED ) AFTER DEFAULT ACTION");
 		}
 		consume(TokenType.RPAREN, "MISSING ) AFTER COND EXPR");
 		return factory.createConditionNode(branches, defaultAction);

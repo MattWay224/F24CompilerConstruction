@@ -41,7 +41,7 @@ public class ASTNodeFactory {
 		return new ConsNode(head, tail);
 	}
 
-	public WhileNode createWhileNode(ASTNode condition, ASTNode body) {
+	public WhileNode createWhileNode(ASTNode condition, List<ASTNode> body) {
 		return new WhileNode(condition, body);
 	}
 

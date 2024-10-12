@@ -2,11 +2,13 @@ package ast.nodes;
 
 import visitors.ASTVisitor;
 
+import java.util.List;
+
 public class WhileNode extends ASTNode {
 	private final ASTNode condition;
-	private final ASTNode body;
+	private final List<ASTNode> body;
 
-	public WhileNode(ASTNode condition, ASTNode body) {
+	public WhileNode(ASTNode condition, List<ASTNode> body) {
 		this.condition = condition;
 		this.body = body;
 	}
@@ -20,7 +22,7 @@ public class WhileNode extends ASTNode {
 		return condition;
 	}
 
-	public ASTNode getBody() {
+	public List<ASTNode> getBody() {
 		return body;
 	}
 }

@@ -159,7 +159,9 @@ public class PrettyVisitor implements ASTVisitor<String> {
 	@Override
 	public String visitWhileNode(WhileNode node) {
 		String condition = node.getCondition().accept(this);
-		String body = node.getBody().accept(this);
+		String body = node.getBody().stream()
+				.map(statement -> statement.accept(this))
+				.collect(Collectors.joining(", "));
 		return "WhileNode(condition=" + condition + ", body=" + body + ")";
 	}
 }
