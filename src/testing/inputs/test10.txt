@@ -6,3 +6,5 @@
 
 (cond (and (greater 5 3) (less 2 4)) (plus 10 5) (minus 5 2))
 (cond (or (less 3 2) (greater 5 1)) (plus 2 3) (minus 5 2))
+
+(cond (less 1 2) (customfunc 2))

@@ -17,6 +17,8 @@ public interface ASTVisitor<R> {
 
 	R visitFunctionNode(FunctionNode node);
 
+	R visitFunctionCallNode(FunctionCallNode node);
+
 	R visitHeadNode(HeadNode node);
 
 	R visitLambdaNode(LambdaNode node);

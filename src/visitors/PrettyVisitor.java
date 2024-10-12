@@ -67,6 +67,15 @@ public class PrettyVisitor implements ASTVisitor<String> {
 	}
 
 	@Override
+	public String visitFunctionCallNode(FunctionCallNode node) {
+		String params = node.getParameters().stream()
+				.map(element -> element.accept(this))
+				.collect(Collectors.joining(", "));
+		return "FunctionCallNode(functionName=" + node.getFunctionName() +
+				", parameters=[" + params + "])";
+	}
+
+	@Override
 	public String visitHeadNode(HeadNode node) {
 		String head = node.getHead().accept(this);
 		return "HeadNode(list=" + head + ")";
