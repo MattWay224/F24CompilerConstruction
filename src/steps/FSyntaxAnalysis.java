@@ -9,7 +9,7 @@ import java.util.List;
 
 public class FSyntaxAnalysis {
 	private static FSyntaxAnalysis instance = new FSyntaxAnalysis();
-	private List<Flexer.Token> tokens;
+	private List<Token> tokens;
 	private int currentPos = 0;
 	private boolean insideCond = false;
 	private PrettyVisitor visitor;
@@ -24,7 +24,7 @@ public class FSyntaxAnalysis {
 		return instance;
 	}
 
-	public void setter(List<Flexer.Token> tokens, PrettyVisitor visitor, ASTNodeFactory factory) {
+	public void setter(List<Token> tokens, PrettyVisitor visitor, ASTNodeFactory factory) {
 		this.tokens = tokens;
 		this.visitor = visitor;
 		this.factory = factory;
@@ -35,13 +35,13 @@ public class FSyntaxAnalysis {
 		while (!isAtEnd()) {
 			ASTNode node = parseExpr();
 			System.out.println(node.accept(visitor)); // Use the PrettyVisitor here to print
-			statements.add(parseExpr());
+			statements.add(node);
 		}
 		return statements;
 	}
 
 	private ASTNode parseExpr() throws Exception {
-		Flexer.Token currentToken = peek();
+		Token currentToken = peek();
 
 		return switch (currentToken.type) {
 			case LPAREN -> parseParenthesizedExpr();
@@ -59,47 +59,46 @@ public class FSyntaxAnalysis {
 			}
 			case LESS, LESSEQ, GREATER, GREATEREQ, EQUAL, NONEQUAL -> parseComparison(currentToken.value);
 			case PLUS, MINUS, TIMES, DIVIDE -> parseOperation(currentToken.value);
-			case EOF, RPAREN -> null; // create parser for that
 			default -> throw new Exception("UNEXPECTED TOKEN: " + currentToken);
 		};
 	}
 
-	private Flexer.Token peek() {
+	private Token peek() {
 		return tokens.get(currentPos);
 	}
 
 	private boolean isAtEnd() {
-		return peek().type == Flexer.TokenType.EOF;
+		return currentPos >= tokens.size() || peek().type == TokenType.EOF;
 	}
 
-	private boolean check(Flexer.TokenType type) {
+	private boolean check(TokenType type) {
 		if (isAtEnd()) return false;
 		return peek().type == type;
 	}
 
-	private Flexer.Token previous() {
+	private Token previous() {
 		return tokens.get(currentPos - 1);
 	}
 
-	private Flexer.Token advance() {
+	private Token advance() {
 		if (!isAtEnd()) currentPos++;
 		return previous();
 	}
 
-	private Flexer.Token consume(Flexer.TokenType type, String errorMessage) throws Exception {
+	private Token consume(TokenType type, String errorMessage) throws Exception {
 		if (check(type)) return advance();
 		throw new Exception(errorMessage + ". FOUND: " + peek());
 	}
 
 	private ASTNode parseParenthesizedExpr() throws Exception {
-		consume(Flexer.TokenType.LPAREN, "EXPECTED (");
+		consume(TokenType.LPAREN, "EXPECTED (");
 
-		Flexer.Token operatorToken = peek();
+		Token operatorToken = peek();
 
-		if (operatorToken.type == Flexer.TokenType.INTEGER ||
-				operatorToken.type == Flexer.TokenType.REAL ||
-				operatorToken.type == Flexer.TokenType.BOOLEAN ||
-				operatorToken.type == Flexer.TokenType.ATOM) {
+		if (operatorToken.type == TokenType.INTEGER ||
+				operatorToken.type == TokenType.REAL ||
+				operatorToken.type == TokenType.BOOLEAN ||
+				operatorToken.type == TokenType.ATOM) {
 			// if literal or atom assume a list of literals
 			return parseLiteralList();
 		}
@@ -107,7 +106,7 @@ public class FSyntaxAnalysis {
 		return switch (operatorToken.value) {
 			case "setq" -> parseSETQ();
 			case "func" -> parseFUNC();
-			case "cond" -> null; //parseCOND();
+			case "cond" -> throw new Exception("COND not yet implemented"); //parseCOND();
 			case "prog" -> parsePROG();
 			case "plus", "minus", "times", "divide" -> parseOperation(operatorToken.value);
 			case "head" -> parseHeadOrTail("head");
@@ -127,48 +126,47 @@ public class FSyntaxAnalysis {
 
 	private ASTNode parseBREAK() throws Exception {
 		advance();
-		consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER BREAK");
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER BREAK");
 		return factory.createBreakNode();
 	}
 
 	private ASTNode parseRETURN() throws Exception {
 		advance();
 		ASTNode returnValue = parseExpr();
-		consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER RETURN");
-		advance();
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER RETURN");
 		return factory.createReturnNode(returnValue);
 	}
 
 	private ASTNode parseWHILE() throws Exception {
 		advance();
-		consume(Flexer.TokenType.LPAREN, "EXPECTED ( AFTER WHILE");
+		consume(TokenType.LPAREN, "EXPECTED ( AFTER WHILE");
 		ASTNode condition = parseExpr();
 		ASTNode body = parseExpr();
-		consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER WHILE BODY");
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER WHILE BODY");
 		return factory.createWhileNode(condition, body);
 	}
 
 	private ASTNode parsePROG() throws Exception {
 		advance();
-		consume(Flexer.TokenType.LPAREN, "EXPECTED ( AFTER PROG");
+		consume(TokenType.LPAREN, "EXPECTED ( AFTER PROG");
 		List<ASTNode> statements = new ArrayList<>();
-		Flexer.Token token = peek();
-		while (token.type != Flexer.TokenType.RPAREN && token.type != Flexer.TokenType.EOF) {
+		Token token = peek();
+		while (token.type != TokenType.RPAREN && token.type != TokenType.EOF) {
 			statements.add(parseExpr());
 			token = peek();
 		}
-		consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER PROG STATEMENTS");
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER PROG STATEMENTS");
 		ASTNode finalExpression = parseExpr();
-		consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER FINAL EXPRESSION");
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER FINAL EXPRESSION");
 		return factory.createProgNode(statements, finalExpression);
 	}
 
 	private ASTNode parseLiteralList() throws Exception {
 		List<ASTNode> elements = new ArrayList<>();
-		while (!check(Flexer.TokenType.RPAREN)) {
+		while (!check(TokenType.RPAREN)) {
 			elements.add(parseExpr()); // add each literal to list
 		}
-		consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER LITERAL LIST");
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER LITERAL LIST");
 		return factory.createListNode(elements);
 	}
 
@@ -176,7 +174,7 @@ public class FSyntaxAnalysis {
 		advance();
 		List<String> parameters = parseParameterList();
 		ASTNode body = parseExpr();
-		consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER LAMBDA BODY");
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER LAMBDA BODY");
 		return factory.createLambdaNode(parameters, body);
 	}
 
@@ -184,14 +182,14 @@ public class FSyntaxAnalysis {
 		advance();
 		ASTNode leftElement = parseExpr();
 		ASTNode rightElement = parseExpr();
-		consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER " + operator);
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER " + operator);
 		return factory.createLogicalOperationNode(operator, leftElement, rightElement);
 	}
 
 	private ASTNode parseNot() throws Exception {
 		advance();
 		ASTNode element = parseExpr();
-		consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER NOT");
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER NOT");
 		return factory.createNotNode(element);
 	}
 
@@ -199,7 +197,7 @@ public class FSyntaxAnalysis {
 		advance();
 		ASTNode leftElement = parseExpr();
 		ASTNode rightElement = parseExpr();
-		consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER " + comparison);
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER " + comparison);
 		return factory.createComparisonNode(comparison, leftElement, rightElement);
 	}
 
@@ -207,15 +205,14 @@ public class FSyntaxAnalysis {
 	private ASTNode parsePredicate(String predicate) throws Exception {
 		advance();
 		ASTNode element = parseExpr();
-		consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER " + predicate);
-
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER " + predicate);
 		return factory.createPredicateNode(predicate, element);
 	}
 
 	private ASTNode parseHeadOrTail(String type) throws Exception {
 		advance();
 		ASTNode listExpr = parseExpr();
-		consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER " + type);
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER " + type);
 		if (type.equals("head")) {
 			return factory.createHeadNode(listExpr);
 		} else {
@@ -227,17 +224,17 @@ public class FSyntaxAnalysis {
 		advance();
 		ASTNode item = parseExpr();//what to add
 		ASTNode list = parseExpr();//to list
-		consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER CONS");
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER CONS");
 		return factory.createConsNode(item, list);
 	}
 
 	private ASTNode parseOperation(String operator) throws Exception {
 		List<ASTNode> operands = new ArrayList<>();
 		advance();
-		while (!check(Flexer.TokenType.RPAREN)) {
+		while (!check(TokenType.RPAREN)) {
 			operands.add(parseExpr());
 		}
-		consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER OPERATION");
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER OPERATION");
 
 		if ((operands.size() < 2) && !(insideCond && (operator.equals("plus") || operator.equals("minus")))) {
 			System.out.println(insideCond);
@@ -248,18 +245,18 @@ public class FSyntaxAnalysis {
 
 	private ASTNode parseSETQ() throws Exception {
 		advance();
-		String variable = consume(Flexer.TokenType.ATOM, "EXPECTED VARIABLE FOR SETQ").value;
+		String variable = consume(TokenType.ATOM, "EXPECTED VARIABLE FOR SETQ").value;
 		ASTNode value = parseExpr();
-		consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER SETQ ASSIGNMENT");
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER SETQ ASSIGNMENT");
 		return factory.createAssignmentNode(variable, value);
 	}
 
 	private ASTNode parseFUNC() throws Exception {
 		advance();
-		String functionName = consume(Flexer.TokenType.ATOM, "MISSING FUNCTION NAME").value;
+		String functionName = consume(TokenType.ATOM, "MISSING FUNCTION NAME").value;
 		List<String> parameters = parseParameterList();
 		ASTNode body = parseExpr();
-		consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER FUNCTION BODY");
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER FUNCTION BODY");
 		return factory.createFunctionNode(functionName, parameters, body);
 	}
 /*
@@ -313,11 +310,11 @@ public class FSyntaxAnalysis {
 
 	private List<String> parseParameterList() throws Exception {
 		List<String> parameters = new ArrayList<>();
-		consume(Flexer.TokenType.LPAREN, "EXPECTED ( BEFORE PARAMETER LIST");
-		while (!check(Flexer.TokenType.RPAREN)) {
-			parameters.add(consume(Flexer.TokenType.ATOM, "EXPECTED PARAMETER").value);
+		consume(TokenType.LPAREN, "EXPECTED ( BEFORE PARAMETER LIST");
+		while (!check(TokenType.RPAREN)) {
+			parameters.add(consume(TokenType.ATOM, "EXPECTED PARAMETER").value);
 		}
-		consume(Flexer.TokenType.RPAREN, "EXPECTED ) AFTER PARAMETER LIST");
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER PARAMETER LIST");
 		return parameters;
 	}
 }

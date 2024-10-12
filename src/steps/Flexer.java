@@ -24,64 +24,7 @@ public class Flexer {
 		this.length = input.length();
 	}
 
-	enum TokenType {
-		LPAREN,//left parenthesis
-		RPAREN,//right parenthesis
-		SETQ,
-		FUNC,
-		LAMBDA,
-		PROG,
-		COND,
-		WHILE,
-		RETURN,
-		BREAK,
-		PLUS,
-		MINUS,
-		TIMES,
-		DIVIDE,
-		INTEGER,//literal
-		REAL,//literal
-		BOOLEAN,//literal
-		NULL,
-		ATOM,
-		HEAD,
-		TAIL,
-		CONS,
-		EQUAL,
-		NONEQUAL,
-		LESS,
-		LESSEQ,
-		GREATER,
-		GREATEREQ,
-		ISINT,
-		ISREAL,
-		ISBOOL,
-		ISNULL,
-		ISATOM,
-		ISLIST,
-		AND,
-		OR,
-		XOR,
-		NOT,
-		EVAL,
-		QUOTE, //NO NEED TO EVALUATE
-		EOF//end of file
-	}
 
-	public class Token {
-		TokenType type;
-		String value;
-
-		Token(TokenType type, String value) {
-			this.type = type;
-			this.value = value;
-		}
-
-		@Override
-		public String toString() {
-			return "Token{" + "type=" + type + ", value='" + value + '\'' + '}';
-		}
-	}
 
 	//Lexical analyzer
 	public List<Token> tokenize() throws Exception {

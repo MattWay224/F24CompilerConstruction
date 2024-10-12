@@ -1,6 +1,7 @@
 package testing.flexer;
 
 import steps.Flexer;
+import steps.Token;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,10 +24,10 @@ public class FlexerTest {
 		this.lexer = Flexer.getInstance();
 		this.lexer.setInput(input.toString());
 		try {
-			List<Flexer.Token> tokens = lexer.tokenize();
+			List<Token> tokens = lexer.tokenize();
 
 			StringBuilder output = new StringBuilder();
-			for (Flexer.Token token : tokens) {
+			for (Token token : tokens) {
 				output.append(token.toString()).append("\n");
 			}
 			return output.toString();

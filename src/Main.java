@@ -2,6 +2,7 @@ import ast.ASTNodeFactory;
 import ast.nodes.*;
 import steps.FSyntaxAnalysis;
 import steps.Flexer;
+import steps.Token;
 import visitors.PrettyVisitor;
 
 import java.io.File;
@@ -32,10 +33,10 @@ public class Main {
 				}
 
 				lexer.setInput(input.toString());
-				List<Flexer.Token> tokens = lexer.tokenize();
+				List<Token> tokens = lexer.tokenize();
 
 				StringBuilder output = new StringBuilder();
-				for (Flexer.Token token : tokens) {
+				for (Token token : tokens) {
 					output.append(token.toString()).append("\n");
 				}
 				writerL.write(output.toString());
@@ -43,8 +44,9 @@ public class Main {
 				fSyntaxAnalysis.setter(tokens, visitor, factory);
 				List<ASTNode> ast = fSyntaxAnalysis.parse();
 				for (ASTNode node : ast) {
-					printAST(node, 0);  //each node starting at depth 0
+					 printAST(node, 0);  //each node starting at depth 0
 				}
+
 			} catch (IOException e) {
 				System.err.println("Error: " + e.getMessage());
 			} catch (Exception e) {
