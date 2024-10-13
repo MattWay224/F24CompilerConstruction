@@ -5,10 +5,12 @@ import visitors.ASTVisitor;
 public class ConsNode extends ASTNode {
 	private final ASTNode head;
 	private final ASTNode tail;
+	int line;
 
-	public ConsNode(ASTNode head, ASTNode tail) {
+	public ConsNode(ASTNode head, ASTNode tail, int line) {
 		this.head = head;
 		this.tail = tail;
+		this.line = line;
 	}
 
 	@Override
@@ -22,5 +24,9 @@ public class ConsNode extends ASTNode {
 
 	public ASTNode getTail() {
 		return tail;
+	}
+
+	public int getLine() {
+		return line;
 	}
 }

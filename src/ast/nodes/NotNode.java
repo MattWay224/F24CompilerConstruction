@@ -4,9 +4,11 @@ import visitors.ASTVisitor;
 
 public class NotNode extends ASTNode {
 	ASTNode element;
+	int line;
 
-	public NotNode(ASTNode element) {
+	public NotNode(ASTNode element, int line) {
 		this.element = element;
+		this.line = line;
 	}
 
 	@Override
@@ -16,5 +18,9 @@ public class NotNode extends ASTNode {
 
 	public ASTNode getElement() {
 		return element;
+	}
+
+	public int getLine() {
+		return line;
 	}
 }

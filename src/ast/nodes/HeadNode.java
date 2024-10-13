@@ -4,9 +4,11 @@ import visitors.ASTVisitor;
 
 public class HeadNode extends ASTNode {
 	ASTNode head;
+	int line;
 
-	public HeadNode(ASTNode head) {
+	public HeadNode(ASTNode head, int line) {
 		this.head = head;
+		this.line = line;
 	}
 
 	@Override
@@ -16,5 +18,9 @@ public class HeadNode extends ASTNode {
 
 	public ASTNode getHead() {
 		return head;
+	}
+
+	public int getLine() {
+		return line;
 	}
 }

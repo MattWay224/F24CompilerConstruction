@@ -1,10 +1,9 @@
 import ast.ASTNodeFactory;
-import ast.nodes.*;
 import steps.FSyntaxAnalysis;
 import steps.Flexer;
 import steps.Token;
 import visitors.PrettyVisitor;
-
+import ast.nodes.ASTNode;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,7 +17,7 @@ public class Main {
 		Flexer lexer = Flexer.getInstance();
 		FSyntaxAnalysis fSyntaxAnalysis = FSyntaxAnalysis.getInstance();
 
-		for (int i = 1; i < 17; i++) {
+		for (int i = 0; i < 17; i++) {
 			File text = new File("src/testing/inputs/test" + i + ".txt");
 			File outL = new File("src/testing/flexer/outputs/output" + i + ".txt");
 			File outSA = new File("src/testing/syntax/outputs/output" + i + ".txt");
@@ -43,8 +42,9 @@ public class Main {
 
 				fSyntaxAnalysis.setter(tokens, visitor, factory);
 				List<ASTNode> ast = fSyntaxAnalysis.parse();
+
 				for (ASTNode node : ast) {
-					 printAST(node, 0);  //each node starting at depth 0
+					 writerSA.write(node.accept(visitor)+"\n");  //each node starting at depth 0
 				}
 
 			} catch (IOException e) {
@@ -57,22 +57,22 @@ public class Main {
 	}
 
 	// Нужно переписать для работы с filewriter и подумать про visitor, чтобы не импортить сюда все ноды
-	static void printAST(ASTNode node, int depth) {
-		for (int i = 0; i < depth; i++) System.out.print("  ");
-
-		//current node
-		System.out.println(node);
-
-		// print children with recursion
-		if (node instanceof FunctionNode func) {
-			printAST(func.getBody(), depth + 1);
-		} else if (node instanceof AssignmentNode assign) {
-			printAST(assign.getValue(), depth + 1);
-		} else if (node instanceof ConditionNode cond) {
-			for (ConditionBranch branch : cond.getBranches()) {
-				printAST(branch.getCondition(), depth + 1);
-				printAST(branch.getAction(), depth + 1);
-			}
-		}
-	}
+//	static void printAST(FileWriter writer, ASTNode node,PrettyVisitor visitor, int depth) throws IOException {
+//		for (int i = 0; i < depth; i++) writer.write("  ");
+//
+//		//current node
+//		writer.write(node.accept(visitor) + "\n");
+//
+//		// print children with recursion
+//		if (node instanceof FunctionNode func) {
+//			printAST(writer, func.getBody(), visitor,depth + 1);
+//		} else if (node instanceof AssignmentNode assign) {
+//			printAST(writer, assign.getValue(), visitor,depth + 1);
+//		} else if (node instanceof ConditionNode cond) {
+//			for (ConditionBranch branch : cond.getBranches()) {
+//				printAST(writer, branch.getCondition(), visitor,depth + 1);
+//				printAST(writer, branch.getAction(), visitor,depth + 1);
+//			}
+//		}
+//	}
 }

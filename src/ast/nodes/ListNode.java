@@ -6,9 +6,11 @@ import java.util.List;
 
 public class ListNode extends ASTNode {
 	List<ASTNode> elements;
+	int line;
 
-	public ListNode(List<ASTNode> elements) {
+	public ListNode(List<ASTNode> elements, int line) {
 		this.elements = elements;
+		this.line = line;
 	}
 
 	@Override
@@ -18,5 +20,9 @@ public class ListNode extends ASTNode {
 
 	public List<ASTNode> getElements() {
 		return elements;
+	}
+
+	public int getLine() {
+		return line;
 	}
 }

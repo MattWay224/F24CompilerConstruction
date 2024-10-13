@@ -6,11 +6,15 @@ public class LogicalOperationNode extends ASTNode {
 	String operator;
 	ASTNode leftElement;
 	ASTNode rightElement;
+	int lineOp;
+	int lineClo;
 
-	public LogicalOperationNode(String operator, ASTNode leftElement, ASTNode rightElement) {
+	public LogicalOperationNode(String operator, ASTNode leftElement, ASTNode rightElement, int lineOp, int lineClo) {
 		this.operator = operator;
 		this.leftElement = leftElement;
 		this.rightElement = rightElement;
+		this.lineOp = lineOp;
+		this.lineClo = lineClo;
 	}
 
 	@Override
@@ -28,5 +32,13 @@ public class LogicalOperationNode extends ASTNode {
 
 	public ASTNode getRightElement() {
 		return rightElement;
+	}
+
+	public int getLineClo() {
+		return lineClo;
+	}
+
+	public int getLineOp() {
+		return lineOp;
 	}
 }

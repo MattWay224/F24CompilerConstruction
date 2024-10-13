@@ -4,9 +4,11 @@ import visitors.ASTVisitor;
 
 public class TailNode extends ASTNode {
 	ASTNode tail;
+	int line;
 
-	public TailNode(ASTNode tail) {
+	public TailNode(ASTNode tail, int line) {
 		this.tail = tail;
+		this.line = line;
 	}
 
 	@Override
@@ -16,5 +18,9 @@ public class TailNode extends ASTNode {
 
 	public ASTNode getTail() {
 		return tail;
+	}
+
+	public int getLine() {
+		return line;
 	}
 }

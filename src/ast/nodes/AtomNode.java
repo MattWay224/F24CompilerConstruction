@@ -5,9 +5,11 @@ import visitors.ASTVisitor;
 //atom
 public class AtomNode extends ASTNode {
 	String value;
+	int line;
 
-	public AtomNode(String value) {
+	public AtomNode(String value, int line) {
 		this.value = value;
+		this.line = line;
 	}
 
 	@Override
@@ -17,5 +19,9 @@ public class AtomNode extends ASTNode {
 
 	public String getValue() {
 		return value;
+	}
+
+	public int getLine() {
+		return line;
 	}
 }

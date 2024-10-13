@@ -9,11 +9,15 @@ public class FunctionNode extends ASTNode {
 	String functionName;
 	List<String> parameters;
 	ASTNode body;
+	int lineOp;
+	int lineClo;
 
-	public FunctionNode(String functionName, List<String> parameters, ASTNode body) {
+	public FunctionNode(String functionName, List<String> parameters, ASTNode body, int lineOp, int lineClo) {
 		this.functionName = functionName;
 		this.parameters = parameters;
 		this.body = body;
+		this.lineOp=lineOp;
+		this.lineClo=lineClo;
 	}
 
 	@Override
@@ -31,5 +35,13 @@ public class FunctionNode extends ASTNode {
 
 	public  ASTNode getBody() {
 		return body;
+	}
+
+	public int getLineOp() {
+		return lineOp;
+	}
+
+	public int getLineClo() {
+		return lineClo;
 	}
 }
