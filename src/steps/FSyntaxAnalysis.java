@@ -30,7 +30,7 @@ public class FSyntaxAnalysis {
 		this.parser = new Parser(tokens, factory);
 	}
 
-	public List<ASTNode> parse() throws Exception {
+	public ASTNode parse() throws Exception {
 		return parser.parse();
 	}
 }

@@ -11,6 +11,9 @@
 (setq triple (returnMultiplier 3))
 (triple 4)
 
+(func square (x) (times x x))
+
 (func applyReturnedFunction (f x factor)
   (applyFunction (returnMultiplier factor) x))
+
 (applyReturnedFunction square 2 3)

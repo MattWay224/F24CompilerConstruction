@@ -6,15 +6,17 @@ import java.util.List;
 
 public class ProgNode extends ASTNode {
     private final List<ASTNode> statements;
-    private final List<ASTNode> finalExpression;
     int lineOp;
     int lineClo;
 
-    public ProgNode(List<ASTNode> statements, List<ASTNode> finalExpression, int lineOp, int lineClo) {
+    public ProgNode(List<ASTNode> statements, int lineOp, int lineClo) {
         this.statements = statements;
-        this.finalExpression = finalExpression;
         this.lineOp = lineOp;
         this.lineClo = lineClo;
+
+        for (ASTNode statement : this.statements) {
+            addChild(statement);
+        }
     }
 
     @Override
@@ -24,10 +26,6 @@ public class ProgNode extends ASTNode {
 
     public List<ASTNode> getStatements() {
         return statements;
-    }
-
-    public List<ASTNode> getFinalExpression() {
-        return finalExpression;
     }
 
     public int getLineOp() {

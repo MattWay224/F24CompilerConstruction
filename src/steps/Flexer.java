@@ -191,6 +191,8 @@ public class Flexer {
                 return new Token(TokenType.BOOLEAN, id, line);
             case "quote":
                 return new Token(TokenType.QUOTE, id, line);
+            case "'":
+                return new Token(TokenType.QUOTE, id, line);
             case "":
                 return new Token(TokenType.EOF, id, line);
             default:

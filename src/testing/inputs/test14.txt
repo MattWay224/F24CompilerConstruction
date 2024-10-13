@@ -20,17 +20,15 @@
   (setq a 10)
   (setq b 15)
   (cond
-    ((greater a b) (setq c (minus a b)))
-    (true (setq c (minus b a))))
-  c)
+    (greater a b) (setq c (minus a b)) (setq c (minus b a)))
+  )
 
 
 (prog (x y result)
   (setq x 3)
   (setq y (plus x 2))
   (cond
-    ((less x y) (setq result (times y 2)))
-    (true (setq result x)))
+    (less x y) (setq result (times y 2)) (setq result x))
   result)
 
 
