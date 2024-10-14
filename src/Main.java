@@ -65,6 +65,4 @@ public class Main {
 			printAST(writer, child, visitor, depth + 1);
 		}
 	}
-
-	// Нужно переписать для работы с filewriter и подумать про visitor, чтобы не импортить сюда все ноды
 }
