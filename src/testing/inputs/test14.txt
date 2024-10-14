@@ -63,9 +63,7 @@
 (prog (a b result)
   (setq a 4)
   (setq b 6)
-  (cond
-    ((equal a b) (return a))
-    ((less a b) (return (plus a b))))
+  (cond (equal a b) (return a) (return (plus a b)))
   (setq result (minus b a))
   result)
 
@@ -80,9 +78,7 @@
 
 (func factorial (n)
   (prog (result)
-    (cond
-      ((equal n 0) (return 1))
-      (true (return (times n (factorial (minus n 1))))))))
+    (cond (equal n 0) (return 1) (return (times n (factorial (minus n 1)))))))
 (factorial 5)
 
 

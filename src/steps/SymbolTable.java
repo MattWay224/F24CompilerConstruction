@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class SymbolTable {
     private final SymbolTable parent;
-    private final Map<String, ASTNode> symbols;
+    Map<String, ASTNode> symbols;
 
     public SymbolTable(SymbolTable parent) {
         this.parent = parent;

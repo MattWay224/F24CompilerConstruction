@@ -61,7 +61,11 @@ public class Parser {
 				if (currentScope.isDefined(currentToken.value)) {
 					yield factory.createAtomNode(currentToken.value, currentToken.line);
 				} else {
-					throw new Exception("Undefined variable " + currentToken.value + "in line " + currentToken.line);
+					StringBuilder sb = new StringBuilder();
+//					sb.append("Current Scope:\n");
+//					currentScope.symbols.forEach((key, value) -> sb.append(key).append(" = ").append(value).append("\n"));
+//					System.out.println(sb);
+					throw new Exception("Undefined variable " + currentToken.value + " in line " + currentToken.line);
 				}
 			}
 			case LESS, LESSEQ, GREATER, GREATEREQ, EQUAL, NONEQUAL -> parseComparison(currentToken.value);
@@ -140,6 +144,7 @@ public class Parser {
 			case "quote" -> {
 				advance();
 				ASTNode quotedExpr = parseExpr();
+				advance();
 				yield factory.createQuoteNode(quotedExpr, operatorToken.line);
 			}
 			case "eval" -> parseEval();
@@ -215,7 +220,7 @@ public class Parser {
 		currentScope = new SymbolTable(previousScope);
 
 		String functionName = consume(TokenType.ATOM, "MISSING FUNCTION NAME").value;
-
+		globalScope.define(functionName, null);
 		List<String> parameters = new ArrayList<>();
 		consume(TokenType.LPAREN, "EXPECTED ( AFTER FUNCTION NAME");
 		while (!check(TokenType.RPAREN)) {
@@ -339,7 +344,7 @@ public class Parser {
 	private ASTNode parseFuncCall(String functionName) throws Exception {
 		//Token op = advance();
 		if (!globalScope.isDefined(functionName)) {
-			throw new Exception("Undefined function " + functionName + "in line " + peek().line);
+			throw new Exception("Undefined function " + functionName + " in line " + peek().line);
 		}
 
 		ASTNode functionNode = globalScope.lookup(functionName);
