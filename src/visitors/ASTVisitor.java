@@ -50,4 +50,6 @@ public interface ASTVisitor<R> {
 	R visitQuoteNode(QuoteNode node);
 
 	R visitLambdaCallNode(LambdaCallNode node);
+
+	R visitEvalNode(EvalNode node);
 }

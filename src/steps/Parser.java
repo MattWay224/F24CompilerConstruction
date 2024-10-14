@@ -51,11 +51,6 @@ public class Parser {
 
 		return switch (currentToken.type) {
 			case LPAREN -> parseParenthesizedExpr();
-			case QUOTE -> {
-				advance();
-				ASTNode quotedExpr = parseExpr();
-				yield factory.createQuoteNode(quotedExpr, currentToken.line);
-			}
 			case INTEGER, REAL, BOOLEAN -> {
 				advance();
 				yield factory.createLiteralNode(currentToken.value, currentToken.line);
@@ -110,8 +105,7 @@ public class Parser {
 				operatorToken.type == TokenType.BOOLEAN) {
 			// if literal or atom assume a list of literals
 			return parseLiteralList();
-		}
-		if (operatorToken.type == TokenType.ATOM) {
+		} else if (operatorToken.type == TokenType.ATOM) {
 			String operatorValue = operatorToken.value;
 
 			if (globalScope.isDefined(operatorValue) && globalScope.lookup(operatorValue) instanceof FunctionNode) {
@@ -143,8 +137,21 @@ public class Parser {
 			case "not" -> parseNot();
 			case "lambda" -> parseLambda();
 			case ")" -> parseLiteralList();
+			case "quote" -> {
+				advance();
+				ASTNode quotedExpr = parseExpr();
+				yield factory.createQuoteNode(quotedExpr, operatorToken.line);
+			}
+			case "eval" -> parseEval();
 			default -> parseFuncCall(operatorToken.value);
 		};
+	}
+
+	private ASTNode parseEval() throws Exception {
+		Token op = advance();
+		ASTNode q = parseExpr();
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER EVAL");
+		return factory.createEvalNode(q, op.line);
 	}
 
 	private ASTNode parseBREAK() throws Exception {

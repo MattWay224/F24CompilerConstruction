@@ -107,5 +107,9 @@ public class ASTNodeFactory {
     public QuoteNode createQuoteNode(ASTNode value, int line) {
         return new QuoteNode(value, line);
     }
+
+    public EvalNode createEvalNode(ASTNode node, int line) {
+        return new EvalNode(node, line);
+    }
 }
 

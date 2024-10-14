@@ -175,4 +175,10 @@ public class PrettyVisitor implements ASTVisitor<String> {
                 .collect(Collectors.joining(",\n"));
         return "WhileNode(condition=" + condition + ", body=" + body + ")";
     }
+
+    @Override
+    public String visitEvalNode(EvalNode node) {
+        String subnode = node.getNode().accept(this);
+        return "EvalNode(node=" + subnode + ")";
+    }
 }
