@@ -5,6 +5,16 @@ import ast.nodes.*;
 import java.util.List;
 
 public class ASTNodeFactory {
+    private static ASTNodeFactory instance = new ASTNodeFactory();
+
+    public static ASTNodeFactory getInstance() {
+        if (instance != null) {
+            return instance;
+        } else {
+            instance = new ASTNodeFactory();
+            return instance;
+        }
+    }
 
     public ASTNode createLiteralNode(String value, int line) {
         return new LiteralNode(value, line);

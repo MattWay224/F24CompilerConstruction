@@ -1,9 +1,9 @@
-import ast.ASTNodeFactory;
+import ast.nodes.ASTNode;
 import steps.FSyntaxAnalysis;
 import steps.Flexer;
 import steps.Token;
 import visitors.PrettyVisitor;
-import ast.nodes.ASTNode;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,7 +12,6 @@ import java.util.Scanner;
 
 public class Main {
 	public static void main(String[] args) {
-		ASTNodeFactory factory = new ASTNodeFactory();
 		PrettyVisitor visitor = new PrettyVisitor();
 		Flexer lexer = Flexer.getInstance();
 		FSyntaxAnalysis fSyntaxAnalysis = FSyntaxAnalysis.getInstance();
@@ -40,7 +39,7 @@ public class Main {
 				}
 				writerL.write(output.toString());
 
-				fSyntaxAnalysis.setter(tokens, visitor, factory);
+				fSyntaxAnalysis.setter(tokens);
 				ASTNode ast = fSyntaxAnalysis.parse();
 
 				printAST(writerSA, ast, visitor, 0);
