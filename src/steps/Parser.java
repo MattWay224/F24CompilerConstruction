@@ -13,7 +13,7 @@ public class Parser {
 	private final ASTNodeFactory factory;
 	private List<Token> tokens;
 	private int currentTokenIndex;
-	private static Parser instance = new Parser();
+	private static Parser instance;
 	private SymbolTable globalScope = new SymbolTable(null);
 	private SymbolTable currentScope = globalScope;
 
