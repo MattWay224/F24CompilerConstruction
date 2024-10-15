@@ -16,7 +16,7 @@ public class Main {
 		Flexer lexer = Flexer.getInstance();
 		FSyntaxAnalysis fSyntaxAnalysis = FSyntaxAnalysis.getInstance();
 
-		for (int i = 0; i < 18; i++) {
+		for (int i = 1; i < 18; i++) {
 			File text = new File("src/testing/inputs/test" + i + ".txt");
 			File outL = new File("src/testing/flexer/outputs/output" + i + ".txt");
 			File outSA = new File("src/testing/syntax/outputs/output" + i + ".txt");

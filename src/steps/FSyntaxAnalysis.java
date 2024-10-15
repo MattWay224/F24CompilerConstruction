@@ -5,7 +5,7 @@ import ast.nodes.ASTNode;
 import java.util.List;
 
 public class FSyntaxAnalysis {
-	private static FSyntaxAnalysis instance = new FSyntaxAnalysis();
+	private static FSyntaxAnalysis instance;
 	private Parser parser;
 	private FSyntaxAnalysis() {
 		this.parser = Parser.getInstance();

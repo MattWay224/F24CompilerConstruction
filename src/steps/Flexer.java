@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Flexer {
-    private static Flexer instance = new Flexer();
+    private static Flexer instance;
     private String input;
     private int pos;
     private int length;
