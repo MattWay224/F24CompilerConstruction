@@ -46,4 +46,10 @@ public interface ASTVisitor<R> {
 	R visitWhileNode(WhileNode node);
 
 	R visitConditionBranch(ConditionBranch branch);
+
+	R visitQuoteNode(QuoteNode node);
+
+	R visitLambdaCallNode(LambdaCallNode node);
+
+	R visitEvalNode(EvalNode node);
 }
