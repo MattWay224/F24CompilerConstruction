@@ -21,5 +21,6 @@ public abstract class ASTNode {
 	public void addChild(ASTNode child) {
 		children.add(child);
 	}
+
 	public abstract <R> R accept(ASTVisitor<R> visitor);
 }

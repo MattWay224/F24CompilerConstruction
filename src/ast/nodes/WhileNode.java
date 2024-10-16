@@ -9,11 +9,12 @@ public class WhileNode extends ASTNode {
 	private final List<ASTNode> body;
 	int lineOp;
 	int lineClo;
+
 	public WhileNode(ASTNode condition, List<ASTNode> body, int lineOp, int lineClo) {
 		this.condition = condition;
 		this.body = body;
-		this.lineOp=lineOp;
-		this.lineClo=lineClo;
+		this.lineOp = lineOp;
+		this.lineClo = lineClo;
 	}
 
 	@Override
