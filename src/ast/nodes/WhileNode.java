@@ -7,10 +7,13 @@ import java.util.List;
 public class WhileNode extends ASTNode {
 	private final ASTNode condition;
 	private final List<ASTNode> body;
-
-	public WhileNode(ASTNode condition, List<ASTNode> body) {
+	int lineOp;
+	int lineClo;
+	public WhileNode(ASTNode condition, List<ASTNode> body, int lineOp, int lineClo) {
 		this.condition = condition;
 		this.body = body;
+		this.lineOp=lineOp;
+		this.lineClo=lineClo;
 	}
 
 	@Override
@@ -24,5 +27,13 @@ public class WhileNode extends ASTNode {
 
 	public List<ASTNode> getBody() {
 		return body;
+	}
+
+	public int getLineClo() {
+		return lineClo;
+	}
+
+	public int getLineOp() {
+		return lineOp;
 	}
 }

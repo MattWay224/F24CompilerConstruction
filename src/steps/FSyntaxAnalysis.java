@@ -1,20 +1,15 @@
 package steps;
 
-import ast.ASTNodeFactory;
 import ast.nodes.ASTNode;
-import visitors.PrettyVisitor;
 
 import java.util.List;
 
 public class FSyntaxAnalysis {
-	private static FSyntaxAnalysis instance = new FSyntaxAnalysis();
+	private static FSyntaxAnalysis instance;
 	private Parser parser;
-	private List<Token> tokens;
-	private int currentPos = 0;
-	private PrettyVisitor visitor;
-	private ASTNodeFactory factory;
-
-	private FSyntaxAnalysis() {}
+	private FSyntaxAnalysis() {
+		this.parser = Parser.getInstance();
+	}
 
 	public static FSyntaxAnalysis getInstance() {
 		if (instance == null) {
@@ -23,14 +18,12 @@ public class FSyntaxAnalysis {
 		return instance;
 	}
 
-	public void setter(List<Token> tokens, PrettyVisitor visitor, ASTNodeFactory factory) {
-		this.tokens = tokens;
-		this.visitor = visitor;
-		this.factory = factory;
-		this.parser = new Parser(tokens, factory);
+	public void setter(List<Token> tokens) {
+		this.parser = Parser.getInstance();
+		this.parser.setter(tokens);
 	}
 
-	public List<ASTNode> parse() throws Exception {
+	public ASTNode parse() throws Exception {
 		return parser.parse();
 	}
 }

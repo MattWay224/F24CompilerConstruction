@@ -1,94 +1,115 @@
 package ast;
 
 import ast.nodes.*;
+
 import java.util.List;
 
 public class ASTNodeFactory {
+    private static ASTNodeFactory instance = new ASTNodeFactory();
 
-	public ASTNode createLiteralNode(String value) {
-		return new LiteralNode(value);
-	}
+    public static ASTNodeFactory getInstance() {
+        if (instance != null) {
+            return instance;
+        } else {
+            instance = new ASTNodeFactory();
+            return instance;
+        }
+    }
 
-	public ASTNode createAtomNode(String value) {
-		return new AtomNode(value);
-	}
+    public ASTNode createLiteralNode(String value, int line) {
+        return new LiteralNode(value, line);
+    }
 
-	public OperationNode createOperationNode(String operator, List<ASTNode> operands, boolean isUnary) {
-		return new OperationNode(operator, operands, isUnary);
-	}
+    public ASTNode createAtomNode(String value, int line) {
+        return new AtomNode(value, line);
+    }
 
-	public ComparisonNode createComparisonNode(String operator, ASTNode left, ASTNode right) {
-		return new ComparisonNode(operator, left, right);
-	}
+    public OperationNode createOperationNode(String operator, List<ASTNode> operands, boolean isUnary, int line) {
+        return new OperationNode(operator, operands, isUnary, line);
+    }
 
-	public LogicalOperationNode createLogicalOperationNode(String operator, ASTNode left, ASTNode right) {
-		return new LogicalOperationNode(operator, left, right);
-	}
+    public ComparisonNode createComparisonNode(String operator, ASTNode left, ASTNode right, int line) {
+        return new ComparisonNode(operator, left, right, line);
+    }
 
-	public PredicateNode createPredicateNode(String predicate, ASTNode element) {
-		return new PredicateNode(predicate, element);
-	}
+    public LogicalOperationNode createLogicalOperationNode(String operator, ASTNode left, ASTNode right, int lineOp, int lineClo) {
+        return new LogicalOperationNode(operator, left, right, lineOp, lineClo);
+    }
 
-	public HeadNode createHeadNode(ASTNode listExpr) {
-		return new HeadNode(listExpr);
-	}
+    public PredicateNode createPredicateNode(String predicate, ASTNode element, int line) {
+        return new PredicateNode(predicate, element, line);
+    }
 
-	public TailNode createTailNode(ASTNode listExpr) {
-		return new TailNode(listExpr);
-	}
+    public HeadNode createHeadNode(ASTNode listExpr, int line) {
+        return new HeadNode(listExpr, line);
+    }
 
-	public ConsNode createConsNode(ASTNode head, ASTNode tail) {
-		return new ConsNode(head, tail);
-	}
+    public TailNode createTailNode(ASTNode listExpr, int line) {
+        return new TailNode(listExpr, line);
+    }
 
-	public WhileNode createWhileNode(ASTNode condition, List<ASTNode> body) {
-		return new WhileNode(condition, body);
-	}
+    public ConsNode createConsNode(ASTNode head, ASTNode tail, int line) {
+        return new ConsNode(head, tail, line);
+    }
 
-	public ReturnNode createReturnNode(ASTNode returnValue) {
-		return new ReturnNode(returnValue);
-	}
+    public WhileNode createWhileNode(ASTNode condition, List<ASTNode> body, int lineOp, int lineClo) {
+        return new WhileNode(condition, body, lineOp, lineClo);
+    }
 
-	public BreakNode createBreakNode() {
-		return new BreakNode();
-	}
+    public ReturnNode createReturnNode(ASTNode returnValue, int line) {
+        return new ReturnNode(returnValue, line);
+    }
 
-	public ProgNode createProgNode(List<ASTNode> statements, List<ASTNode> finalExpression) {
-		return new ProgNode(statements, finalExpression);
-	}
+    public BreakNode createBreakNode(int line) {
+        return new BreakNode(line);
+    }
 
-	public FunctionNode createFunctionNode(String functionName, List<String> parameters, ASTNode body) {
-		return new FunctionNode(functionName, parameters, body);
-	}
+    public ProgNode createProgNode(List<ASTNode> statements, int lineOp, int lineClo) {
+        return new ProgNode(statements, lineOp, lineClo);
+    }
 
-	public FunctionCallNode createFunctionCallNode(String functionName, List<ASTNode> parameters) {
-		return new FunctionCallNode(functionName, parameters);
-	}
+    public FunctionNode createFunctionNode(String functionName, List<String> parameters, ASTNode body, int lineOp, int lineClo) {
+        return new FunctionNode(functionName, parameters, body, lineOp, lineClo);
+    }
 
-	public LambdaNode createLambdaNode(List<String> parameters, ASTNode body) {
-		return new LambdaNode(parameters, body);
-	}
+    public FunctionCallNode createFunctionCallNode(String functionName, List<ASTNode> parameters, int line) {
+        return new FunctionCallNode(functionName, parameters, line);
+    }
 
-	public ConditionNode createConditionNode(List<ConditionBranch> branches, ASTNode defaultAction) {
-		return new ConditionNode(branches, defaultAction);
-	}
+    public FunctionCallNode createLambdaCallNode(String lambdaName, List<ASTNode> parameters, int line) {
+        return new FunctionCallNode(lambdaName, parameters, line);
+    }
 
-	public ConditionBranch createConditionBranch(ASTNode condition, ASTNode action) {
-		return new ConditionBranch(condition, action);
-	}
+    public LambdaNode createLambdaNode(List<String> parameters, ASTNode body, int line) {
+        return new LambdaNode(parameters, body, line);
+    }
 
-	public AssignmentNode createAssignmentNode(String variable, ASTNode value) {
-		return new AssignmentNode(variable, value);
-	}
+    public ConditionNode createConditionNode(List<ConditionBranch> branches, ASTNode defaultAction, int lineOp, int lineClo) {
+        return new ConditionNode(branches, defaultAction, lineOp, lineClo);
+    }
 
-	public ListNode createListNode(List<ASTNode> list) {
-		return new ListNode(list);
-	}
+    public ConditionBranch createConditionBranch(ASTNode condition, ASTNode action) {
+        return new ConditionBranch(condition, action);
+    }
 
-	public NotNode createNotNode(ASTNode element) {
-		return new NotNode(element);
-	}
+    public AssignmentNode createAssignmentNode(String variable, ASTNode value, int line) {
+        return new AssignmentNode(variable, value, line);
+    }
 
-	// Add other node creation methods as needed...
+    public ListNode createListNode(List<ASTNode> list, int line) {
+        return new ListNode(list, line);
+    }
+
+    public NotNode createNotNode(ASTNode element, int line) {
+        return new NotNode(element, line);
+    }
+
+    public QuoteNode createQuoteNode(ASTNode value, int line) {
+        return new QuoteNode(value, line);
+    }
+
+    public EvalNode createEvalNode(ASTNode node, int line) {
+        return new EvalNode(node, line);
+    }
 }
 

@@ -4,9 +4,10 @@ import visitors.ASTVisitor;
 
 public class ReturnNode extends ASTNode {
 	private final ASTNode returnValue;
+	int line;
 
-	public ReturnNode(ASTNode returnValue) {
-		this.returnValue = returnValue;
+	public ReturnNode(ASTNode returnValue, int line) {
+		this.returnValue = returnValue;this.line=line;
 	}
 
 	@Override
@@ -16,5 +17,9 @@ public class ReturnNode extends ASTNode {
 
 	public ASTNode getReturnValue() {
 		return returnValue;
+	}
+
+	public int getLine() {
+		return line;
 	}
 }

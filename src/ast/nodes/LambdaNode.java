@@ -7,10 +7,12 @@ import java.util.List;
 public class LambdaNode extends ASTNode {
 	List<String> parameters;
 	ASTNode body;
+	int line;
 
-	public LambdaNode(List<String> parameters, ASTNode body) {
+	public LambdaNode(List<String> parameters, ASTNode body, int line) {
 		this.parameters = parameters;
 		this.body = body;
+		this.line = line;
 	}
 
 	@Override
@@ -24,5 +26,9 @@ public class LambdaNode extends ASTNode {
 
 	public ASTNode getBody() {
 		return body;
+	}
+
+	public int getLine() {
+		return line;
 	}
 }

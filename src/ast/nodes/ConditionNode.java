@@ -8,10 +8,14 @@ import java.util.List;
 public class ConditionNode extends ASTNode {
 	List<ConditionBranch> branches;
 	ASTNode defaultAction;
+	int lineOp;
+	int lineClo;
 
-	public ConditionNode(List<ConditionBranch> branches, ASTNode defaultAction) {
+	public ConditionNode(List<ConditionBranch> branches, ASTNode defaultAction, int lineOp, int lineClo) {
 		this.branches = branches;
 		this.defaultAction = defaultAction;
+		this.lineOp = lineOp;
+		this.lineClo = lineClo;
 	}
 
 	@Override
@@ -25,5 +29,13 @@ public class ConditionNode extends ASTNode {
 
 	public ASTNode getDefaultAction() {
 		return defaultAction;
+	}
+
+	public int getLineClo() {
+		return lineClo;
+	}
+
+	public int getLineOp() {
+		return lineOp;
 	}
 }

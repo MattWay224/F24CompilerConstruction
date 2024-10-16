@@ -5,24 +5,34 @@ import visitors.ASTVisitor;
 import java.util.List;
 
 public class ProgNode extends ASTNode {
-	private final List<ASTNode> statements;
-	private final List<ASTNode> finalExpression;
+    private final List<ASTNode> statements;
+    int lineOp;
+    int lineClo;
 
-	public ProgNode(List<ASTNode> statements, List<ASTNode> finalExpression) {
-		this.statements = statements;
-		this.finalExpression = finalExpression;
-	}
+    public ProgNode(List<ASTNode> statements, int lineOp, int lineClo) {
+        this.statements = statements;
+        this.lineOp = lineOp;
+        this.lineClo = lineClo;
 
-	@Override
-	public <R> R accept(ASTVisitor<R> visitor) {
-		return visitor.visitProgNode(this);
-	}
+        for (ASTNode statement : this.statements) {
+            addChild(statement);
+        }
+    }
 
-	public List<ASTNode> getStatements() {
-		return statements;
-	}
+    @Override
+    public <R> R accept(ASTVisitor<R> visitor) {
+        return visitor.visitProgNode(this);
+    }
 
-	public List<ASTNode> getFinalExpression() {
-		return finalExpression;
-	}
+    public List<ASTNode> getStatements() {
+        return statements;
+    }
+
+    public int getLineOp() {
+        return lineOp;
+    }
+
+    public int getLineClo() {
+        return lineClo;
+    }
 }

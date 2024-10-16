@@ -4,24 +4,24 @@ import visitors.ASTVisitor;
 
 import java.util.List;
 
-public class FunctionCallNode extends ASTNode {
-    String functionName;
+public class LambdaCallNode extends ASTNode {
+    String lambdaName;
     List<ASTNode> parameters;
     int line;
 
-    public FunctionCallNode(String functionName, List<ASTNode> parameters, int line) {
-        this.functionName = functionName;
+    public LambdaCallNode(String lambdaName, List<ASTNode> parameters, int line) {
+        this.lambdaName = lambdaName;
         this.parameters = parameters;
         this.line = line;
     }
 
     @Override
     public <R> R accept(ASTVisitor<R> visitor) {
-        return visitor.visitFunctionCallNode(this);
+        return visitor.visitLambdaCallNode(this);
     }
 
-    public String getFunctionName() {
-        return functionName;
+    public String getLambdaName() {
+        return lambdaName;
     }
 
     public List<ASTNode> getParameters() {

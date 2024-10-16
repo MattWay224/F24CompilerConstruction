@@ -5,10 +5,12 @@ import visitors.ASTVisitor;
 public class PredicateNode extends ASTNode {
 	String predicate;
 	ASTNode element;
+	int line;
 
-	public PredicateNode(String predicate, ASTNode element) {
+	public PredicateNode(String predicate, ASTNode element, int line) {
 		this.predicate = predicate;
 		this.element = element;
+		this.line = line;
 	}
 
 	@Override
@@ -22,5 +24,9 @@ public class PredicateNode extends ASTNode {
 
 	public ASTNode getElement() {
 		return element;
+	}
+
+	public int getLine() {
+		return line;
 	}
 }
