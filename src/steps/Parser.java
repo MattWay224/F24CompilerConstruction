@@ -13,22 +13,14 @@ public class Parser {
 	private final ASTNodeFactory factory;
 	private List<Token> tokens;
 	private int currentTokenIndex;
-	private static Parser instance;
 	private SymbolTable globalScope = new SymbolTable(null);
 	private SymbolTable currentScope = globalScope;
 
-	private Parser() {
-		factory = ASTNodeFactory.getInstance();
+	public Parser() {
+		factory = new ASTNodeFactory();
 	}
 
-	public static Parser getInstance() {
-		if (instance == null) {
-			instance = new Parser();
-		}
-		return instance;
-	}
-
-	public void setter(List<Token> tokens) {
+	public void setTokens(List<Token> tokens) {
 		this.tokens = tokens;
 		this.currentTokenIndex = 0;
 	}

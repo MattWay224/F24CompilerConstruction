@@ -16,8 +16,8 @@ public class FunctionNode extends ASTNode {
 		this.functionName = functionName;
 		this.parameters = parameters;
 		this.body = body;
-		this.lineOp=lineOp;
-		this.lineClo=lineClo;
+		this.lineOp = lineOp;
+		this.lineClo = lineClo;
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class FunctionNode extends ASTNode {
 		return parameters;
 	}
 
-	public  ASTNode getBody() {
+	public ASTNode getBody() {
 		return body;
 	}
 

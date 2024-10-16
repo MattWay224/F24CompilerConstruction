@@ -1,6 +1,6 @@
 import ast.nodes.ASTNode;
-import steps.FSyntaxAnalysis;
 import steps.Flexer;
+import steps.Parser;
 import steps.Token;
 import visitors.PrettyVisitor;
 
@@ -13,8 +13,8 @@ import java.util.Scanner;
 public class Main {
 	public static void main(String[] args) {
 		PrettyVisitor visitor = new PrettyVisitor();
-		Flexer lexer = Flexer.getInstance();
-		FSyntaxAnalysis fSyntaxAnalysis = FSyntaxAnalysis.getInstance();
+		Flexer lexer = new Flexer();
+		Parser parser = new Parser();
 
 		for (int i = 1; i < 18; i++) {
 			File text = new File("src/testing/inputs/test" + i + ".txt");
@@ -39,13 +39,13 @@ public class Main {
 				}
 				writerL.write(output.toString());
 
-				fSyntaxAnalysis.setter(tokens);
-				ASTNode ast = fSyntaxAnalysis.parse();
+				parser.setTokens(tokens);
+				ASTNode ast = parser.parse();
 
 				printAST(writerSA, ast, visitor, 0);
 
 			} catch (IOException e) {
-				System.err.println("Error: " + e.getMessage() + "Test: "+i);
+				System.err.println("Error: " + e.getMessage() + "Test: " + i);
 			} catch (Exception e) {
 				System.out.println(i);
 				throw new RuntimeException(e);

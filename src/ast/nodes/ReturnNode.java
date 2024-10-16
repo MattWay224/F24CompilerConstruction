@@ -7,7 +7,8 @@ public class ReturnNode extends ASTNode {
 	int line;
 
 	public ReturnNode(ASTNode returnValue, int line) {
-		this.returnValue = returnValue;this.line=line;
+		this.returnValue = returnValue;
+		this.line = line;
 	}
 
 	@Override
