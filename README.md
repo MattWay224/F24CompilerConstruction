@@ -89,7 +89,6 @@ The parser maintains a symbol table that stores information about each declared 
 
 *Design Patterns:*
 
-- *Singleton Pattern:* Large components like the Lexer, Parser, and Factory are implemented as Singletons to ensure that only one instance of each class is active at a time, preventing duplication and maintaining global state.
 - *Factory Pattern:* The *Factory Pattern* is applied for creating AST nodes, simplifying the process of generating various node types (e.g., function nodes, operation nodes, and conditional nodes).
 - *Visitor Pattern:* We use the *Visitor Pattern* for traversing and processing the AST. This pattern is particularly useful for exporting the tree structure to external formats like text files, facilitating AST visualization and debugging.
 - *Composite Pattern:* The *Composite Pattern* allows for flexible and hierarchical organization of AST nodes. For instance, high-order functions, which take other functions as arguments, are treated as composite nodes that may contain multiple child nodes.
