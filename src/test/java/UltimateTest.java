@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -14,10 +15,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 class UltimateTest {
 
     private FlexerTest flexerTest;
+    private FsyntaxerTest fsyntaxerTest;
 
     @BeforeEach
     void setUp() {
         flexerTest = new FlexerTest();
+        fsyntaxerTest = new FsyntaxerTest();
     }
 
     @Test
@@ -45,7 +48,7 @@ class UltimateTest {
         try {
             flexerTest.test(testFilePath);
             fail("Expected FileNotFoundException was not thrown");
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             assertThat(e.getMessage()).contains("nonexistent.txt");
         } catch (Exception e) {
             fail("Unexpected exception occurred: " + e.getMessage());
