@@ -1,53 +1,42 @@
 package testing;
 
 import ast.nodes.ASTNode;
-import steps.ASTPrinter;
+import things.ASTPrinter;
 import steps.Flexer;
 import steps.Parser;
 import steps.Token;
+import things.InputFileReader;
 import visitors.PrettyVisitor;
 
-import java.io.Writer;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.FileReader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.List;
 
 public class FsyntaxerTest {
-    StringBuilder input;
-    Parser parser;
-    Flexer flexer;
+    private Parser parser;
 
-    public String test(String test) throws IOException {
-        input = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new FileReader(test))) {
-            this.parser = new Parser();
-            this.flexer = new Flexer();
-            Writer sw = new StringWriter();
-            PrettyVisitor prettyVisitor = new PrettyVisitor();
+    public String test(String testFilePath) throws Exception {
+        String input = InputFileReader.readInputFromFile(testFilePath);
+        this.parser = new Parser();
+        Flexer flexer = new Flexer();
+        flexer.setInput(input);
+        List<Token> tokens = flexer.tokenize();
+        ASTNode ast = parseTokens(tokens);
+        return printAST(ast);
+    }
 
-            String line;
-            while ((line = br.readLine()) != null) {
-                input.append(line).append("\n");
-            }
+    private ASTNode parseTokens(List<Token> tokens) throws Exception {
+        parser.setTokens(tokens);
+        return parser.parse();
+    }
 
-            this.flexer.setInput(input.toString());
-            List<Token> tokens = this.flexer.tokenize();
-            this.parser.setTokens(tokens);
-            ASTNode ast = this.parser.parse();
-
-            ASTPrinter.printAST(sw, ast, prettyVisitor, 0);
-            String output = sw.toString();
-            sw.flush();
-            sw.close();
-            return output;
-        } catch (IOException e) {
-            throw new IOException(e);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.exit(1);
-        }
-        return null;
+    private String printAST(ASTNode ast) throws IOException {
+        Writer stringWriter = new StringWriter();
+        PrettyVisitor prettyVisitor = new PrettyVisitor();
+        ASTPrinter.printAST(stringWriter, ast, prettyVisitor, 0);
+        String output = stringWriter.toString();
+        stringWriter.flush();
+        return output;
     }
 }

@@ -1,4 +1,4 @@
-package steps;
+package things;
 
 import ast.nodes.ASTNode;
 import visitors.PrettyVisitor;
