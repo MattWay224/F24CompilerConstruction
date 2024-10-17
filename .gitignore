@@ -2,3 +2,7 @@
 /target/
 # Ignore IntelliJ IDEA project settings
 .idea/
+# Ignore outputs
+/src/main/resources/flexer/outputs
+/src/main/resources/fsyntaxer/outputs
+/F24CompilerConstruction.iml

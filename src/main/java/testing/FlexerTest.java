@@ -1,4 +1,4 @@
-package tests;
+package testing;
 
 import steps.Flexer;
 import steps.Token;

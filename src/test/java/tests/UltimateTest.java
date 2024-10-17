@@ -1,9 +1,10 @@
-import tests.FlexerTest;
-import tests.FsyntaxerTest;
+package tests;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import testing.FlexerTest;
+import testing.FsyntaxerTest;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
