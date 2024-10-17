@@ -116,7 +116,7 @@ public class UltimateFsyntaxerTest {
             assertNotNull(actualOutput, "The output should not be null.");
             String expectedOutput = Files.readString(Path.of(solutionFilePath));
             assertThat(actualOutput).isEqualTo(expectedOutput);
-        } catch (RuntimeException | IOException e) {
+        } catch (Exception e) {
             fail("Exception occurred during test execution for test" + testNumber + ": " + e.getMessage());
         }
     }
@@ -130,7 +130,7 @@ public class UltimateFsyntaxerTest {
             fail("Expected FileNotFoundException was not thrown");
         } catch (IOException e) {
             assertThat(e.getMessage()).contains("nonexistent.txt");
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             fail("Unexpected exception occurred: " + e.getMessage());
         }
     }
