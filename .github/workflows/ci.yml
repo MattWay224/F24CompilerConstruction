@@ -35,5 +35,5 @@ jobs:
         run: mvn clean install -B
 
       - name: Run UltimateTest
-        run: mvn -Dtest=UltimateTest test
+        run: mvn test
 
