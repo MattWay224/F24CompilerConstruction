@@ -1,0 +1,11 @@
+(setq double (lambda (x) (times x 2)))
+(double 4)
+
+(setq increment (lambda (x) (plus x 1)))
+(increment 7)
+
+(setq applyTwice (lambda (f x) (f (f x))))
+(applyTwice increment 5)
+
+(setq subtractTwo (lambda (x) (minus x 2)))
+(applyTwice subtractTwo 10)

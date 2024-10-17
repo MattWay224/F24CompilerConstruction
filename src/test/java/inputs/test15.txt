@@ -1,0 +1,11 @@
+(setq code (quote (plus 7 8)))
+(eval code)
+
+(setq conditionCode (quote (cond (greater 4 3) (plus 1 1) (minus 5 2))))
+(eval conditionCode)
+
+(setq nestedCode (quote (plus (times 3 4) (divide 12 3))))
+(eval nestedCode)
+
+(setq factorialCode (quote (factorial 4)))
+(eval factorialCode)

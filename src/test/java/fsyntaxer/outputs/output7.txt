@@ -1,0 +1,5 @@
+ProgNode(statements=[LogicalOperationNode(operator=and, leftElement=LiteralNode(true), rightElement=LiteralNode(false)), LogicalOperationNode(operator=or, leftElement=LiteralNode(true), rightElement=LiteralNode(false)), LogicalOperationNode(operator=xor, leftElement=LiteralNode(true), rightElement=LiteralNode(false)), NotNode(element=LiteralNode(true))])
+  LogicalOperationNode(operator=and, leftElement=LiteralNode(true), rightElement=LiteralNode(false))
+  LogicalOperationNode(operator=or, leftElement=LiteralNode(true), rightElement=LiteralNode(false))
+  LogicalOperationNode(operator=xor, leftElement=LiteralNode(true), rightElement=LiteralNode(false))
+  NotNode(element=LiteralNode(true))

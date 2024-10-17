@@ -1,0 +1,5 @@
+ProgNode(statements=[OperationNode(operator=plus, operands=[LiteralNode(3), LiteralNode(4)]), OperationNode(operator=minus, operands=[LiteralNode(10), LiteralNode(5)]), OperationNode(operator=times, operands=[LiteralNode(6), LiteralNode(7)]), OperationNode(operator=divide, operands=[LiteralNode(20), LiteralNode(4)])])
+  OperationNode(operator=plus, operands=[LiteralNode(3), LiteralNode(4)])
+  OperationNode(operator=minus, operands=[LiteralNode(10), LiteralNode(5)])
+  OperationNode(operator=times, operands=[LiteralNode(6), LiteralNode(7)])
+  OperationNode(operator=divide, operands=[LiteralNode(20), LiteralNode(4)])
