@@ -1,4 +1,5 @@
 import ast.nodes.ASTNode;
+import steps.ASTPrinter;
 import steps.Flexer;
 import steps.Parser;
 import steps.Token;
@@ -7,6 +8,7 @@ import visitors.PrettyVisitor;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,8 +24,8 @@ public class Main {
 			File outSA = new File("src/main/resources/fsyntaxer/outputs/output" + i + ".txt");
 
 			try (Scanner scanner = new Scanner(text);
-				 FileWriter writerL = new FileWriter(outL);
-				 FileWriter writerSA = new FileWriter(outSA)) {
+				 Writer writerL = new FileWriter(outL);
+				 Writer writerSA = new FileWriter(outSA)) {
 
 				StringBuilder input = new StringBuilder();
 				while (scanner.hasNext()) {
@@ -42,26 +44,13 @@ public class Main {
 				parser.setTokens(tokens);
 				ASTNode ast = parser.parse();
 
-				printAST(writerSA, ast, visitor, 0);
-
-			} catch (IOException e) {
+				ASTPrinter.printAST(writerSA, ast, visitor, 0);
+            } catch (IOException e) {
 				System.err.println("Error: " + e.getMessage() + "Test: " + i);
 			} catch (Exception e) {
 				System.out.println(i);
 				throw new RuntimeException(e);
 			}
-		}
-	}
-
-	private static void printAST(FileWriter writer, ASTNode node, PrettyVisitor visitor, int depth) throws IOException {
-		for (int i = 0; i < depth; i++) {
-			writer.write("  ");
-		}
-
-		writer.write(node.accept(visitor) + "\n");
-
-		for (ASTNode child : node.getChildren()) {
-			printAST(writer, child, visitor, depth + 1);
 		}
 	}
 }

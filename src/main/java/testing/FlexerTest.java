@@ -9,35 +9,34 @@ import java.io.FileReader;
 import java.util.List;
 
 public class FlexerTest {
-	StringBuilder input;
-	Flexer lexer;
+    StringBuilder input;
+    Flexer lexer;
 
-	public String test(String test) throws IOException {
-		try (BufferedReader br = new BufferedReader(new FileReader(test))){
-			this.input = new StringBuilder();
-			String line;
-			while ((line = br.readLine()) != null) {
-				input.append(line).append("\n");
-			}
+    public String test(String test) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(test))) {
+            this.input = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                input.append(line).append("\n");
+            }
 
-			this.lexer = new Flexer();
-			this.lexer.setInput(input.toString());
-			try {
-				List<Token> tokens = lexer.tokenize();
+            this.lexer = new Flexer();
+            this.lexer.setInput(input.toString());
 
-				StringBuilder output = new StringBuilder();
-				for (Token token : tokens) {
-					output.append(token.toString()).append("\n");
-				}
-				return output.toString();
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				System.exit(1);
-			}
-		} catch (IOException e) {
-			throw new IOException(e);
-		}
-		return null;
-	}
+            List<Token> tokens = lexer.tokenize();
+
+            StringBuilder output = new StringBuilder();
+            for (Token token : tokens) {
+                output.append(token.toString()).append("\n");
+            }
+            return output.toString();
+        } catch (IOException e) {
+            throw new IOException(e);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
+        }
+        return null;
+    }
 }
 
