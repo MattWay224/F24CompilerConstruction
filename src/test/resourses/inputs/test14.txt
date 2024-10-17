@@ -1,0 +1,91 @@
+(prog (x)
+  (setq x 10)
+  (setq y (plus x 5))
+  y)
+
+
+(prog (x y)
+  (setq x 5)
+  (setq y (plus x 3))
+  y)
+
+(prog (x y z)
+  (setq x 2)
+  (setq y (times x 4))
+  (setq z (minus y 3))
+  z)
+
+
+(prog (a b c)
+  (setq a 10)
+  (setq b 15)
+  (cond
+    (greater a b) (setq c (minus a b)) (setq c (minus b a)))
+  )
+
+
+(prog (x y result)
+  (setq x 3)
+  (setq y (plus x 2))
+  (cond
+    (less x y) (setq result (times y 2)) (setq result x))
+  result)
+
+
+(prog (counter sum)
+  (setq counter 1)
+  (setq sum 0)
+  (while (less counter 6)
+    (setq sum (plus sum counter))
+    (setq counter (plus counter 1)))
+  sum)
+
+
+(prog (a b c result)
+  (setq a 5)
+  (setq b 10)
+  (setq c (plus a b))
+  (func multiplyByTwo (x) (times x 2))
+  (setq result (multiplyByTwo c))
+  result)
+
+
+(prog (code result)
+  (setq code (quote (plus 7 8)))
+  (setq result (eval code))
+  (prog (x y)
+    (setq x 5)
+    (setq y 10)
+    (setq result (plus result (times x y))))
+  result)
+
+
+(prog (a b result)
+  (setq a 4)
+  (setq b 6)
+  (cond (equal a b) (return a) (return (plus a b)))
+  (setq result (minus b a))
+  result)
+
+
+(prog (x y temp final)
+  (setq x 8)
+  (setq y 12)
+  (setq temp (plus x y))
+  (setq final (times temp 2))
+  final)
+
+
+(func factorial (n)
+  (prog (result)
+    (cond (equal n 0) (return 1) (return (times n (factorial (minus n 1)))))))
+(factorial 5)
+
+
+(prog (i total)
+  (setq i 1)
+  (setq total 0)
+  (while (less i 6)
+    (setq total (plus total i))
+    (setq i (plus i 1)))
+  total)

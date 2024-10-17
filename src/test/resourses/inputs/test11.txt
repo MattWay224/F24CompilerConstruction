@@ -1,0 +1,13 @@
+(setq counter 0)
+(while (less counter 5)
+  (setq counter (plus counter 1)))
+
+(setq count 0)
+(while (less count 3)
+  (setq count (plus count 1)))
+
+(setq sum 0)
+(setq n 1)
+(while (less n 6)
+  (setq sum (plus sum n))
+  (setq n (plus n 1)))
