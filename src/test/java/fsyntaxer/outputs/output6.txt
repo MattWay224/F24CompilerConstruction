@@ -1,0 +1,7 @@
+ProgNode(statements=[ComparisonNode(comparison=equal, leftElement=LiteralNode(5), rightElement=LiteralNode(5)), ComparisonNode(comparison=nonequal, leftElement=LiteralNode(5), rightElement=LiteralNode(4)), ComparisonNode(comparison=less, leftElement=LiteralNode(3), rightElement=LiteralNode(5)), ComparisonNode(comparison=lesseq, leftElement=LiteralNode(5), rightElement=LiteralNode(5)), ComparisonNode(comparison=greater, leftElement=LiteralNode(6), rightElement=LiteralNode(5)), ComparisonNode(comparison=greatereq, leftElement=LiteralNode(5), rightElement=LiteralNode(5))])
+  ComparisonNode(comparison=equal, leftElement=LiteralNode(5), rightElement=LiteralNode(5))
+  ComparisonNode(comparison=nonequal, leftElement=LiteralNode(5), rightElement=LiteralNode(4))
+  ComparisonNode(comparison=less, leftElement=LiteralNode(3), rightElement=LiteralNode(5))
+  ComparisonNode(comparison=lesseq, leftElement=LiteralNode(5), rightElement=LiteralNode(5))
+  ComparisonNode(comparison=greater, leftElement=LiteralNode(6), rightElement=LiteralNode(5))
+  ComparisonNode(comparison=greatereq, leftElement=LiteralNode(5), rightElement=LiteralNode(5))

@@ -1,5 +1,0 @@
-(isint 42)
-(isreal 3.14)
-(isbool true)
-(isnull 1)
-(islist (cons 1 (cons 2 ())))

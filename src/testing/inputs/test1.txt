@@ -1,4 +1,0 @@
-(plus 3 4)
-(minus 10 5)
-(times 6 7)
-(divide 20 4)
