@@ -17,9 +17,9 @@ public class Main {
 		Parser parser = new Parser();
 
 		for (int i = 1; i < 18; i++) {
-			File text = new File("src/test/java/inputs/test" + i + ".txt");
-			File outL = new File("src/test/java/flexer/outputs/output" + i + ".txt");
-			File outSA = new File("src/test/java/fsyntaxer/outputs/output" + i + ".txt");
+			File text = new File("src/main/resources/inputs/test" + i + ".txt");
+			File outL = new File("src/main/resources/flexer/outputs/output" + i + ".txt");
+			File outSA = new File("src/main/resources/fsyntaxer/outputs/output" + i + ".txt");
 
 			try (Scanner scanner = new Scanner(text);
 				 FileWriter writerL = new FileWriter(outL);

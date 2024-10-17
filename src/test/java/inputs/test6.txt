@@ -1,6 +1,0 @@
-(equal 5 5)
-(nonequal 5 4)
-(less 3 5)
-(lesseq 5 5)
-(greater 6 5)
-(greatereq 5 5)

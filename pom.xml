@@ -4,11 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!-- Replace these with your actual project information -->
-    <groupId>com.yourcompany.yourproject</groupId>  <!-- Unique identifier for your project -->
+    <groupId>com.IU.compilerCons</groupId>  <!-- Unique identifier for your project -->
     <artifactId>F24CompilerConstruction</artifactId> <!-- Project name or artifact name -->
-    <version>1.0-SNAPSHOT</version>  <!-- Project version -->
+    <version>2.0</version>  <!-- Project version -->
 
-    <!-- The rest of the pom.xml remains unchanged -->
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -35,11 +34,26 @@
             <version>5.10.1</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.10.1</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.22.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+    </repositories>
 </project>
