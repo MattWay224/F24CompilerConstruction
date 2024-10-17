@@ -19,7 +19,7 @@ public class FsyntaxerTest {
     Parser parser;
     Flexer flexer;
 
-    public String test(String test) throws IOException {
+    public String test(String test) throws IOException, RuntimeException {
         input = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader(test))) {
             this.parser = new Parser();
@@ -45,9 +45,7 @@ public class FsyntaxerTest {
         } catch (IOException e) {
             throw new IOException(e);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.exit(1);
+            throw new RuntimeException(e);
         }
-        return null;
     }
 }

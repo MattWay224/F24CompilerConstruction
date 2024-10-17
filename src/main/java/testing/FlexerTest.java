@@ -12,7 +12,7 @@ public class FlexerTest {
     StringBuilder input;
     Flexer lexer;
 
-    public String test(String test) throws IOException {
+    public String test(String test) throws IOException, RuntimeException {
         try (BufferedReader br = new BufferedReader(new FileReader(test))) {
             this.input = new StringBuilder();
             String line;
@@ -33,10 +33,8 @@ public class FlexerTest {
         } catch (IOException e) {
             throw new IOException(e);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.exit(1);
+            throw new RuntimeException(e);
         }
-        return null;
     }
 }
 

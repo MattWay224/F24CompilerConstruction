@@ -115,7 +115,7 @@ class UltimateFlexerTest {
             assertNotNull(actualOutput, "The output should not be null.");
             String expectedOutput = Files.readString(Path.of(solutionFilePath));
             assertThat(actualOutput).isEqualTo(expectedOutput);
-        } catch (Exception e) {
+        } catch (RuntimeException | IOException e) {
             fail("Exception occurred during test execution for test" + testNumber + ": " + e.getMessage());
         }
     }

@@ -48,7 +48,7 @@ public class Main {
             } catch (IOException e) {
 				System.err.println("Error: " + e.getMessage() + "Test: " + i);
 			} catch (Exception e) {
-				System.out.println(i);
+				System.out.println("Error: " + e.getMessage() + "Test: " + i);
 				throw new RuntimeException(e);
 			}
 		}
