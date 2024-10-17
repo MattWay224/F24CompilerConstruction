@@ -34,5 +34,5 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -B
 
-      #- name: Run tests  # let's skip them for now
-      #  run: mvn test
+      - name: Run tests
+        run: mvn test
