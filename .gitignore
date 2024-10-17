@@ -1,0 +1,4 @@
+# Ignore Maven target directory
+/target/
+# Ignore IntelliJ IDEA project settings
+.idea/
