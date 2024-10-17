@@ -14,6 +14,9 @@
     </properties>
 
     <build>
+        <sourceDirectory>src/main/java</sourceDirectory> <!-- Main source directory -->
+        <testSourceDirectory>src/test/java</testSourceDirectory> <!-- test source directory -->
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
