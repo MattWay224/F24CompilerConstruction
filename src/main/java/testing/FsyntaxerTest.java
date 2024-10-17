@@ -1,4 +1,4 @@
-package tests;
+package testing;
 
 public class FsyntaxerTest {
 }
