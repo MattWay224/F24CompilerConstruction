@@ -34,5 +34,6 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -B
 
-      - name: Run tests
-        run: mvn test
+      - name: Run UltimateTest
+        run: mvn -Dtest=UltimateTest test
+
