@@ -1,4 +1,5 @@
 import ast.nodes.ASTNode;
+import steps.FSemanter;
 import things.ASTPrinter;
 import steps.Flexer;
 import steps.Parser;
@@ -20,13 +21,14 @@ public class Main {
         PrettyVisitor visitor = new PrettyVisitor();
         Flexer lexer = new Flexer();
         Parser parser = new Parser();
+        FSemanter semanter = new FSemanter();
 
         for (int i = 1; i <= TOTAL_TESTS; i++) {
-            processTestFile(i, lexer, parser, visitor);
+            processTestFile(i, lexer, parser, visitor, semanter);
         }
     }
 
-    private static void processTestFile(int testNumber, Flexer lexer, Parser parser, PrettyVisitor visitor) {
+    private static void processTestFile(int testNumber, Flexer lexer, Parser parser, PrettyVisitor visitor, FSemanter semanter) {
         String inputPath = "src/main/resources/inputs/test" + testNumber + ".txt";
         File outputLexerFile = new File("src/main/resources/flexer/outputs/output" + testNumber + ".txt");
         File outputParserFile = new File("src/main/resources/fsyntaxer/outputs/output" + testNumber + ".txt");
@@ -41,6 +43,7 @@ public class Main {
             ASTNode ast = parseTokens(parser, tokens);
             ASTPrinter.printAST(writerParser, ast, visitor, 0);
 
+            semanter.analyze(ast);
         } catch (IOException e) {
             System.err.println("Error: " + e.getMessage() + " Test: " + testNumber);
         } catch (Exception e) {

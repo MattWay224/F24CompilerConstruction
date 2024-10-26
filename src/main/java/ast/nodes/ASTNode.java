@@ -8,6 +8,12 @@ import java.util.List;
 
 // Base class for AST nodes
 public abstract class ASTNode {
+    private NodeType type;
+
+    private boolean isQuoted;
+
+    private boolean isEvaluated;
+
     private final List<ASTNode> children;
 
     public ASTNode() {
@@ -23,4 +29,58 @@ public abstract class ASTNode {
     }
 
     public abstract <R> R accept(ASTVisitor<R> visitor);
+
+    public void setQuoted(boolean quoted) {
+        isQuoted = quoted;
+    }
+
+    public boolean isQuoted() {
+        return isQuoted;
+    }
+
+    public void setEvaluated(boolean evaluated) {
+        isEvaluated = evaluated;
+    }
+
+    public boolean isEvaluated() {
+        return isEvaluated;
+    }
+
+    public NodeType getType() {
+        return type;
+    }
+
+    public void setType(NodeType type) {
+        this.type = type;
+    }
+
+    public enum NodeType {
+        ASSIGNMENT,
+        ATOM,
+        BOOL,
+        BREAK,
+        COMP,
+        COND,
+        CONS,
+        EVAL,
+        FUNC,
+        FUNCCALL,
+        HEAD,
+        LAMBDA,
+        LAMBDACALL,
+        LIST,
+        LITERAL,
+        LOGICALOP,
+        NOT,
+        NULL,
+        OPERATION,
+        PREDICATE,
+        PROG,
+        QUOTE,
+        RETURN,
+        SIGN,
+        TAIL,
+        WHILE,
+        VOID
+    }
 }
