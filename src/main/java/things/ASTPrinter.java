@@ -1,6 +1,7 @@
 package things;
 
 import ast.nodes.ASTNode;
+import ast.nodes.ComparisonNode;
 import visitors.PrettyVisitor;
 
 import java.io.IOException;

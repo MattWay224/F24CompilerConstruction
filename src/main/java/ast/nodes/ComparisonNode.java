@@ -7,6 +7,7 @@ public class ComparisonNode extends ASTNode {
     ASTNode leftElement;
     ASTNode rightElement;
     int line;
+    private BooleanNode constantValue;
 
     public ComparisonNode(String comparison, ASTNode leftElement, ASTNode rightElement, int line) {
         this.comparison = comparison;
@@ -34,5 +35,17 @@ public class ComparisonNode extends ASTNode {
 
     public int getLine() {
         return line;
+    }
+
+    public BooleanNode getConstantValue() {
+        return constantValue;
+    }
+
+    public void setConstantValue(BooleanNode constantValue) {
+        this.constantValue = constantValue;
+    }
+
+    public boolean isConstant() {
+        return constantValue != null;
     }
 }

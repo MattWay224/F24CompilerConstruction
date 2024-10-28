@@ -10,6 +10,8 @@ import java.util.List;
 public abstract class ASTNode {
     private NodeType type;
 
+    private ASTNode parent;
+
     private boolean isQuoted;
 
     private boolean isEvaluated;
@@ -25,7 +27,16 @@ public abstract class ASTNode {
     }
 
     public void addChild(ASTNode child) {
+        child.setParent(this);
         children.add(child);
+    }
+
+    public ASTNode getParent() {
+        return parent;
+    }
+
+    public void setParent(ASTNode parent) {
+        this.parent = parent;
     }
 
     public abstract <R> R accept(ASTVisitor<R> visitor);
@@ -52,6 +63,18 @@ public abstract class ASTNode {
 
     public void setType(NodeType type) {
         this.type = type;
+    }
+
+    public boolean isConstant() {
+        return false;
+    }
+
+    public boolean isInt() {
+        return false;
+    }
+
+    public boolean isReal() {
+        return false;
     }
 
     public enum NodeType {

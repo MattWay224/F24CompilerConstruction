@@ -5,16 +5,6 @@ import ast.nodes.*;
 import java.util.List;
 
 public class FSemanter {
-    public void checkOperation(ASTNode operation) throws Exception {
-        if (operation instanceof LogicalOperationNode) {
-            checkLogicalOperation((LogicalOperationNode) operation);
-        } else if (operation instanceof OperationNode) {
-            checkArithmeticOperation((OperationNode) operation);
-        } else if (operation instanceof ComparisonNode) {
-            checkComparisonOperation((ComparisonNode) operation);
-        }
-    }
-
     public void checkArithmeticOperation(ASTNode operation) throws Exception {
         String operator = ((OperationNode) operation).getOperator();
         List<ASTNode> operands = ((OperationNode) operation).getOperands();
@@ -70,16 +60,127 @@ public class FSemanter {
     private void traverseAndCheck(ASTNode node) throws Exception {
         if (node == null) return;
 
-        if (node.getClass().getSimpleName().equals("OperationNode")) {
+        if (node.getClass().getSimpleName().equals("OperationNode") && !node.isConstant()) {
             checkArithmeticOperation(node);
-        } else if (node.getClass().getSimpleName().equals("ComparisonNode")) {
+
+            simplifyExpression(node);
+        } else if (node.getClass().getSimpleName().equals("ComparisonNode") && !node.isConstant()) {
             checkComparisonOperation((ComparisonNode) node);
+
+            simplifyExpression(node);
+
         } else if (node.getClass().getSimpleName().equals("LogicalOperationNode")) {
             checkLogicalOperation((LogicalOperationNode) node);
+
+            simplifyExpression(node);
+
         }
 
         for (ASTNode child : node.getChildren()) {
             traverseAndCheck(child);
+        }
+    }
+
+    //Constant Expression Simplification
+    private void simplifyExpression(ASTNode operation) throws Exception {
+        ASTNode parent = operation.getParent();
+
+        if (operation.getClass().getSimpleName().equals("OperationNode")) {
+            OperationNode opNode = (OperationNode) operation;
+            List<ASTNode> operands = opNode.getOperands();
+
+            if (operands.stream().allMatch(ASTNode::isInt)) {
+                Number result = evalInt(opNode.getOperator(), operands);
+                LiteralNode constantNode = new LiteralNode(result.toString(), opNode.getLine());
+                replaceNodeInParent(parent, opNode, constantNode);
+            } else if (operands.stream().anyMatch(ASTNode::isReal)) {
+                Number result = evalReal(opNode.getOperator(), operands);
+                LiteralNode constantNode = new LiteralNode(result.toString(), opNode.getLine());
+                replaceNodeInParent(parent, opNode, constantNode);
+            }
+        } else if (operation.getClass().getSimpleName().equals("ComparisonNode")) {
+            ComparisonNode compNode = (ComparisonNode) operation;
+            boolean result = evalComp(compNode);
+            BooleanNode constNode = new BooleanNode(result, compNode.getLine());
+            replaceNodeInParent(parent, compNode, constNode);
+        }
+    }
+
+    private Number evalInt(String operator, List<ASTNode> operands) throws Exception {
+        int firstOperand = Integer.parseInt(((LiteralNode) operands.get(0)).getValue());
+        int secondOperand = Integer.parseInt(((LiteralNode) operands.get(1)).getValue());
+
+        switch (operator) {
+            case "plus" -> {
+                return firstOperand + secondOperand;
+            }
+            case "minus" -> {
+                return firstOperand - secondOperand;
+            }
+            case "times" -> {
+                return firstOperand * secondOperand;
+            }
+            case "divide" -> {
+                if (secondOperand == 0) {
+                    throw new Exception("Division by zero");
+                }
+                return (double) firstOperand / secondOperand;
+            }
+            default -> throw new Exception("Unsupported operator: " + operator);
+        }
+    }
+
+    private double evalReal(String operator, List<ASTNode> operands) throws Exception {
+        double firstOperand = Double.parseDouble(((LiteralNode) operands.get(0)).getValue());
+        double secondOperand = Double.parseDouble(((LiteralNode) operands.get(1)).getValue());
+
+        switch (operator) {
+            case "plus" -> {
+                return firstOperand + secondOperand;
+            }
+            case "minus" -> {
+                return firstOperand - secondOperand;
+            }
+            case "times" -> {
+                return firstOperand * secondOperand;
+            }
+            case "divide" -> {
+                if (secondOperand == 0) {
+                    throw new Exception("Division by zero");
+                }
+                return firstOperand / secondOperand;
+            }
+            default -> throw new Exception("Unsupported operator: " + operator);
+        }
+    }
+
+    private boolean evalComp(ComparisonNode operation) throws Exception {
+        ASTNode leftOperand = operation.getLeftElement();
+        ASTNode rightOperand = operation.getRightElement();
+
+        if (leftOperand.isConstant() && rightOperand.isConstant()) {
+            double left = Double.parseDouble(((LiteralNode) leftOperand).getValue());
+            double right = Double.parseDouble(((LiteralNode) rightOperand).getValue());
+            return switch (operation.getComparison()) {
+                case "equal" -> left == right;
+                case "nonequal" -> left != right;
+                case "less" -> left < right;
+                case "lesseq" -> left <= right;
+                case "greater" -> left > right;
+                case "greatereq" -> left >= right;
+                default -> false;
+            };
+        }
+        return false;
+    }
+
+    private void replaceNodeInParent(ASTNode parent, ASTNode oldNode, ASTNode newNode) {
+        if (parent==null) return;
+        List<ASTNode> children = parent.getChildren();
+        int index = children.indexOf(oldNode);
+        if (index >= 0) {
+            children.set(index, newNode);
+            newNode.setParent(parent);
         }
     }
 }

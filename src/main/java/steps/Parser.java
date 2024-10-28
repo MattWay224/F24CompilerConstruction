@@ -35,6 +35,7 @@ public class Parser {
         }
         ASTNode prognode = factory.createProgNode(statements, 0, 0);
         prognode.setType(ASTNode.NodeType.PROG);
+
         return prognode;
     }
 
@@ -63,7 +64,7 @@ public class Parser {
             }
             case BOOLEAN -> {
                 advance();
-                ASTNode boolnode = factory.createBooleanNode(currentToken.value, currentToken.line);
+                ASTNode boolnode = factory.createBooleanNode(Boolean.parseBoolean(currentToken.value), currentToken.line);
                 boolnode.setType(ASTNode.NodeType.BOOL);
                 yield boolnode;
             }
@@ -90,6 +91,7 @@ public class Parser {
         ASTNode quotedExpr = parseExpr();
         quotedExpr.setQuoted(true);
         ASTNode quotednode = factory.createQuoteNode(quotedExpr, quoteToken.line);
+        quotednode.addChild(quotedExpr);
         quotednode.setType(ASTNode.NodeType.QUOTE);
         return quotednode;
     }
@@ -159,6 +161,7 @@ public class Parser {
                 ASTNode quotedExpr = parseExpr();
                 advance();
                 ASTNode quotednode = factory.createQuoteNode(quotedExpr, operatorToken.line);
+                quotednode.addChild(quotedExpr);
                 quotednode.setType(ASTNode.NodeType.QUOTE);
                 yield quotednode;
             }
@@ -173,6 +176,7 @@ public class Parser {
         q.setEvaluated(true);
         consume(TokenType.RPAREN, "EXPECTED ) AFTER EVAL");
         ASTNode evalnode = factory.createEvalNode(q, op.line);
+        evalnode.addChild(q);
         evalnode.setType(ASTNode.NodeType.EVAL);
         return evalnode;
     }
@@ -190,6 +194,7 @@ public class Parser {
         ASTNode returnValue = parseExpr();
         consume(TokenType.RPAREN, "EXPECTED ) AFTER RETURN");
         ASTNode returnnode = factory.createReturnNode(returnValue, op.line);
+        returnnode.addChild(returnValue);
         returnnode.setType(ASTNode.NodeType.RETURN);
         return returnnode;
     }
@@ -204,6 +209,10 @@ public class Parser {
         }
         Token clo = consume(TokenType.RPAREN, "EXPECTED ) AFTER WHILE BODY");
         ASTNode whilenode = factory.createWhileNode(condition, body, op.line, clo.line);
+        whilenode.addChild(condition);
+        for (ASTNode statement : body) {
+            whilenode.addChild(statement);
+        }
         return whilenode;
     }
 
@@ -259,7 +268,7 @@ public class Parser {
             currentScope.define(varName, null);
         }
 
-        placeholderFunctionNode = new FunctionNode(functionName, parameters,  null, op.line, op.line, ASTNode.NodeType.VOID);
+        placeholderFunctionNode = new FunctionNode(functionName, parameters, null, op.line, op.line, ASTNode.NodeType.VOID);
         globalScope.define(functionName, placeholderFunctionNode);
         currentScope.define(functionName, placeholderFunctionNode);
 
@@ -283,6 +292,9 @@ public class Parser {
         currentScope = previousScope;
 
         ASTNode functionNode = factory.createFunctionNode(functionName, parameters, body, op.line, clo.line, returnType);
+        for (ASTNode expr:bodyExpressions){
+            functionNode.addChild(expr);
+        }
         functionNode.setType(ASTNode.NodeType.FUNC);
         globalScope.define(functionName, functionNode);
         currentScope.define(functionName, functionNode);
@@ -309,6 +321,7 @@ public class Parser {
         currentScope = previousScope;
 
         ASTNode lambdanode = factory.createLambdaNode(parameters, body, op.line);
+        lambdanode.addChild(body);
         lambdanode.setType(ASTNode.NodeType.LAMBDA);
         return lambdanode;
     }
@@ -328,6 +341,9 @@ public class Parser {
         }
         Token clo = consume(TokenType.RPAREN, "EXPECTED ) AFTER LITERAL LIST");
         ASTNode listnode = factory.createListNode(elements, clo.line);
+        for (ASTNode el:elements){
+            listnode.addChild(el);
+        }
         listnode.setType(ASTNode.NodeType.LIST);
         return listnode;
     }
@@ -339,6 +355,8 @@ public class Parser {
         Token clo = consume(TokenType.RPAREN, "EXPECTED ) AFTER " + operator);
 
         ASTNode logicalopnode = factory.createLogicalOperationNode(operator, leftElement, rightElement, op.line, clo.line);
+        logicalopnode.addChild(leftElement);
+        logicalopnode.addChild(rightElement);
         logicalopnode.setType(ASTNode.NodeType.LOGICALOP);
         return logicalopnode;
     }
@@ -348,6 +366,7 @@ public class Parser {
         ASTNode element = parseExpr();
         consume(TokenType.RPAREN, "EXPECTED ) AFTER NOT");
         ASTNode notnode = factory.createNotNode(element, op.line);
+        notnode.addChild(element);
         notnode.setType(ASTNode.NodeType.NOT);
         return notnode;
     }
@@ -359,6 +378,8 @@ public class Parser {
         Token line = consume(TokenType.RPAREN, "EXPECTED ) AFTER " + comparison);
 
         ASTNode compnode = factory.createComparisonNode(comparison, leftElement, rightElement, op.line);
+        compnode.addChild(leftElement);
+        compnode.addChild(rightElement);
         compnode.setType(ASTNode.NodeType.BOOL);
         return compnode;
     }
@@ -369,6 +390,7 @@ public class Parser {
         ASTNode element = parseExpr();
         consume(TokenType.RPAREN, "EXPECTED ) AFTER " + predicate);
         ASTNode predicatenode = factory.createPredicateNode(predicate, element, op.line);
+        predicatenode.addChild(element);
         predicatenode.setType(ASTNode.NodeType.PREDICATE);
         return predicatenode;
     }
@@ -379,10 +401,12 @@ public class Parser {
         consume(TokenType.RPAREN, "EXPECTED ) AFTER " + type);
         if (type.equals("head")) {
             ASTNode headnode = factory.createHeadNode(listExpr, op.line);
+            headnode.addChild(listExpr);
             headnode.setType(ASTNode.NodeType.HEAD);
             return headnode;
         } else {
             ASTNode tailnode = factory.createTailNode(listExpr, op.line);
+            tailnode.addChild(listExpr);
             tailnode.setType(ASTNode.NodeType.TAIL);
             return tailnode;
         }
@@ -394,6 +418,8 @@ public class Parser {
         ASTNode list = parseExpr();//to list
         consume(TokenType.RPAREN, "EXPECTED ) AFTER CONS");
         ASTNode consnode = factory.createConsNode(item, list, op.line);
+        consnode.addChild(item);
+        consnode.addChild(list);
         consnode.setType(ASTNode.NodeType.CONS);
         return consnode;
     }
@@ -412,6 +438,9 @@ public class Parser {
             throw new Exception("IMPOSSIBLE OPERATION");
         }
         ASTNode opnode = factory.createOperationNode(operator, operands, false, op.line);
+        for (ASTNode operand:operands){
+            opnode.addChild(operand);
+        }
         opnode.setType(operands.getFirst().getType());
         return opnode;
     }
@@ -436,8 +465,8 @@ public class Parser {
             operands.add(expr);
         }
 
-        if (operands.size()!=((FunctionNode) functionNode).getParameters().size()){
-            throw new Exception("INCORRECT NUMBER OF PARAMETERS FOR FUNCTION "+ functionName + "EXPECTED-GOT: "+((FunctionNode) functionNode).getParameters().size()+"-"+operands.size());
+        if (operands.size() != ((FunctionNode) functionNode).getParameters().size()) {
+            throw new Exception("INCORRECT NUMBER OF PARAMETERS FOR FUNCTION " + functionName + "EXPECTED-GOT: " + ((FunctionNode) functionNode).getParameters().size() + "-" + operands.size());
         }
 
         Token clo = consume(TokenType.RPAREN, "EXPECTED ) AFTER OPERATION");
@@ -481,6 +510,7 @@ public class Parser {
 
         consume(TokenType.RPAREN, "EXPECTED ) AFTER SETQ ASSIGNMENT");
         ASTNode assignmentnode = factory.createAssignmentNode(variable, value, op.line);
+        assignmentnode.addChild(value);
         assignmentnode.setType(ASTNode.NodeType.ASSIGNMENT);
         return assignmentnode;
     }
@@ -503,6 +533,8 @@ public class Parser {
         }
         Token clo = consume(TokenType.RPAREN, "MISSING ) AFTER COND EXPR");
         ASTNode condnode = factory.createConditionNode(branches, defaultAction, op.line, clo.line);
+        condnode.addChild(condition);
+        condnode.addChild(action);
         condnode.setType(ASTNode.NodeType.COND);
         return condnode;
     }

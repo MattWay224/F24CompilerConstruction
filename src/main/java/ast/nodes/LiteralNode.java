@@ -24,4 +24,33 @@ public class LiteralNode extends ASTNode {
     public int getLine() {
         return line;
     }
+
+    @Override
+    public boolean isConstant() {
+        return true;
+    }
+
+    @Override
+    public boolean isInt() {
+        try {
+            Integer.parseInt(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isReal() {
+        if (isInt()) {
+            return false;
+        }
+        try {
+            Double.parseDouble(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
 }

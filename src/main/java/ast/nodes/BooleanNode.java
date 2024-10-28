@@ -3,9 +3,9 @@ package ast.nodes;
 import visitors.ASTVisitor;
 
 public class BooleanNode extends ASTNode{
-    String value;
+    Boolean value;
     int line;
-    public BooleanNode(String value, int line) {
+    public BooleanNode(Boolean value, int line) {
         this.value = value;
         this.line = line;
     }
@@ -19,7 +19,7 @@ public class BooleanNode extends ASTNode{
         return line;
     }
 
-    public String getValue() {
+    public Boolean getValue() {
         return value;
     }
 }

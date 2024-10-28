@@ -41,9 +41,8 @@ public class Main {
             writeTokens(writerLexer, tokens);
 
             ASTNode ast = parseTokens(parser, tokens);
-            ASTPrinter.printAST(writerParser, ast, visitor, 0);
-
             semanter.analyze(ast);
+            ASTPrinter.printAST(writerParser, ast, visitor, 0);
         } catch (IOException e) {
             System.err.println("Error: " + e.getMessage() + " Test: " + testNumber);
         } catch (Exception e) {

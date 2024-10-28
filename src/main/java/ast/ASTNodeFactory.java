@@ -106,7 +106,7 @@ public class ASTNodeFactory {
         return new NullNode(line);
     }
 
-    public ASTNode createBooleanNode(String value, int line) {
+    public ASTNode createBooleanNode(boolean value, int line) {
         return new BooleanNode(value, line);
     }
 }
