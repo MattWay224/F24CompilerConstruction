@@ -60,22 +60,18 @@ public class FSemanter {
 	private void traverseAndCheck(ASTNode node) throws Exception {
 		if (node == null) return;
 
-		if (node.getClass().getSimpleName().equals("OperationNode") && !node.isConstant()) {
+		else if (node.getClass().getSimpleName().equals("OperationNode") && !node.isConstant()) {
 			checkArithmeticOperation(node);
-
 			simplifyExpression(node);
+
 		} else if (node.getClass().getSimpleName().equals("ComparisonNode") && !node.isConstant()) {
 			checkComparisonOperation((ComparisonNode) node);
-
 			simplifyExpression(node);
 
 		} else if (node.getClass().getSimpleName().equals("LogicalOperationNode")) {
 			checkLogicalOperation((LogicalOperationNode) node);
-
 			simplifyExpression(node);
-
 		}
-
 		for (ASTNode child : node.getChildren()) {
 			traverseAndCheck(child);
 		}
