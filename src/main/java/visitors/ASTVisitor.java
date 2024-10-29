@@ -3,57 +3,57 @@ package visitors;
 import ast.nodes.*;
 
 public interface ASTVisitor<R> {
-    R visitAssignmentNode(AssignmentNode node);
+	R visitAssignmentNode(AssignmentNode node);
 
-    R visitAtomNode(AtomNode node);
+	R visitAtomNode(AtomNode node);
 
-    R visitBreakNode(BreakNode node);
+	R visitBreakNode(BreakNode node);
 
-    R visitComparisonNode(ComparisonNode node);
+	R visitComparisonNode(ComparisonNode node);
 
-    R visitConditionNode(ConditionNode node);
+	R visitConditionNode(ConditionNode node);
 
-    R visitConsNode(ConsNode node);
+	R visitConsNode(ConsNode node);
 
-    R visitFunctionNode(FunctionNode node);
+	R visitFunctionNode(FunctionNode node);
 
-    R visitFunctionCallNode(FunctionCallNode node);
+	R visitFunctionCallNode(FunctionCallNode node);
 
-    R visitHeadNode(HeadNode node);
+	R visitHeadNode(HeadNode node);
 
-    R visitLambdaNode(LambdaNode node);
+	R visitLambdaNode(LambdaNode node);
 
-    R visitListNode(ListNode node);
+	R visitListNode(ListNode node);
 
-    R visitLiteralNode(LiteralNode node);
+	R visitLiteralNode(LiteralNode node);
 
-    R visitLogicalOperationNode(LogicalOperationNode node);
+	R visitLogicalOperationNode(LogicalOperationNode node);
 
-    R visitNotNode(NotNode node);
+	R visitNotNode(NotNode node);
 
-    R visitOperationNode(OperationNode node);
+	R visitOperationNode(OperationNode node);
 
-    R visitPredicateNode(PredicateNode node);
+	R visitPredicateNode(PredicateNode node);
 
-    R visitProgNode(ProgNode node);
+	R visitProgNode(ProgNode node);
 
-    R visitReturnNode(ReturnNode node);
+	R visitReturnNode(ReturnNode node);
 
-    R visitSignNode(SignNode node);
+	R visitSignNode(SignNode node);
 
-    R visitTailNode(TailNode node);
+	R visitTailNode(TailNode node);
 
-    R visitWhileNode(WhileNode node);
+	R visitWhileNode(WhileNode node);
 
-    R visitConditionBranch(ConditionBranch branch);
+	R visitConditionBranch(ConditionBranch branch);
 
-    R visitQuoteNode(QuoteNode node);
+	R visitQuoteNode(QuoteNode node);
 
-    R visitLambdaCallNode(LambdaCallNode node);
+	R visitLambdaCallNode(LambdaCallNode node);
 
-    R visitEvalNode(EvalNode node);
+	R visitEvalNode(EvalNode node);
 
-    R visitNullNode(NullNode nullNode);
+	R visitNullNode(NullNode nullNode);
 
-    R visitBoolNode(BooleanNode booleanNode);
+	R visitBoolNode(BooleanNode booleanNode);
 }
