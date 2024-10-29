@@ -1,11 +1,11 @@
-(func addTwo (x) (plus x 2))
+(func addTwo (x) (return (plus x 2)))
 (addTwo 3)
 
-(func square (x) (times x x))
+(func square (x) (return (times x x)))
 (square 4)
 
-(func sumOfSquares (a b) (plus (square a) (square b)))
+(func sumOfSquares (a b) (return (plus (square a) (square b))))
 (sumOfSquares 3 4)
 
-(func powerOfThree (x) (times (square x) x))
+(func powerOfThree (x) (return (times (square x) x)))
 (powerOfThree 2)

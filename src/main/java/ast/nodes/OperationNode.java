@@ -8,6 +8,7 @@ public class OperationNode extends ASTNode {
 	String operator;
 	List<ASTNode> operands;
 	int line;
+	private LiteralNode constantValue;
 
 	public OperationNode(String operator, List<ASTNode> operands, Boolean sign, int line) {
 		this.operator = operator;
@@ -30,5 +31,18 @@ public class OperationNode extends ASTNode {
 
 	public int getLine() {
 		return line;
+	}
+
+	public LiteralNode getConstantValue() {
+		return constantValue;
+	}
+
+	public void setConstantValue(LiteralNode constantValue) {
+		this.constantValue = constantValue;
+		this.operands.clear();
+	}
+
+	public boolean isConstant() {
+		return constantValue != null;
 	}
 }

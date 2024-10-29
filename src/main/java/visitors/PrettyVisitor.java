@@ -181,4 +181,14 @@ public class PrettyVisitor implements ASTVisitor<String> {
 		String subnode = node.getNode().accept(this);
 		return "EvalNode(node=" + subnode + ")";
 	}
+
+	@Override
+	public String visitNullNode(NullNode nullNode) {
+		return "NullNode(nullNode=" + nullNode + ")";
+	}
+
+	@Override
+	public String visitBoolNode(BooleanNode booleanNode) {
+		return "BoolNode(booleanNode=" + booleanNode.getValue() + ")";
+	}
 }

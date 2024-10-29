@@ -52,4 +52,8 @@ public interface ASTVisitor<R> {
 	R visitLambdaCallNode(LambdaCallNode node);
 
 	R visitEvalNode(EvalNode node);
+
+	R visitNullNode(NullNode nullNode);
+
+	R visitBoolNode(BooleanNode booleanNode);
 }
