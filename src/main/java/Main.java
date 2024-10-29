@@ -1,4 +1,5 @@
 import ast.nodes.ASTNode;
+import steps.FSemanter;
 import things.ASTPrinter;
 import steps.Flexer;
 import steps.Parser;
@@ -11,59 +12,63 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
-import java.util.Scanner;
 
 public class Main {
-    private static final int TOTAL_TESTS = 17;
+	private static final int TOTAL_TESTS = 17;
 
-    public static void main(String[] args) {
-        PrettyVisitor visitor = new PrettyVisitor();
-        Flexer lexer = new Flexer();
-        Parser parser = new Parser();
+	public static void main(String[] args) {
+		PrettyVisitor visitor = new PrettyVisitor();
+		Flexer lexer = new Flexer();
+		Parser parser = new Parser();
+		FSemanter semanter = new FSemanter();
 
-        for (int i = 1; i <= TOTAL_TESTS; i++) {
-            processTestFile(i, lexer, parser, visitor);
-        }
-    }
+		for (int i = 1; i <= TOTAL_TESTS; i++) {
+			processTestFile(i, lexer, parser, visitor, semanter);
+		}
+	}
 
-    private static void processTestFile(int testNumber, Flexer lexer, Parser parser, PrettyVisitor visitor) {
-        String inputPath = "src/main/resources/inputs/test" + testNumber + ".txt";
-        File outputLexerFile = new File("src/main/resources/flexer/outputs/output" + testNumber + ".txt");
-        File outputParserFile = new File("src/main/resources/fsyntaxer/outputs/output" + testNumber + ".txt");
+	private static void processTestFile(int testNumber, Flexer lexer, Parser parser, PrettyVisitor visitor, FSemanter semanter) {
+		String inputPath = "src/main/resources/inputs/test" + testNumber + ".txt";
+		File outputLexerFile = new File("src/main/resources/flexer/outputs/output" + testNumber + ".txt");
+		File outputParserFile = new File("src/main/resources/fsyntaxer/outputs/output" + testNumber + ".txt");
+		File outputSematecerFile = new File("src/main/resources/fsemantecer/outputs/output" + testNumber + ".txt");
 
-        try (Writer writerLexer = new FileWriter(outputLexerFile);
-             Writer writerParser = new FileWriter(outputParserFile)) {
+		try (Writer writerLexer = new FileWriter(outputLexerFile);
+			 Writer writerParser = new FileWriter(outputParserFile);
+			 Writer writerSemantecer = new FileWriter(outputSematecerFile)) {
 
-            String input = InputFileReader.readInputFromFile(inputPath);
-            List<Token> tokens = tokenizeInput(lexer, input);
-            writeTokens(writerLexer, tokens);
+			String input = InputFileReader.readInputFromFile(inputPath);
+			List<Token> tokens = tokenizeInput(lexer, input);
+			writeTokens(writerLexer, tokens);
 
-            ASTNode ast = parseTokens(parser, tokens);
-            ASTPrinter.printAST(writerParser, ast, visitor, 0);
+			ASTNode ast = parseTokens(parser, tokens);
+			ASTPrinter.printAST(writerParser, ast, visitor, 0);
 
-        } catch (IOException e) {
-            System.err.println("Error: " + e.getMessage() + " Test: " + testNumber);
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage() + " Test: " + testNumber);
-            throw new RuntimeException(e);
-        }
-    }
+			semanter.analyze(ast);
+			ASTPrinter.printAST(writerSemantecer, ast, visitor, 0);
+		} catch (IOException e) {
+			System.err.println("Error: " + e.getMessage() + " Test: " + testNumber);
+		} catch (Exception e) {
+			System.out.println("Error: " + e.getMessage() + " Test: " + testNumber);
+			throw new RuntimeException(e);
+		}
+	}
 
-    private static List<Token> tokenizeInput(Flexer lexer, String input) throws Exception {
-        lexer.setInput(input);
-        return lexer.tokenize();
-    }
+	private static List<Token> tokenizeInput(Flexer lexer, String input) throws Exception {
+		lexer.setInput(input);
+		return lexer.tokenize();
+	}
 
-    private static void writeTokens(Writer writer, List<Token> tokens) throws IOException {
-        StringBuilder output = new StringBuilder();
-        for (Token token : tokens) {
-            output.append(token.toString()).append("\n");
-        }
-        writer.write(output.toString());
-    }
+	private static void writeTokens(Writer writer, List<Token> tokens) throws IOException {
+		StringBuilder output = new StringBuilder();
+		for (Token token : tokens) {
+			output.append(token.toString()).append("\n");
+		}
+		writer.write(output.toString());
+	}
 
-    private static ASTNode parseTokens(Parser parser, List<Token> tokens) throws Exception {
-        parser.setTokens(tokens);
-        return parser.parse();
-    }
+	private static ASTNode parseTokens(Parser parser, List<Token> tokens) throws Exception {
+		parser.setTokens(tokens);
+		return parser.parse();
+	}
 }
