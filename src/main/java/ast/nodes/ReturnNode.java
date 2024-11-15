@@ -3,24 +3,44 @@ package ast.nodes;
 import visitors.ASTVisitor;
 
 public class ReturnNode extends ASTNode {
-	private final ASTNode returnValue;
-	int line;
+    private final ASTNode returnValue;
+    int line;
 
-	public ReturnNode(ASTNode returnValue, int line) {
-		this.returnValue = returnValue;
-		this.line = line;
-	}
+    private ASTNode constantValue;
 
-	@Override
-	public <R> R accept(ASTVisitor<R> visitor) {
-		return visitor.visitReturnNode(this);
-	}
+    public ReturnNode(ASTNode returnValue, int line) {
+        this.returnValue = returnValue;
+        this.line = line;
+    }
 
-	public ASTNode getReturnValue() {
-		return returnValue;
-	}
+    @Override
+    public <R> R accept(ASTVisitor<R> visitor) {
+        return visitor.visitReturnNode(this);
+    }
 
-	public int getLine() {
-		return line;
-	}
+    public ASTNode getReturnValue() {
+        return returnValue;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public ASTNode getConstantValue() {
+        return constantValue;
+    }
+
+    @Override
+    public void setConstantValue(ASTNode constantValue) {
+        this.constantValue = constantValue;
+    }
+
+    @Override
+    public ASTNode clone() {
+        ReturnNode clonedNode = new ReturnNode(returnValue, line);
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
+    }
 }

@@ -53,4 +53,13 @@ public class LiteralNode extends ASTNode {
 		}
 	}
 
+    @Override
+    public LiteralNode clone() {
+        LiteralNode clonedNode = new LiteralNode(value, line);
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
+    }
+
 }
