@@ -7,6 +7,7 @@ import things.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Parser {
     private final ASTNodeFactory factory;
     private List<Token> tokens;
@@ -139,6 +140,7 @@ public class Parser {
         }
 
         return switch (operatorToken.value) {
+            case "print" -> parsePrint();
             case "setq" -> parseSETQ();
             case "func" -> parseFUNC();
             case "cond" -> parseCOND();
@@ -168,6 +170,16 @@ public class Parser {
             case "eval" -> parseEval();
             default -> parseFuncCall(operatorToken.value);
         };
+    }
+
+    private ASTNode parsePrint() throws Exception {
+        Token printToken = advance();
+        ASTNode expression = parseExpr();
+        consume(TokenType.RPAREN, "EXPECTED ) AFTER print");
+        ASTNode printnode = factory.createPrintNode(expression, printToken.line);
+        printnode.addChild(expression);
+        printnode.setType(ASTNode.NodeType.PRINT);
+        return printnode;
     }
 
     private ASTNode parseEval() throws Exception {
@@ -292,10 +304,11 @@ public class Parser {
         currentScope = previousScope;
 
         ASTNode functionNode = factory.createFunctionNode(functionName, parameters, body, op.line, clo.line, returnType);
-        for (ASTNode expr:bodyExpressions){
+        for (ASTNode expr : bodyExpressions) {
             functionNode.addChild(expr);
         }
         functionNode.setType(ASTNode.NodeType.FUNC);
+
         globalScope.define(functionName, functionNode);
         currentScope.define(functionName, functionNode);
         return functionNode;
@@ -341,7 +354,7 @@ public class Parser {
         }
         Token clo = consume(TokenType.RPAREN, "EXPECTED ) AFTER LITERAL LIST");
         ASTNode listnode = factory.createListNode(elements, clo.line);
-        for (ASTNode el:elements){
+        for (ASTNode el : elements) {
             listnode.addChild(el);
         }
         listnode.setType(ASTNode.NodeType.LIST);
@@ -380,7 +393,7 @@ public class Parser {
         ASTNode compnode = factory.createComparisonNode(comparison, leftElement, rightElement, op.line);
         compnode.addChild(leftElement);
         compnode.addChild(rightElement);
-        compnode.setType(ASTNode.NodeType.BOOL);
+        compnode.setType(ASTNode.NodeType.COMP);
         return compnode;
     }
 
@@ -438,10 +451,11 @@ public class Parser {
             throw new Exception("IMPOSSIBLE OPERATION");
         }
         ASTNode opnode = factory.createOperationNode(operator, operands, false, op.line);
-        for (ASTNode operand:operands){
+        for (ASTNode operand : operands) {
             opnode.addChild(operand);
         }
         opnode.setType(operands.getFirst().getType());
+        //opnode.setType(ASTNode.NodeType.OPERATION);
         return opnode;
     }
 
@@ -472,6 +486,10 @@ public class Parser {
         Token clo = consume(TokenType.RPAREN, "EXPECTED ) AFTER OPERATION");
         ASTNode funccallnode = factory.createFunctionCallNode(functionName, operands, clo.line);
         funccallnode.setType(((FunctionNode) functionNode).getReturnType());
+        funccallnode.addChild(functionNode.clone());
+        for (ASTNode operand : operands) {
+            funccallnode.addChild(operand);
+        }
         return funccallnode;
     }
 
@@ -535,6 +553,9 @@ public class Parser {
         ASTNode condnode = factory.createConditionNode(branches, defaultAction, op.line, clo.line);
         condnode.addChild(condition);
         condnode.addChild(action);
+        if (defaultAction != null) {
+            condnode.addChild(defaultAction);
+        }
         condnode.setType(ASTNode.NodeType.COND);
         return condnode;
     }
@@ -564,4 +585,11 @@ public class Parser {
         }
     }
 
+    public SymbolTable getGlobalScope() {
+        return globalScope;
+    }
+
+    public SymbolTable getCurrentScope() {
+        return currentScope;
+    }
 }

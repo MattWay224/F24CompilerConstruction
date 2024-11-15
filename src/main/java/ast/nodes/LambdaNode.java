@@ -21,6 +21,15 @@ public class LambdaNode extends ASTNode {
         return visitor.visitLambdaNode(this);
     }
 
+    @Override
+    public LambdaNode clone() {
+        LambdaNode clonedNode = new LambdaNode(parameters, body, line);
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
+    }
+
     public List<String> getParameters() {
         return parameters;
     }

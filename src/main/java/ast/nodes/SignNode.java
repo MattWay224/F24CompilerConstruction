@@ -14,6 +14,15 @@ public class SignNode extends ASTNode {
         return visitor.visitSignNode(this);
     }
 
+    @Override
+    public ASTNode clone() {
+        SignNode clonedNode = new SignNode(sign);
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
+    }
+
     public String getSign() {
         return sign;
     }

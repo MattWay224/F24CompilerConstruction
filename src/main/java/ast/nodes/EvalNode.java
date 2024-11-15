@@ -16,6 +16,15 @@ public class EvalNode extends ASTNode {
         return visitor.visitEvalNode(this);
     }
 
+    @Override
+    public EvalNode clone() {
+        EvalNode clonedNode = new EvalNode(node, line);
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
+    }
+
     public ASTNode getNode() {
         return node;
     }

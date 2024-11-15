@@ -9,6 +9,8 @@ public class FunctionCallNode extends ASTNode {
     List<ASTNode> parameters;
     int line;
 
+    private ASTNode constantValue;
+
     public FunctionCallNode(String functionName, List<ASTNode> parameters, int line) {
         this.functionName = functionName;
         this.parameters = parameters;
@@ -18,6 +20,15 @@ public class FunctionCallNode extends ASTNode {
     @Override
     public <R> R accept(ASTVisitor<R> visitor) {
         return visitor.visitFunctionCallNode(this);
+    }
+
+    @Override
+    public FunctionCallNode clone() {
+        FunctionCallNode clonedNode = new FunctionCallNode(functionName, parameters, line);
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
     }
 
     public String getFunctionName() {
@@ -31,4 +42,14 @@ public class FunctionCallNode extends ASTNode {
     public int getLine() {
         return line;
     }
+
+    public ASTNode getConstantValue() {
+        return constantValue;
+    }
+
+    @Override
+    public void setConstantValue(ASTNode constantValue) {
+        this.constantValue = constantValue;
+    }
+
 }

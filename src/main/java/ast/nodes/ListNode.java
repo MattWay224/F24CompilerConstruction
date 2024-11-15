@@ -18,6 +18,15 @@ public class ListNode extends ASTNode {
         return visitor.visitListNode(this);
     }
 
+    @Override
+    public ListNode clone() {
+        ListNode clonedNode = new ListNode(elements, line);
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
+    }
+
     public List<ASTNode> getElements() {
         return elements;
     }

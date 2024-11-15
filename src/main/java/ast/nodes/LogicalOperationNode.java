@@ -8,6 +8,7 @@ public class LogicalOperationNode extends ASTNode {
     ASTNode rightElement;
     int lineOp;
     int lineClo;
+    private BooleanNode constantValue;
 
     public LogicalOperationNode(String operator, ASTNode leftElement, ASTNode rightElement, int lineOp, int lineClo) {
         this.operator = operator;
@@ -40,5 +41,23 @@ public class LogicalOperationNode extends ASTNode {
 
     public int getLineOp() {
         return lineOp;
+    }
+
+    public BooleanNode getConstantValue() {
+        return constantValue;
+    }
+
+    @Override
+    public void setConstantValue(BooleanNode constantValue) {
+        this.constantValue = constantValue;
+    }
+
+    @Override
+    public LogicalOperationNode clone() {
+        LogicalOperationNode clonedNode = new LogicalOperationNode(operator, leftElement.clone(), rightElement.clone(), lineOp, lineClo);
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
     }
 }

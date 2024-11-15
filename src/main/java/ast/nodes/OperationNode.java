@@ -37,6 +37,7 @@ public class OperationNode extends ASTNode {
         return constantValue;
     }
 
+    @Override
     public void setConstantValue(LiteralNode constantValue) {
         this.constantValue = constantValue;
         this.operands.clear();
@@ -44,5 +45,14 @@ public class OperationNode extends ASTNode {
 
     public boolean isConstant() {
         return constantValue != null;
+    }
+
+    @Override
+    public OperationNode clone() {
+        OperationNode clonedNode = new OperationNode(operator, operands, isConstant(), line);
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
     }
 }

@@ -30,4 +30,13 @@ public class AssignmentNode extends ASTNode {
     public int getLine() {
         return line;
     }
+
+    @Override
+    public AssignmentNode clone() {
+        AssignmentNode clonedNode = new AssignmentNode(variable, value, line);
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
+    }
 }

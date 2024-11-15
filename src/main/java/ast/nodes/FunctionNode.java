@@ -54,4 +54,15 @@ public class FunctionNode extends ASTNode {
     public NodeType getReturnType() {
         return returnType;
     }
+
+    @Override
+    public FunctionNode clone() {
+        FunctionNode clonedNode = new FunctionNode(this.getFunctionName(), this.getParameters(), this.getBody(), this.getLineOp(), this.getLineClo(), this.getReturnType());
+
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
+    }
+
 }

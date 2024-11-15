@@ -22,6 +22,15 @@ public class WhileNode extends ASTNode {
         return visitor.visitWhileNode(this);
     }
 
+    @Override
+    public ASTNode clone() {
+        WhileNode clonedNode = new WhileNode(condition.clone(), body, lineOp, lineClo);
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
+    }
+
     public ASTNode getCondition() {
         return condition;
     }

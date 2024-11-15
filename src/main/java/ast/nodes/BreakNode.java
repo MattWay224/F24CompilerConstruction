@@ -14,6 +14,15 @@ public class BreakNode extends ASTNode {
         return visitor.visitBreakNode(this);
     }
 
+    @Override
+    public BreakNode clone() {
+        BreakNode clonedNode = new BreakNode(line);
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
+    }
+
     public int getLine() {
         return line;
     }

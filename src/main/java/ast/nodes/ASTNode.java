@@ -65,6 +65,15 @@ public abstract class ASTNode {
         this.type = type;
     }
 
+    public void setConstantValue(LiteralNode constantValue) {
+    }
+
+    public void setConstantValue(BooleanNode constantValue) {
+    }
+
+    public void setConstantValue(ListNode constantValue) {
+    }
+
     public boolean isConstant() {
         return false;
     }
@@ -76,6 +85,17 @@ public abstract class ASTNode {
     public boolean isReal() {
         return false;
     }
+
+    public void setConstantValue(ASTNode constantValue) {
+    }
+
+    ;
+
+    public void setConstantValue(Object constantValue) {
+    }
+
+    public abstract ASTNode clone();
+
 
     public enum NodeType {
         ASSIGNMENT,
@@ -104,6 +124,7 @@ public abstract class ASTNode {
         SIGN,
         TAIL,
         WHILE,
+        PRINT,
         VOID
     }
 }

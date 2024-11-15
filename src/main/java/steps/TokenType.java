@@ -41,5 +41,6 @@ public enum TokenType {
     NOT,
     EVAL,
     QUOTE, //NO NEED TO EVALUATE
-    EOF//end of file
+    EOF,//end of file
+    PRINT
 }

@@ -1,9 +1,6 @@
 import ast.nodes.ASTNode;
-import steps.FSemanter;
+import steps.*;
 import things.ASTPrinter;
-import steps.Flexer;
-import steps.Parser;
-import steps.Token;
 import things.InputFileReader;
 import visitors.PrettyVisitor;
 
@@ -12,23 +9,23 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
-import java.util.Scanner;
 
 public class Main {
     private static final int TOTAL_TESTS = 17;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         PrettyVisitor visitor = new PrettyVisitor();
         Flexer lexer = new Flexer();
         Parser parser = new Parser();
-        FSemanter semanter = new FSemanter();
+        FSemanter semanter = new FSemanter(parser.getGlobalScope());
+        FGenerator generator=new FGenerator(parser.getGlobalScope(),semanter);
 
-        for (int i = 1; i <= TOTAL_TESTS; i++) {
-            processTestFile(i, lexer, parser, visitor, semanter);
+        for (int i = 0; i <= 1; i++) {
+            processTestFile(i, lexer, parser, visitor, semanter, generator);
         }
     }
 
-    private static void processTestFile(int testNumber, Flexer lexer, Parser parser, PrettyVisitor visitor, FSemanter semanter) {
+    private static void processTestFile(int testNumber, Flexer lexer, Parser parser, PrettyVisitor visitor, FSemanter semanter,FGenerator generator) {
         String inputPath = "src/main/resources/inputs/test" + testNumber + ".txt";
         File outputLexerFile = new File("src/main/resources/flexer/outputs/output" + testNumber + ".txt");
         File outputParserFile = new File("src/main/resources/fsyntaxer/outputs/output" + testNumber + ".txt");
@@ -42,6 +39,7 @@ public class Main {
 
             ASTNode ast = parseTokens(parser, tokens);
             semanter.analyze(ast);
+            generator.generate(ast);
             ASTPrinter.printAST(writerParser, ast, visitor, 0);
         } catch (IOException e) {
             System.err.println("Error: " + e.getMessage() + " Test: " + testNumber);

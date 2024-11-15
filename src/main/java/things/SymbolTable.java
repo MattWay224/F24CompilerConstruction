@@ -1,6 +1,7 @@
 package things;
 
 import ast.nodes.ASTNode;
+import steps.FSemanter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,5 +31,14 @@ public class SymbolTable {
 
     public boolean isDefined(String name) {
         return symbols.containsKey(name) || (parent != null && parent.isDefined(name));
+    }
+
+    public void simplifyAllSymbols(FSemanter semanter) throws Exception {
+        for (Map.Entry<String, ASTNode> entry : symbols.entrySet()) {
+            ASTNode simplifiedNode = semanter.simplifyExpression(entry.getValue());
+            if (simplifiedNode != null) {
+                entry.setValue(simplifiedNode);
+            }
+        }
     }
 }

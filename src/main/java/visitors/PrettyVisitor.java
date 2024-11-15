@@ -74,9 +74,10 @@ public class PrettyVisitor implements ASTVisitor<String> {
     @Override
     public String visitFunctionNode(FunctionNode node) {
         String params = String.join(", ", node.getParameters());
-        String body = node.getBody().accept(this);
+        //String body = node.getBody().accept(this);
         return "FunctionNode(functionName=" + node.getFunctionName() +
-                ", parameters=[" + params + "], body=" + body + ")";
+                ", parameters=[" + params + "], body=" ;
+                //body + ")";
     }
 
     @Override
@@ -190,5 +191,10 @@ public class PrettyVisitor implements ASTVisitor<String> {
     @Override
     public String visitBoolNode(BooleanNode booleanNode) {
         return "BoolNode(booleanNode=" + booleanNode.getValue() + ")";
+    }
+
+    @Override
+    public String visitPrintNode(PrintNode printNode) {
+        return "Printnode:";
     }
 }

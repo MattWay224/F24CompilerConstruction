@@ -56,4 +56,6 @@ public interface ASTVisitor<R> {
     R visitNullNode(NullNode nullNode);
 
     R visitBoolNode(BooleanNode booleanNode);
+
+    R visitPrintNode(PrintNode printNode);
 }

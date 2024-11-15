@@ -41,11 +41,21 @@ public class ComparisonNode extends ASTNode {
         return constantValue;
     }
 
+    @Override
     public void setConstantValue(BooleanNode constantValue) {
         this.constantValue = constantValue;
     }
 
     public boolean isConstant() {
         return constantValue != null;
+    }
+
+    @Override
+    public ComparisonNode clone() {
+        ComparisonNode clonedNode = new ComparisonNode(comparison, leftElement.clone(), rightElement.clone(), line);
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
     }
 }

@@ -1,4 +1,10 @@
-(plus 3 4)
-(minus 10 5)
-(times 6 7)
-(divide 20 4)
+(print (plus 1.5 2.5))
+(print (minus 5.5 2.2))
+(print (times 3.0 4.0))
+(print (divide 9.0 3.0))
+
+(setq a (plus 1.5 2.5))
+(setq b (divide 9.0 3.0))
+
+(print a)
+(print b)

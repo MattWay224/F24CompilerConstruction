@@ -2,21 +2,23 @@ package ast.nodes;
 
 import visitors.ASTVisitor;
 
-public class NullNode extends ASTNode {
+public class PrintNode extends ASTNode {
+    ASTNode expression;
     int line;
 
-    public NullNode(int line) {
+    public PrintNode(ASTNode expression, int line) {
+        this.expression = expression;
         this.line = line;
     }
 
     @Override
     public <R> R accept(ASTVisitor<R> visitor) {
-        return visitor.visitNullNode(this);
+        return visitor.visitPrintNode(this);
     }
 
     @Override
-    public NullNode clone() {
-        NullNode clonedNode = new NullNode(line);
+    public ASTNode clone() {
+        PrintNode clonedNode = new PrintNode(expression.clone(), line);
         for (ASTNode child : this.getChildren()) {
             clonedNode.addChild(child.clone());
         }
@@ -26,4 +28,10 @@ public class NullNode extends ASTNode {
     public int getLine() {
         return line;
     }
+
+    public ASTNode getExpression() {
+        return expression;
+    }
+
+
 }

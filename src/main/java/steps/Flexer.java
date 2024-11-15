@@ -117,6 +117,8 @@ public class Flexer {
                 return new Token(TokenType.SETQ, id, line);
             case "null":
                 return new Token(TokenType.NULL, id, line);
+            case "print":
+                return new Token(TokenType.PRINT,id, line);
             case "func":
                 // func Atom List Element
                 return new Token(TokenType.FUNC, id, line);

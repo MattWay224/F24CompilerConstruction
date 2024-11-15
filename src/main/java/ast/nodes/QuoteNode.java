@@ -16,6 +16,15 @@ public class QuoteNode extends ASTNode {
         return visitor.visitQuoteNode(this);
     }
 
+    @Override
+    public ASTNode clone() {
+        QuoteNode clonedNode = new QuoteNode(quotedExpr, line);
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
+    }
+
     public ASTNode getQuotedExpr() {
         return quotedExpr;
     }

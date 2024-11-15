@@ -24,6 +24,15 @@ public class ProgNode extends ASTNode {
         return visitor.visitProgNode(this);
     }
 
+    @Override
+    public ASTNode clone() {
+        ProgNode clonedNode = new ProgNode(statements, lineOp, lineClo);
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
+    }
+
     public List<ASTNode> getStatements() {
         return statements;
     }

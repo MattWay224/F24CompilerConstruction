@@ -109,5 +109,9 @@ public class ASTNodeFactory {
     public ASTNode createBooleanNode(boolean value, int line) {
         return new BooleanNode(value, line);
     }
+
+    public ASTNode createPrintNode(ASTNode expression, int line) {
+        return new PrintNode(expression, line);
+    }
 }
 
