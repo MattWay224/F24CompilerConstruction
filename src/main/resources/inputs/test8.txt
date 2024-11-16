@@ -1,11 +1,11 @@
 (func addTwo (x) (return (plus x 2)))
-(addTwo 3)
+(print (addTwo 3))
 
 (func square (x) (return (times x x)))
-(square 4)
+(print (square 4))
 
 (func sumOfSquares (a b) (return (plus (square a) (square b))))
-(sumOfSquares 3 4)
+(print (sumOfSquares 3 4))
 
 (func powerOfThree (x) (return (times (square x) x)))
-(powerOfThree 2)
+(print (powerOfThree 2))

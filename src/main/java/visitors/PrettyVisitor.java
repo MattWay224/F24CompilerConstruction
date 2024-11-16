@@ -47,7 +47,7 @@ public class PrettyVisitor implements ASTVisitor<String> {
         String params = node.getParameters().stream()
                 .map(element -> element.accept(this))
                 .collect(Collectors.joining(", "));
-        return "FunctionCallNode(functionName=" + node.getLambdaName() +
+        return "LambdaCallNode(lambdaName=" + node.getLambdaName() +
                 ", parameters=[" + params + "])";
     }
 

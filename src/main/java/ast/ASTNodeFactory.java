@@ -66,8 +66,8 @@ public class ASTNodeFactory {
         return new FunctionCallNode(functionName, parameters, line);
     }
 
-    public FunctionCallNode createLambdaCallNode(String lambdaName, List<ASTNode> parameters, int line) {
-        return new FunctionCallNode(lambdaName, parameters, line);
+    public LambdaCallNode createLambdaCallNode(String lambdaName, List<ASTNode> parameters, int line) {
+        return new LambdaCallNode(lambdaName, parameters, line);
     }
 
     public LambdaNode createLambdaNode(List<String> parameters, ASTNode body, int line) {
