@@ -220,11 +220,15 @@ public class Parser {
         consume(TokenType.LPAREN, "EXPECTED ( AFTER WHILE");
         ASTNode condition = parseExpr();
         List<ASTNode> body = new ArrayList<>();
+        List<ASTNode> bodyCloned = new ArrayList<>();
         while (!check(TokenType.RPAREN)) {
-            body.add(parseExpr());
+            ASTNode toAdd=parseExpr();
+            body.add(toAdd);
+            bodyCloned.add(toAdd);
         }
         Token clo = consume(TokenType.RPAREN, "EXPECTED ) AFTER WHILE BODY");
-        ASTNode whilenode = factory.createWhileNode(condition, body, op.line, clo.line);
+
+        ASTNode whilenode = factory.createWhileNode(condition.clone(), bodyCloned, op.line, clo.line);
         whilenode.addChild(condition);
         for (ASTNode statement : body) {
             whilenode.addChild(statement);
@@ -530,11 +534,11 @@ public class Parser {
 
         String variable = consume(TokenType.ATOM, "EXPECTED VARIABLE FOR SETQ").value;
 
-        if (currentScope.isDefined(variable) || globalScope.isDefined(variable)) {
-            throw new Exception("VARIABLE NAME ALREADY IN USE in line " + op.line);
-        }
+//        if (currentScope.isDefined(variable) || globalScope.isDefined(variable)) {
+//            throw new Exception("VARIABLE NAME ALREADY IN USE in line " + op.line);
+//        }
 
-        currentScope.define(variable, null);
+        //currentScope.define(variable, null);
         ASTNode value = parseExpr();
 
         //add var to scope in symbol table
