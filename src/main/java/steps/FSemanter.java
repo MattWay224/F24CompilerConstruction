@@ -9,10 +9,15 @@ import java.util.*;
 public class FSemanter {
     private final SymbolTable symbolTable;
     private final FunctionScopeTable functionScopeTable = new FunctionScopeTable();
+    private final FGenerator generator;
 
-
-    public FSemanter(SymbolTable symbolTable) {
+    public FSemanter(SymbolTable symbolTable, FGenerator generator) {
         this.symbolTable = symbolTable;
+        this.generator = generator;
+    }
+
+    public Object processExpression(ASTNode expression) throws Exception {
+        return generator.generate(expression);
     }
 
     public void checkArithmeticOperation(ASTNode operation) throws Exception {
@@ -51,7 +56,7 @@ public class FSemanter {
         evalLogicalOperation(operation);
     }
 
-    private void checkPredicate(PredicateNode op) throws Exception {
+    private BooleanNode checkPredicate(PredicateNode op) throws Exception {
         String predicate = op.getPredicate();
         ASTNode element = op.getElement();
 
@@ -74,6 +79,11 @@ public class FSemanter {
         replaceNodeInParent(op.getParent(), op, constnode);
         op.setEvaluated(true);
         op.setConstantValue(constnode);
+        try {
+            processExpression(constnode);
+        } catch (Exception e) {
+        }
+        return constnode;
     }
 
     private void evalLogicalOperation(LogicalOperationNode operation) throws Exception {
@@ -144,7 +154,9 @@ public class FSemanter {
         if (node instanceof FunctionNode) {
             return;
         }
-
+        if (node instanceof LambdaNode) {
+            return;
+        }
 
         for (ASTNode child : node.getChildren()) {
             traverseAndCheck(child);
@@ -164,10 +176,26 @@ public class FSemanter {
             analyzeCond((ConditionNode) node);
         } else if (node.getClass().getSimpleName().equals("FunctionCallNode")) {
             analyzeFuncCall((FunctionCallNode) node);
+        } else if (node.getClass().getSimpleName().equals("LambdaCallNode")) {
+            analyzeLambdaCallNode((LambdaCallNode) node);
+        } else if (node.getClass().getSimpleName().equals("PrintNode")) {
+            visitPrint((PrintNode) node);
+        } else if (node.getClass().getSimpleName().equals("AtomNode")) {
+            visitAtom((AtomNode) node);
+        } else if (node.getClass().getSimpleName().equals("NullNode")) {
+            visitNull((NullNode) node);
         }
-
         simplifyExpression(node);
 
+    }
+
+    public void visitAtom(AtomNode node) throws Exception {
+        node.addChild(symbolTable.lookup(node.getValue()));
+        replaceNodeInParent(node.getParent(), node, symbolTable.lookup(node.getValue()));
+    }
+
+    public void visitNull(NullNode node) throws Exception {
+        replaceNodeInParent(node.getParent(), node, new NullNode(node.getLine()));
     }
 
     //Constant Expression Simplification
@@ -192,6 +220,7 @@ public class FSemanter {
                 LiteralNode constantNode = new LiteralNode(result.toString(), opNode.getLine());
                 constantNode.setType(ASTNode.NodeType.ATOM);
                 replaceNodeInParent(parent, opNode, constantNode);
+                replaceNodeInParent(opNode, opNode.getChildren().getFirst(), constantNode);
                 return constantNode;
             } else if (operands.stream().anyMatch(ASTNode::isReal)) {
                 Number result = evalReal(opNode.getOperator(), operands);
@@ -444,6 +473,60 @@ public class FSemanter {
         functionScopeTable.exitScope(functionCall);
     }
 
+    private void analyzeLambdaCallNode(LambdaCallNode lambdaCall) throws Exception {
+        functionScopeTable.enterScope(lambdaCall);
+
+        String lambdaName = lambdaCall.getLambdaName();
+        List<ASTNode> parameters = new ArrayList<>();
+        for (int i = 1; i < lambdaCall.getChildren().size(); i++) {
+            parameters.add(simplifyExpression(lambdaCall.getChildren().get(i)));
+        }
+
+        List<ASTNode> evaluatedParams = new ArrayList<>();
+
+        LambdaNode lambdaDefinition = (LambdaNode) symbolTable.lookup(lambdaName);
+        LambdaNode clonedLambda = lambdaDefinition.clone();
+        List<String> lambdaDefParams = clonedLambda.getParameters();
+
+        if (parameters.size() != lambdaDefParams.size()) {
+            throw new Exception("PARAMETERS MISMATCH IN LAMBDA CALL :" + lambdaName + ", EXPECTED " + lambdaDefParams.size() + ", FOUND " + parameters.size());
+        }
+
+        for (int i = 0; i < parameters.size(); i++) {
+            functionScopeTable.put(lambdaCall, lambdaDefParams.get(i), parameters.get(i));
+        }
+
+        List<ASTNode> expressions = clonedLambda.getChildren();
+        for (ASTNode expression : expressions) {
+            if (expression instanceof AssignmentNode) {
+                functionScopeTable.put(lambdaCall, ((AssignmentNode) expression).getVariable(), ((AssignmentNode) expression).getValue());
+            }
+        }
+
+        Map<String, ASTNode> paramArgMap = functionScopeTable.getMappingsForScope(lambdaCall);
+
+        for (ASTNode expr : expressions) {
+            replaceParamsWithArgs(expr, paramArgMap, new HashSet<>());
+        }
+
+        for (ASTNode expr : expressions) {
+            if (expr instanceof ConditionNode) {
+                analyzeCond((ConditionNode) expr);
+            } else {
+                traverseAndCheck(expr);
+            }
+
+            //if ((expr instanceof ReturnNode && expr.isEvaluated())) {
+            if ((expr.isEvaluated())) {
+                lambdaCall.setEvaluated(true);
+                lambdaCall.setConstantValue(expr.getChildren().getFirst());
+                replaceNodeInParent(lambdaCall.getParent(), lambdaCall, expr.getChildren().getFirst());
+                break;
+            }
+        }
+        functionScopeTable.exitScope(lambdaCall);
+    }
+
     private void handleSetq(FunctionCallNode functionCall, ASTNode setqNode) throws Exception {
         if (setqNode instanceof OperationNode && ((OperationNode) setqNode).getOperator().equals("setq")) {
             List<ASTNode> children = setqNode.getChildren();
@@ -542,5 +625,10 @@ public class FSemanter {
                 break;
             }
         }
+    }
+
+    private void visitPrint(PrintNode node) throws Exception {
+        traverseAndCheck(node.getChildren().getFirst());
+        System.out.println(processExpression(node.getChildren().getFirst()));
     }
 }

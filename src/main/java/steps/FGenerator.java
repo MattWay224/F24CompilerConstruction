@@ -11,27 +11,27 @@ import java.util.Map;
 public class FGenerator {
 
     private final SymbolTable symbolTable;
-    private final FSemanter semanter;
+   // private final FSemanter semanter;
 
     private int stackPointer;
 
     private final List<String> generatedMethods;
     private final Map<String, Integer> variableOffsets;
 
-    public FGenerator(SymbolTable symbolTable, FSemanter semanter) throws Exception {
-        this.semanter = semanter;
+    public FGenerator(SymbolTable symbolTable) throws Exception {
+        //this.semanter = semanter;
         this.symbolTable = symbolTable;
         this.variableOffsets = new HashMap<>();
         this.stackPointer = 0;
         this.generatedMethods = new ArrayList<>();
     }
 
-    public void generate(ASTNode node) throws Exception {
-        symbolTable.simplifyAllSymbols(semanter);
-        visit(node);
-        for (String method : generatedMethods) {
-            System.out.println(method);
+    public String generate(ASTNode node) throws Exception {
+        //symbolTable.simplifyAllSymbols(semanter);
+        if (visit(node) ==null){
+            return "null";
         }
+        return visit(node).toString();
     }
 
     private Object visit(ASTNode node) throws Exception {
@@ -208,28 +208,8 @@ public class FGenerator {
     }
 
     private void visitPrint(PrintNode node) throws Exception {
-        // System.out.println("print:" + node.getExpression().getType() + "  " + node.getChildren().getFirst().getType());
         System.out.println("print:" + node.getExpression().getClass().getSimpleName() + "  " + node.getChildren().getFirst().getClass().getSimpleName());
-        //switch (node.getExpression().getType()) {
         switch (node.getChildren().getFirst().getClass().getSimpleName()) {
-//            case "AtomNode" -> {
-//                if (node.getChildren().getFirst().getClass().getSimpleName().equals("AtomNode")) {
-//                    String atom_class = symbolTable.lookup(((AtomNode) node.getChildren().getFirst()).getValue()).getClass().getSimpleName();
-//                    ASTNode atom = symbolTable.lookup(((AtomNode) node.getChildren().getFirst()).getValue());
-//                    if (atom_class.equals("BooleanNode")) {
-//                        //System.out.println(((BooleanNode) atom).getValue());
-//                        System.out.println(visitBool((BooleanNode) atom));
-//                    } else if (atom_class.equals("NullNode")) {
-//                        System.out.println(visitNull((NullNode) atom));
-//                    } else if (atom_class.equals("ConsNode")) {
-//                        System.out.println(visitCons((ConsNode) atom));
-//                    }
-//                } else if (node.getChildren().getFirst().getClass().getSimpleName().equals("FunctionCallNode")) {
-//                    System.out.println(visitFunctionCall((FunctionCallNode) node.getChildren().getFirst()));
-//                } else {
-//                    System.out.println(((LiteralNode) node.getChildren().getFirst()).getValue());
-//                }
-//            }
             case "OperationNode" -> System.out.println(visitOperation((OperationNode) node.getChildren().getFirst()));
             case "BooleanNode" -> System.out.println(visitBool((BooleanNode) node.getChildren().getFirst()));
             case "ComparisonNode" ->
@@ -247,7 +227,6 @@ public class FGenerator {
             case "NullNode" -> System.out.println(visitNull((NullNode) node.getChildren().getFirst()));
             case "AtomNode" -> System.out.println(visit(symbolTable.lookup(((AtomNode) node.getChildren().getFirst()).getValue())));
         }
-
     }
 
     private boolean visitBool(BooleanNode node) {
@@ -262,5 +241,6 @@ public class FGenerator {
     }
 
     private void visitAssignment(AssignmentNode node) throws Exception {
+
     }
 }

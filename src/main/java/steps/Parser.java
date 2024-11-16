@@ -138,6 +138,9 @@ public class Parser {
                 return parseLiteralList();
             }
         }
+//        } else if (operatorToken.type == TokenType.LAMBDA) {
+//            parseLambda();
+//        }
 
         return switch (operatorToken.value) {
             case "print" -> parsePrint();
@@ -168,7 +171,8 @@ public class Parser {
                 yield quotednode;
             }
             case "eval" -> parseEval();
-            default -> parseFuncCall(operatorToken.value);
+            default -> null;
+            //parseFuncCall(operatorToken.value);
         };
     }
 
@@ -320,8 +324,8 @@ public class Parser {
         SymbolTable previousScope = currentScope;
         currentScope = new SymbolTable(previousScope);
 
-        List<String> parameters = new ArrayList<>();
         consume(TokenType.LPAREN, "EXPECTED ( AFTER LAMBDA");
+        List<String> parameters = new ArrayList<>();
         while (!check(TokenType.RPAREN)) {
             String varName = consume(TokenType.ATOM, "EXPECTED ATOM FOR LOCAL PARAMETER").value;
             parameters.add(varName);
@@ -498,6 +502,8 @@ public class Parser {
             throw new Exception("Undefined lambda " + lambdaName);
         }
 
+        advance();
+
         ASTNode lambdaNode = globalScope.lookup(lambdaName);
         if (!(lambdaNode instanceof LambdaNode)) {
             throw new Exception(lambdaName + " is not a lambda");
@@ -512,6 +518,10 @@ public class Parser {
         Token clo = consume(TokenType.RPAREN, "EXPECTED ) AFTER OPERATION");
         ASTNode lambdacallnode = factory.createLambdaCallNode(lambdaName, operands, clo.line);
         lambdacallnode.setType(ASTNode.NodeType.LAMBDACALL);
+        lambdacallnode.addChild(lambdaNode.clone());
+        for (ASTNode operand:operands){
+            lambdacallnode.addChild(operand);
+        }
         return lambdacallnode;
     }
 
@@ -520,10 +530,15 @@ public class Parser {
 
         String variable = consume(TokenType.ATOM, "EXPECTED VARIABLE FOR SETQ").value;
 
+        if (currentScope.isDefined(variable) || globalScope.isDefined(variable)) {
+            throw new Exception("VARIABLE NAME ALREADY IN USE in line " + op.line);
+        }
+
         currentScope.define(variable, null);
         ASTNode value = parseExpr();
 
         //add var to scope in symbol table
+
         currentScope.define(variable, value);
 
         consume(TokenType.RPAREN, "EXPECTED ) AFTER SETQ ASSIGNMENT");

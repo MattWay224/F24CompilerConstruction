@@ -9,6 +9,9 @@ public class LambdaCallNode extends ASTNode {
     List<ASTNode> parameters;
     int line;
 
+
+    private ASTNode constantValue;
+
     public LambdaCallNode(String lambdaName, List<ASTNode> parameters, int line) {
         this.lambdaName = lambdaName;
         this.parameters = parameters;
@@ -39,5 +42,14 @@ public class LambdaCallNode extends ASTNode {
 
     public int getLine() {
         return line;
+    }
+
+    public ASTNode getConstantValue() {
+        return constantValue;
+    }
+
+    @Override
+    public void setConstantValue(ASTNode constantValue) {
+        this.constantValue = constantValue;
     }
 }

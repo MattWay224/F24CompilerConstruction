@@ -17,15 +17,16 @@ public class Main {
         PrettyVisitor visitor = new PrettyVisitor();
         Flexer lexer = new Flexer();
         Parser parser = new Parser();
-        FSemanter semanter = new FSemanter(parser.getGlobalScope());
-        FGenerator generator=new FGenerator(parser.getGlobalScope(),semanter);
 
-        for (int i = 0; i <= 1; i++) {
+        FGenerator generator = new FGenerator(parser.getGlobalScope());
+        FSemanter semanter = new FSemanter(parser.getGlobalScope(), generator);
+
+        for (int i = 0; i <= 0; i++) {
             processTestFile(i, lexer, parser, visitor, semanter, generator);
         }
     }
 
-    private static void processTestFile(int testNumber, Flexer lexer, Parser parser, PrettyVisitor visitor, FSemanter semanter,FGenerator generator) {
+    private static void processTestFile(int testNumber, Flexer lexer, Parser parser, PrettyVisitor visitor, FSemanter semanter, FGenerator generator) {
         String inputPath = "src/main/resources/inputs/test" + testNumber + ".txt";
         File outputLexerFile = new File("src/main/resources/flexer/outputs/output" + testNumber + ".txt");
         File outputParserFile = new File("src/main/resources/fsyntaxer/outputs/output" + testNumber + ".txt");
@@ -39,7 +40,7 @@ public class Main {
 
             ASTNode ast = parseTokens(parser, tokens);
             semanter.analyze(ast);
-            generator.generate(ast);
+            //generator.generate(ast);
             ASTPrinter.printAST(writerParser, ast, visitor, 0);
         } catch (IOException e) {
             System.err.println("Error: " + e.getMessage() + " Test: " + testNumber);
