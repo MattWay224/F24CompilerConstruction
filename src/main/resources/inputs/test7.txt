@@ -1,4 +1,4 @@
-(and true false)
-(or true false)
-(xor true false)
-(not true)
+(print (and true false))
+(print (or true false))
+(print (xor true false))
+(print (not true))
