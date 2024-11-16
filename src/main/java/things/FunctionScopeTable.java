@@ -3,6 +3,7 @@ package things;
 import ast.nodes.ASTNode;
 import ast.nodes.FunctionCallNode;
 import ast.nodes.LambdaCallNode;
+import ast.nodes.WhileNode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,26 +12,38 @@ public class FunctionScopeTable {
     // Maps each FunctionCallNode to its scope (a map of variables)
     private final Map<FunctionCallNode, Map<String, ASTNode>> functionScopes;
     private final Map<LambdaCallNode, Map<String, ASTNode>> lambdaScopes;
+    private final Map<WhileNode, Map<String, ASTNode>> whileScopes;
 
     public FunctionScopeTable() {
         this.lambdaScopes = new HashMap<>();
         this.functionScopes = new HashMap<>();
+        this.whileScopes = new HashMap<>();
     }
 
     // Creates a new scope for a function call
     public void enterScope(FunctionCallNode funcCallNode) {
         functionScopes.put(funcCallNode, new HashMap<>());
     }
+
     public void enterScope(LambdaCallNode lambdaCallNode) {
         lambdaScopes.put(lambdaCallNode, new HashMap<>());
+    }
+
+    public void enterScope(WhileNode whileNode) {
+        whileScopes.put(whileNode, new HashMap<>());
     }
 
     // Removes the scope for a function call (when the function call is complete)
     public void exitScope(FunctionCallNode funcCallNode) {
         functionScopes.remove(funcCallNode);
     }
+
     public void exitScope(LambdaCallNode lambdaCallNode) {
         lambdaScopes.remove(lambdaCallNode);
+    }
+
+    public void exitScope(WhileNode whileNode) {
+        whileScopes.remove(whileNode);
     }
 
     // Adds a variable to the scope associated with the specified FunctionCallNode
@@ -40,8 +53,16 @@ public class FunctionScopeTable {
             scope.put(name, value);
         }
     }
+
     public void put(LambdaCallNode lambdaCallNode, String name, ASTNode value) {
         Map<String, ASTNode> scope = lambdaScopes.get(lambdaCallNode);
+        if (scope != null) {
+            scope.put(name, value);
+        }
+    }
+
+    public void put(WhileNode whileNode, String name, ASTNode value) {
+        Map<String, ASTNode> scope = whileScopes.get(whileNode);
         if (scope != null) {
             scope.put(name, value);
         }
@@ -52,11 +73,16 @@ public class FunctionScopeTable {
         Map<String, ASTNode> scope = functionScopes.get(funcCallNode);
         return (scope != null) ? scope.get(name) : null;
     }
+
     public ASTNode get(LambdaCallNode lambdaCallNode, String name) {
         Map<String, ASTNode> scope = lambdaScopes.get(lambdaCallNode);
         return (scope != null) ? scope.get(name) : null;
     }
 
+    public ASTNode get(WhileNode whileNode, String name) {
+        Map<String, ASTNode> scope = whileScopes.get(whileNode);
+        return (scope != null) ? scope.get(name) : null;
+    }
 
 //    // check if a variable exists in the specified function scope
 //    public boolean contains(FunctionCallNode funcCallNode, String name) {
@@ -70,9 +96,16 @@ public class FunctionScopeTable {
         Map<String, ASTNode> scope = functionScopes.get(funcCallNode);
         return (scope != null) ? new HashMap<>(scope) : null;
     }
+
     public Map<String, ASTNode> getMappingsForScope(LambdaCallNode lambdaCallNode) {
         // Return a copy of the map to avoid external modification
         Map<String, ASTNode> scope = lambdaScopes.get(lambdaCallNode);
+        return (scope != null) ? new HashMap<>(scope) : null;
+    }
+
+    public Map<String, ASTNode> getMappingsForScope(WhileNode whileNode) {
+        // Return a copy of the map to avoid external modification
+        Map<String, ASTNode> scope = whileScopes.get(whileNode);
         return (scope != null) ? new HashMap<>(scope) : null;
     }
 

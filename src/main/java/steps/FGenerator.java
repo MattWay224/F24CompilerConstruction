@@ -85,7 +85,7 @@ public class FGenerator {
             if (node.getConstantValue() instanceof LiteralNode) {
                 return visitLiteral((LiteralNode) node.getConstantValue());
             } else {
-                visit(node.getConstantValue());
+                visit(node.getChildren().getFirst());
             }
         }
         return "";

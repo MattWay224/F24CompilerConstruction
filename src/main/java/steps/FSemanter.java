@@ -133,6 +133,12 @@ public class FSemanter {
         }
 
         if (!leftOperand.getClass().getSimpleName().equals(rightOperand.getClass().getSimpleName())) {
+            simplifyExpression(leftOperand);
+            simplifyExpression(rightOperand);
+            //traverseAndCheck(leftOperand);
+            //traverseAndCheck(rightOperand);
+        }
+        if (!leftOperand.getClass().getSimpleName().equals(rightOperand.getClass().getSimpleName())) {
             throw new Exception("TYPE ERROR IN COMPARISON: " + leftOperand.getClass()
                     + " CANNOT BE COMPARED WITH " + rightOperand.getClass()
                     + " on line " + operation.getLine());
@@ -156,6 +162,10 @@ public class FSemanter {
         }
         if (node instanceof LambdaNode) {
             return;
+
+        }
+        else if (node.getClass().getSimpleName().equals("WhileNode")) {
+            analyzeWhile((WhileNode) node.clone());
         }
 
         for (ASTNode child : node.getChildren()) {
@@ -184,14 +194,29 @@ public class FSemanter {
             visitAtom((AtomNode) node);
         } else if (node.getClass().getSimpleName().equals("NullNode")) {
             visitNull((NullNode) node);
+        }else if (node.getClass().getSimpleName().equals("AssignmentNode")) {
+            analyzeAssignment((AssignmentNode) node);
         }
         simplifyExpression(node);
 
     }
 
+    public void analyzeAssignment(AssignmentNode node) {
+        ASTNode value = node.getChildren().getFirst();
+        symbolTable.define(node.getVariable(), value);
+    }
+
     public void visitAtom(AtomNode node) throws Exception {
+        /*ASTNode simplified = simplifyExpression(symbolTable.lookup(node.getValue()));
+        if (simplified instanceof OperationNode) {
+            checkArithmeticOperation(simplified);
+            simplifyExpression(simplified);
+        }
+        node.addChild(simplified);
+        replaceNodeInParent(node.getParent(), node, simplified);*/
+        //symbolTable.simplifyAllSymbols(this);
         node.addChild(symbolTable.lookup(node.getValue()));
-        replaceNodeInParent(node.getParent(), node, symbolTable.lookup(node.getValue()));
+        replaceNodeInParent(node.getParent(), node, node.getChildren().getFirst());
     }
 
     public void visitNull(NullNode node) throws Exception {
@@ -256,6 +281,9 @@ public class FSemanter {
             //return simplifiedTail;
         } else if (operation instanceof AtomNode) {
             if (symbolTable.isDefined(((AtomNode) operation).getValue())) {
+                // ((AtomNode) operation).addChild(symbolTable.lookup(((AtomNode) operation).getValue()));
+                //symbolTable.simplifyAllSymbols(this);
+                replaceNodeInParent(((AtomNode) operation).getParent(), ((AtomNode) operation), ((AtomNode) operation).getChildren().getFirst());
                 return symbolTable.lookup(((AtomNode) operation).getValue());
             } else if (operation.getParent().getParent() instanceof FunctionCallNode) {
                 return functionScopeTable.get((FunctionCallNode) operation.getParent().getParent(), ((AtomNode) operation).getValue());
@@ -550,6 +578,32 @@ public class FSemanter {
         ASTNode action = conditionNode.getChildren().get(1);
 
         traverseAndCheck(condition);
+        if (condition instanceof BooleanNode) {
+            if (((BooleanNode) condition).getValue()) {
+                traverseAndCheck(action);
+                conditionNode.setEvaluated(true);
+                conditionNode.setConstantValue(action);
+                replaceNodeInParent(conditionNode.getParent(), conditionNode, action);
+                if (action instanceof ReturnNode && ((ReturnNode) action).getChildren().getFirst() != null) {
+                    replaceNodeInParent(conditionNode, conditionNode.getChildren().getFirst(), ((ReturnNode) action).getChildren().getFirst());
+                }
+                branchExecuted = true;
+                return conditionNode;
+            } else if (defaultAction != null) {
+                traverseAndCheck(defaultAction);
+                conditionNode.setEvaluated(true);
+                conditionNode.setConstantValue(defaultAction);
+
+                replaceNodeInParent(conditionNode.getParent(), conditionNode, defaultAction);
+                if (defaultAction instanceof ReturnNode && ((ReturnNode) defaultAction).getChildren().getFirst() != null) {
+                    replaceNodeInParent(conditionNode, conditionNode.getChildren().getFirst(), ((ReturnNode) defaultAction).getChildren().getFirst());
+                }
+
+                branchExecuted = true;
+                return conditionNode;
+
+            }
+        }
         if (condition.isEvaluated() && condition instanceof ComparisonNode) {
             //BooleanNode boolCondition = (BooleanNode) condition;
             if ((((ComparisonNode) condition).getConstantValue()).getValue()) {
@@ -577,6 +631,49 @@ public class FSemanter {
             }
         }
         return null;
+    }
+
+    private void analyzeWhile(WhileNode whileNode) throws Exception {
+        functionScopeTable.enterScope(whileNode);
+
+        //ASTNode condition = whileNode.getChildren().getFirst().clone();
+        ASTNode condition=whileNode.getChildren().getFirst();
+        List<ASTNode> actions = new ArrayList<>();
+        for (int i = 1; i < whileNode.getChildren().size(); i++) {
+            actions.add(whileNode.getChildren().get(i).clone());
+        }
+        //List<ASTNode> actions=whileNode.getBody();
+        traverseAndCheck(condition);
+
+        condition = whileNode.getChildren().getFirst();
+        if (condition instanceof BooleanNode) {
+            while (condition instanceof BooleanNode && ((BooleanNode) condition).getValue()) {
+                for (ASTNode action : actions) {
+                    traverseAndCheck(action);
+                }
+
+                /*condition = whileNode.getChildren().getFirst().clone();
+                actions = new ArrayList<>();
+                for (int i = 1; i < whileNode.getChildren().size(); i++) {
+                    actions.add(whileNode.getChildren().get(i).clone());
+                }*/
+                condition=whileNode.getCondition().clone();
+                replaceNodeInParent(whileNode,whileNode.getChildren().getFirst(),condition);
+                condition=whileNode.getChildren().getFirst();
+                traverseAndCheck(condition);
+                condition = whileNode.getChildren().getFirst();
+                actions=whileNode.getBody();
+                for (int i=1;i<whileNode.getChildren().size();i++){
+                    replaceNodeInParent(whileNode,whileNode.getChildren().get(i),actions.get(i-1));
+                }
+                actions = new ArrayList<>();
+                for (int i = 1; i < whileNode.getChildren().size(); i++) {
+                    actions.add(whileNode.getChildren().get(i).clone());
+                }
+            }
+        }
+
+        functionScopeTable.exitScope(whileNode);
     }
 
     private void replaceParamsWithArgs(ASTNode node, Map<String, ASTNode> paramArgMap, Set<ASTNode> visited) throws Exception {
