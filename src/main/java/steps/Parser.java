@@ -37,6 +37,9 @@ public class Parser {
         ASTNode prognode = factory.createProgNode(statements, 0, 0);
         prognode.setType(ASTNode.NodeType.PROG);
 
+//        for (ASTNode st: statements){
+//            prognode.addChild(st);
+//        }
         return prognode;
     }
 
@@ -264,6 +267,9 @@ public class Parser {
 
         ASTNode prognode = factory.createProgNode(statements, op.line, clo.line);
         prognode.setType(ASTNode.NodeType.PROG);
+        for (ASTNode statement:statements){
+            prognode.addChild(statement);
+        }
         return prognode;
     }
 
