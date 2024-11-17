@@ -163,9 +163,12 @@ public class FSemanter {
         if (node instanceof LambdaNode) {
             return;
 
-        }
-        else if (node.getClass().getSimpleName().equals("WhileNode")) {
-            analyzeWhile((WhileNode) node.clone());
+        } else if (node.getClass().getSimpleName().equals("WhileNode")) {
+            analyzeWhile((WhileNode) node);
+            return;
+        } else if (node.getClass().getSimpleName().equals("ConditionNode")) {
+            analyzeCond((ConditionNode) node);
+            return;
         }
 
         for (ASTNode child : node.getChildren()) {
@@ -182,8 +185,6 @@ public class FSemanter {
             checkPredicate((PredicateNode) node);
         } else if (node.getClass().getSimpleName().equals("NotNode")) {
             checkNotNode((NotNode) node);
-        } else if (node.getClass().getSimpleName().equals("ConditionNode")) {
-            analyzeCond((ConditionNode) node);
         } else if (node.getClass().getSimpleName().equals("FunctionCallNode")) {
             analyzeFuncCall((FunctionCallNode) node);
         } else if (node.getClass().getSimpleName().equals("LambdaCallNode")) {
@@ -194,8 +195,10 @@ public class FSemanter {
             visitAtom((AtomNode) node);
         } else if (node.getClass().getSimpleName().equals("NullNode")) {
             visitNull((NullNode) node);
-        }else if (node.getClass().getSimpleName().equals("AssignmentNode")) {
+        } else if (node.getClass().getSimpleName().equals("AssignmentNode")) {
             analyzeAssignment((AssignmentNode) node);
+        } else if (node.getClass().getSimpleName().equals("BreakNode")) {
+            throw new BreakException("Break statement executed.");
         }
         simplifyExpression(node);
 
@@ -264,7 +267,6 @@ public class FSemanter {
                 constNode.setType(ASTNode.NodeType.BOOL);
                 replaceNodeInParent(parent, compNode, constNode);
                 compNode.setConstantValue(new BooleanNode(result, compNode.getLine()));
-                replaceNodeInParent(compNode, compNode, constNode);
                 return constNode;
             }
         } else if (operation instanceof ConsNode) {
@@ -578,6 +580,7 @@ public class FSemanter {
         ASTNode action = conditionNode.getChildren().get(1);
 
         traverseAndCheck(condition);
+        condition = conditionNode.getChildren().getFirst();
         if (condition instanceof BooleanNode) {
             if (((BooleanNode) condition).getValue()) {
                 traverseAndCheck(action);
@@ -589,7 +592,7 @@ public class FSemanter {
                 }
                 branchExecuted = true;
                 return conditionNode;
-            } else if (defaultAction != null) {
+            } else if (defaultAction != null && !((BooleanNode) condition).getValue()) {
                 traverseAndCheck(defaultAction);
                 conditionNode.setEvaluated(true);
                 conditionNode.setConstantValue(defaultAction);
@@ -637,7 +640,7 @@ public class FSemanter {
         functionScopeTable.enterScope(whileNode);
 
         //ASTNode condition = whileNode.getChildren().getFirst().clone();
-        ASTNode condition=whileNode.getChildren().getFirst();
+        ASTNode condition = whileNode.getChildren().getFirst();
         List<ASTNode> actions = new ArrayList<>();
         for (int i = 1; i < whileNode.getChildren().size(); i++) {
             actions.add(whileNode.getChildren().get(i).clone());
@@ -649,22 +652,21 @@ public class FSemanter {
         if (condition instanceof BooleanNode) {
             while (condition instanceof BooleanNode && ((BooleanNode) condition).getValue()) {
                 for (ASTNode action : actions) {
-                    traverseAndCheck(action);
+                    try {
+                        traverseAndCheck(action);
+                    } catch (BreakException e) {
+                        return;
+                    }
                 }
 
-                /*condition = whileNode.getChildren().getFirst().clone();
-                actions = new ArrayList<>();
-                for (int i = 1; i < whileNode.getChildren().size(); i++) {
-                    actions.add(whileNode.getChildren().get(i).clone());
-                }*/
-                condition=whileNode.getCondition().clone();
-                replaceNodeInParent(whileNode,whileNode.getChildren().getFirst(),condition);
-                condition=whileNode.getChildren().getFirst();
+                condition = whileNode.getCondition().clone();
+                replaceNodeInParent(whileNode, whileNode.getChildren().getFirst(), condition);
+                condition = whileNode.getChildren().getFirst();
                 traverseAndCheck(condition);
                 condition = whileNode.getChildren().getFirst();
-                actions=whileNode.getBody();
-                for (int i=1;i<whileNode.getChildren().size();i++){
-                    replaceNodeInParent(whileNode,whileNode.getChildren().get(i),actions.get(i-1));
+                actions = whileNode.getBody();
+                for (int i = 1; i < whileNode.getChildren().size(); i++) {
+                    replaceNodeInParent(whileNode, whileNode.getChildren().get(i), actions.get(i - 1));
                 }
                 actions = new ArrayList<>();
                 for (int i = 1; i < whileNode.getChildren().size(); i++) {
@@ -728,4 +730,11 @@ public class FSemanter {
         traverseAndCheck(node.getChildren().getFirst());
         System.out.println(processExpression(node.getChildren().getFirst()));
     }
+
+    public class BreakException extends Exception {
+        public BreakException(String message) {
+            super(message);
+        }
+    }
+
 }

@@ -1,4 +1,5 @@
 (setq counter 0)
 (while (less counter 10)
+  (print counter)
   (cond (equal counter 5) (break) (setq counter (plus counter 1)))
-  )
+)
