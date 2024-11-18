@@ -139,7 +139,7 @@ public class FGenerator {
     private List<Object> visitList(ListNode node) {
         List<Object> result = new ArrayList<>();
 
-        for (ASTNode element : node.getElements()) {
+        for (ASTNode element : node.getChildren()) {
             if (element instanceof LiteralNode) {
                 String value = ((LiteralNode) element).getValue();
                 try {

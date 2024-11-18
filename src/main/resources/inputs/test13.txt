@@ -1,10 +1,10 @@
 (func triple (x) (times x 3))
-(func addAndTriple (a b) (triple (plus a b)))
-(addAndTriple 2 3)
+(func addAndTriple (a b) (return (triple (plus a b))))
+(print (addAndTriple 2 3))
 
-(func double (x) (times x 2))
-(func applyFunction (f x) (f x))
-(applyFunction double 4)
+(func double (x) (return (times x 2)))
+(func applyFunction (f x) (return (f x)))
+(print (applyFunction double 4))
 
 (func returnMultiplier (factor)
   (lambda (x) (times x factor)))
