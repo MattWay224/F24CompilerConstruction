@@ -8,15 +8,21 @@ import java.util.List;
 
 public class InterpreterVisitor implements ASTVisitor<Object> {
 	private final SymbolTable symbolTable;
+	private final boolean globalScope; // Flag to track whether in global scope
 
 	public InterpreterVisitor(SymbolTable symbolTable) {
+		this(symbolTable, true); // Default to global scope
+	}
+
+	public InterpreterVisitor(SymbolTable symbolTable, boolean globalScope) {
 		this.symbolTable = symbolTable;
+		this.globalScope = globalScope;
 	}
 
 	@Override
 	public Object visitAssignmentNode(AssignmentNode node) {
-		ASTNode value = node.getChildren().getFirst();
-		symbolTable.define(node.getVariable(), value);
+		Object value = visit(node.getChildren().getFirst());
+		symbolTable.define(node.getVariable(), new LiteralNode(value.toString()));
 		return value;
 	}
 
@@ -31,134 +37,82 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 
 	@Override
 	public Object visitLiteralNode(LiteralNode node) {
-		return node.getValue();
+		String value = node.getValue();
+		try {
+			if (value.contains(".")) {
+				return Double.parseDouble(value);
+			} else {
+				return Integer.parseInt(value);
+			}
+		} catch (NumberFormatException e) {
+			return value;
+		}
 	}
 
 	@Override
 	public Object visitOperationNode(OperationNode node) {
-		List<ASTNode> operands = node.getOperands();
-
-		if (operands.stream().allMatch(ASTNode::isInt)) {
-			return evalInt(node.getOperator(), operands);
-		} else if (operands.stream().anyMatch(ASTNode::isReal)) {
-			return evalReal(node.getOperator(), operands);
+		String operator = node.getOperator();
+		List<Object> evaluatedOperands = new ArrayList<>();
+		for (ASTNode operand : node.getOperands()) {
+			evaluatedOperands.add(visit(operand));
 		}
 
-
-		throw new RuntimeException("Unsupported operand types for operator " + node.getOperator());
+		return evalOperation(operator, evaluatedOperands);
 	}
 
-	private Number evalInt(String operator, List<ASTNode> operands) {
+	@Override
+	public Object visitPredicateNode(PredicateNode node) {
+		Object value = visit(node.getElement());
+		return value != null;
+	}
+
+	private Number evalOperation(String operator, List<Object> operands) {
+		List<Double> numericOperands = operands.stream()
+				.map(o -> ((Number) o).doubleValue()) // Ensure all are Numbers
+				.toList();
+
 		switch (operator) {
 			case "plus" -> {
-				int count = 0;
-				for (ASTNode op : operands) {
-					LiteralNode opp = (LiteralNode) op;
-					count += Integer.parseInt(opp.getValue());
-				}
-				return count;
+				return numericOperands.stream().mapToDouble(Double::doubleValue).sum();
 			}
 			case "minus" -> {
-				int count = 0;
-				boolean flag = true;
-				for (ASTNode op : operands) {
-					LiteralNode opp = (LiteralNode) op;
-					if (flag) {
-						count += Integer.parseInt(opp.getValue());
-						flag = false;
-					} else {
-						count -= Integer.parseInt(opp.getValue());
-					}
+				double result = numericOperands.get(0);
+				for (int i = 1; i < numericOperands.size(); i++) {
+					result -= numericOperands.get(i);
 				}
-				return count;
+				return result;
 			}
 			case "times" -> {
-				int count = 1;
-				for (ASTNode op : operands) {
-					LiteralNode opp = (LiteralNode) op;
-					count *= Integer.parseInt(opp.getValue());
+				double result = 1.0;
+				for (Double operand : numericOperands) {
+					result *= operand;
 				}
-				return count;
+				return result;
 			}
 			case "divide" -> {
-				double count = 1;
-				boolean flag = true;
-				for (ASTNode op : operands) {
-					LiteralNode opp = (LiteralNode) op;
-					if (flag) {
-						count = Integer.parseInt(opp.getValue());
-						flag = false;
-					} else {
-						if (Integer.parseInt(opp.getValue()) == 0) {
-							throw new RuntimeException("Division by zero: " + operator);
-						}
-						count /= Integer.parseInt(opp.getValue());
+				double result = numericOperands.get(0);
+				for (int i = 1; i < numericOperands.size(); i++) {
+					double divisor = numericOperands.get(i);
+					if (divisor == 0) {
+						throw new RuntimeException("Division by zero.");
 					}
+					result /= divisor;
 				}
-				return count;
+				return result;
 			}
 			default -> throw new RuntimeException("Unknown operator: " + operator);
 		}
 	}
 
-	private Number evalReal(String operator, List<ASTNode> operands) {
-		switch (operator) {
-			case "plus" -> {
-				double count = 0;
-				for (ASTNode op : operands) {
-					LiteralNode opp = (LiteralNode) op;
-					count += Integer.parseInt(opp.getValue());
-				}
-				return count;
-			}
-			case "minus" -> {
-				double count = 0;
-				boolean flag = true;
-				for (ASTNode op : operands) {
-					LiteralNode opp = (LiteralNode) op;
-					if (flag) {
-						count += Integer.parseInt(opp.getValue());
-						flag = false;
-					} else {
-						count -= Integer.parseInt(opp.getValue());
-					}
-				}
-				return count;
-			}
-			case "times" -> {
-				double count = 1;
-				for (ASTNode op : operands) {
-					LiteralNode opp = (LiteralNode) op;
-					count *= Integer.parseInt(opp.getValue());
-				}
-				return count;
-			}
-			case "divide" -> {
-				double count = 1;
-				boolean flag = true;
-				for (ASTNode op : operands) {
-					LiteralNode opp = (LiteralNode) op;
-					if (flag) {
-						count = Integer.parseInt(opp.getValue());
-						flag = false;
-					} else {
-						if (Integer.parseInt(opp.getValue()) == 0) {
-							throw new RuntimeException("Division by zero: " + operator);
-						}
-						count /= Integer.parseInt(opp.getValue());
-					}
-				}
-				return count;
-			}
-			default -> throw new RuntimeException("Unknown operator: " + operator);
-		}
-	}
 
 	@Override
 	public Object visitProgNode(ProgNode node) {
 		Object result = null;
 		for (ASTNode statement : node.getStatements()) {
 			result = visit(statement);
+			if (globalScope && result != null) { // Only print in global scope
+				System.out.println(result);
+			}
 		}
 		return result;
 	}
@@ -170,26 +124,27 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 
 	@Override
 	public Object visitWhileNode(WhileNode node) {
-		List<Object> smth = new ArrayList<>();
-		while ((boolean) visit(node.getCondition())) {
-			for (ASTNode child : node.getBody()) {
-				smth.add(visit(child));
+		Object result = null;
+		while ((Boolean) visit(node.getCondition())) {
+			for (ASTNode stmt : node.getBody()) {
+				result = visit(stmt);
 			}
+			if (result.toString() == "break") break;
 		}
-		return smth;
+		return result;
 	}
 
 	@Override
 	public Object visitFunctionNode(FunctionNode node) {
 		symbolTable.define(node.getFunctionName(), node);
-		return null; // Store function definition in the symbol table
+		return null;
 	}
 
 	@Override
 	public Object visitFunctionCallNode(FunctionCallNode node) {
 		try {
 			FunctionNode function = (FunctionNode) symbolTable.lookup(node.getFunctionName());
-			SymbolTable functionScope = new SymbolTable(symbolTable); // New scope for function call
+			SymbolTable functionScope = new SymbolTable(symbolTable);
 
 			// Bind arguments
 			for (int i = 0; i < function.getParameters().size(); i++) {
@@ -211,8 +166,8 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 	}
 
 	@Override
-	public Object visitBoolNode(BooleanNode booleanNode) {
-		return booleanNode.getValue();
+	public Object visitBoolNode(BooleanNode node) {
+		return node.getValue();
 	}
 
 	@Override
@@ -221,29 +176,25 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 		if (value instanceof Boolean) {
 			return !(Boolean) value;
 		}
-		throw new RuntimeException("Invalid type for 'not' operation. Expected Boolean.");
+		throw new RuntimeException("Invalid type for 'not'. Expected Boolean.");
 	}
 
 	@Override
 	public Object visitComparisonNode(ComparisonNode node) {
-		ASTNode leftOperand = node.getLeftElement();
-		ASTNode rightOperand = node.getRightElement();
+		double left = ((Number) visit(node.getLeftElement())).doubleValue();
+		double right = ((Number) visit(node.getRightElement())).doubleValue();
 
-		if (leftOperand.isConstant() && rightOperand.isConstant()) {
-			double left = Double.parseDouble(((LiteralNode) leftOperand).getValue());
-			double right = Double.parseDouble(((LiteralNode) rightOperand).getValue());
-			return switch (node.getComparison()) {
-				case "equal" -> left == right;
-				case "nonequal" -> left != right;
-				case "less" -> left < right;
-				case "lesseq" -> left <= right;
-				case "greater" -> left > right;
-				case "greatereq" -> left >= right;
-				default -> throw new RuntimeException("Incompatible types for comparison.");
-			};
-		}
-		return false;
+		return switch (node.getComparison()) {
+			case "equal" -> left == right;
+			case "nonequal" -> left != right;
+			case "less" -> left < right;
+			case "lesseq" -> left <= right;
+			case "greater" -> left > right;
+			case "greatereq" -> left >= right;
+			default -> throw new RuntimeException("Unknown comparison operator.");
+		};
 	}
+
 
 	@Override
 	public Object visitLogicalOperationNode(LogicalOperationNode node) {
@@ -264,59 +215,48 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 				default -> throw new RuntimeException("Unknown logical operator: " + operator);
 			};
 		}
-
-		throw new RuntimeException("Invalid types for logical operation. Expected Booleans.");
+		throw new RuntimeException("Unknown logical operator: " + operator);
 	}
 
 	@Override
 	public Object visitConsNode(ConsNode node) {
 		Object head = visit(node.getHead());
-		Object tail = visit(node.getTail());
-
-		if (tail instanceof List<?>) {
-			List<Object> newList = new ArrayList<>((List<?>) tail);
-			newList.add(0, head);
-			return newList;
-		}
-
-		throw new RuntimeException("Invalid type for 'cons'. Tail must be a list.");
+		List<Object> tail = (List<Object>) visit(node.getTail());
+		List<Object> result = new ArrayList<>();
+		result.add(head);
+		result.addAll(tail);
+		return result;
 	}
 
 	@Override
 	public Object visitHeadNode(HeadNode node) {
-		return visit(node.getHead());
+		List<Object> list = (List<Object>) visit(node.getHead());
+		if (list.isEmpty()) {
+			throw new RuntimeException("Cannot get head of an empty list.");
+		}
+		return list.get(0);
 	}
 
 	@Override
 	public Object visitTailNode(TailNode node) {
-		Object list = visit(node.getTail());
-
-		if (list instanceof List<?> castedList) {
-			if (!castedList.isEmpty()) {
-				return castedList.subList(1, castedList.size());
-			}
+		List<Object> list = (List<Object>) visit(node.getTail());
+		if (list.isEmpty()) {
 			throw new RuntimeException("Cannot get tail of an empty list.");
 		}
-
-		throw new RuntimeException("Invalid type for 'tail'. Expected List.");
-	}
-
-	@Override
-	public Object visitPredicateNode(PredicateNode node) {
-		Object value = visit(node.getElement());
-		return value != null;
+		return list.subList(1, list.size());
 	}
 
 	@Override
 	public Object visitLambdaNode(LambdaNode node) {
-		return node; // Return the LambdaNode itself; it can be invoked later.
+		return node;
 	}
 
 	@Override
 	public Object visitLambdaCallNode(LambdaCallNode node) {
 		try {
-			LambdaNode lambda = (LambdaNode) symbolTable.lookup(node.getLambdaName());
-			SymbolTable lambdaScope = new SymbolTable(symbolTable); // Create new scope for lambda
+			LambdaNode lambda = (LambdaNode) visit(symbolTable.lookup(node.getLambdaName()));
+			SymbolTable lambdaScope = new SymbolTable(symbolTable);
+
 			for (int i = 0; i < lambda.getParameters().size(); i++) {
 				String param = lambda.getParameters().get(i);
 				Object argValue = visit(node.getParameters().get(i));
@@ -326,40 +266,41 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 			InterpreterVisitor lambdaInterpreter = new InterpreterVisitor(lambdaScope);
 			return lambdaInterpreter.visit(lambda.getBody());
 		} catch (Exception e) {
-			throw new RuntimeException("Function call error: " + e.getMessage());
+			throw new RuntimeException("Lambda call exc: ");
 		}
+
 	}
 
 	@Override
 	public Object visitReturnNode(ReturnNode node) {
-		return visit(node.getReturnValue()); // Evaluate and return the expression
+		return visit(node.getReturnValue());
 	}
 
 	@Override
 	public Object visitBreakNode(BreakNode node) {
-		throw new RuntimeException("Break encountered"); // Use custom exception for control flow
+		return true;
 	}
 
 	@Override
 	public Object visitEvalNode(EvalNode node) {
 		Object code = visit(node.getNode());
 		if (code instanceof ASTNode) {
-			return visit((ASTNode) code); // Evaluate dynamically
+			return visit((ASTNode) code);
 		}
 		throw new RuntimeException("Eval expects an ASTNode as input.");
 	}
 
 	@Override
 	public Object visitQuoteNode(QuoteNode node) {
-		return node.getQuotedExpr(); // Return the raw quoted ASTNode
+		return node.getQuotedExpr();
 	}
 
 	@Override
 	public Object visitConditionBranch(ConditionBranch node) {
-		if ((boolean) visit(node.getCondition())) {
+		if ((Boolean) visit(node.getCondition())) {
 			return visit(node.getAction());
 		}
-		return null; // No match
+		return null;
 	}
 
 	@Override

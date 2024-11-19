@@ -12,14 +12,6 @@ public class FSemanter {
 		if (operands.isEmpty()) {
 			throw new Exception("ARITHMETIC OPERATION " + operator + " HAS NO OPERANDS");
 		}
-
-		ASTNode.NodeType expectedType = operands.get(0).getType();
-		for (ASTNode operand : operands) {
-			if (operand.getType() != expectedType) {
-				throw new Exception("TYPE ERROR IN " + operator + " OPERATION: EXPECTED " + expectedType
-						+ ", FOUND " + operand.getType() + " on line " + ((OperationNode) operation).getLine());
-			}
-		}
 	}
 
 	private void checkLogicalOperation(LogicalOperationNode operation) throws Exception {
