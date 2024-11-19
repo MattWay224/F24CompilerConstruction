@@ -6,8 +6,8 @@ import java.util.List;
 
 public class ASTNodeFactory {
 
-	public ASTNode createLiteralNode(String value, int line) {
-		return new LiteralNode(value, line);
+	public ASTNode createLiteralNode(String value) {
+		return new LiteralNode(value);
 	}
 
 	public ASTNode createAtomNode(String value, int line) {

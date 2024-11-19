@@ -47,13 +47,13 @@ public class Parser {
 			case LPAREN -> parseParenthesizedExpr();
 			case INTEGER -> {
 				advance();
-				ASTNode intnode = factory.createLiteralNode(currentToken.value, currentToken.line);
+				ASTNode intnode = factory.createLiteralNode(currentToken.value);
 				intnode.setType(ASTNode.NodeType.ATOM);
 				yield intnode;
 			}
 			case REAL -> {
 				advance();
-				ASTNode realnode = factory.createLiteralNode(currentToken.value, currentToken.line);
+				ASTNode realnode = factory.createLiteralNode(currentToken.value);
 				realnode.setType(ASTNode.NodeType.ATOM);
 				yield realnode;
 			}

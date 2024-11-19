@@ -39,8 +39,6 @@ public interface ASTVisitor<R> {
 
 	R visitReturnNode(ReturnNode node);
 
-	R visitSignNode(SignNode node);
-
 	R visitTailNode(TailNode node);
 
 	R visitWhileNode(WhileNode node);

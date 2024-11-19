@@ -5,11 +5,9 @@ import visitors.ASTVisitor;
 //literals
 public class LiteralNode extends ASTNode {
 	String value;
-	int line;
 
-	public LiteralNode(String value, int line) {
+	public LiteralNode(String value) {
 		this.value = value;
-		this.line = line;
 	}
 
 	@Override
@@ -19,10 +17,6 @@ public class LiteralNode extends ASTNode {
 
 	public String getValue() {
 		return value;
-	}
-
-	public int getLine() {
-		return line;
 	}
 
 	@Override

@@ -157,11 +157,6 @@ public class PrettyVisitor implements ASTVisitor<String> {
 	}
 
 	@Override
-	public String visitSignNode(SignNode node) {
-		return "SignNode(sign=" + node.getSign() + ")";
-	}
-
-	@Override
 	public String visitTailNode(TailNode node) {
 		String tail = node.getTail().accept(this);
 		return "TailNode(list=" + tail + ')';

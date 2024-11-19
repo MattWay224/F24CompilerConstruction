@@ -67,11 +67,9 @@ public class FSemanter {
 
 		} else if (node.getClass().getSimpleName().equals("ComparisonNode") && !node.isConstant()) {
 			checkComparisonOperation((ComparisonNode) node);
-			simplifyExpression(node);
 
 		} else if (node.getClass().getSimpleName().equals("LogicalOperationNode")) {
 			checkLogicalOperation((LogicalOperationNode) node);
-			simplifyExpression(node);
 		}
 		for (ASTNode child : node.getChildren()) {
 			traverseAndCheck(child);
@@ -88,18 +86,13 @@ public class FSemanter {
 
 			if (operands.stream().allMatch(ASTNode::isInt)) {
 				Number result = evalInt(opNode.getOperator(), operands);
-				LiteralNode constantNode = new LiteralNode(result.toString(), opNode.getLine());
+				LiteralNode constantNode = new LiteralNode(result.toString());
 				replaceNodeInParent(parent, opNode, constantNode);
 			} else if (operands.stream().anyMatch(ASTNode::isReal)) {
 				Number result = evalReal(opNode.getOperator(), operands);
-				LiteralNode constantNode = new LiteralNode(result.toString(), opNode.getLine());
+				LiteralNode constantNode = new LiteralNode(result.toString());
 				replaceNodeInParent(parent, opNode, constantNode);
 			}
-		} else if (operation.getClass().getSimpleName().equals("ComparisonNode")) {
-			ComparisonNode compNode = (ComparisonNode) operation;
-			boolean result = evalComp(compNode);
-			BooleanNode constNode = new BooleanNode(result, compNode.getLine());
-			replaceNodeInParent(parent, compNode, constNode);
 		}
 	}
 
@@ -149,26 +142,6 @@ public class FSemanter {
 			}
 			default -> throw new Exception("Unsupported operator: " + operator);
 		}
-	}
-
-	private boolean evalComp(ComparisonNode operation) {
-		ASTNode leftOperand = operation.getLeftElement();
-		ASTNode rightOperand = operation.getRightElement();
-
-		if (leftOperand.isConstant() && rightOperand.isConstant()) {
-			double left = Double.parseDouble(((LiteralNode) leftOperand).getValue());
-			double right = Double.parseDouble(((LiteralNode) rightOperand).getValue());
-			return switch (operation.getComparison()) {
-				case "equal" -> left == right;
-				case "nonequal" -> left != right;
-				case "less" -> left < right;
-				case "lesseq" -> left <= right;
-				case "greater" -> left > right;
-				case "greatereq" -> left >= right;
-				default -> false;
-			};
-		}
-		return false;
 	}
 
 	private void replaceNodeInParent(ASTNode parent, ASTNode oldNode, ASTNode newNode) {
