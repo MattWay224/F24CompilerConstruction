@@ -1,6 +1,7 @@
 (func triple (x) (times x 3))
 (func addAndTriple (a b) (triple (plus a b)))
 (addAndTriple 2 3)
+(triple 3)
 
 (func double (x) (times x 2))
 (func applyFunction (f x) (f x))

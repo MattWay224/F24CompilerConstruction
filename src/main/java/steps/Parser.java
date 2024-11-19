@@ -82,7 +82,7 @@ public class Parser {
 			}
 			case QUOTE -> parseQuote();
 			case LESS, LESSEQ, GREATER, GREATEREQ, EQUAL, NONEQUAL -> parseComparison(currentToken.value);
-			case PLUS, MINUS, TIMES, DIVIDE -> parseOperation(currentToken.value, false, false);
+			case PLUS, MINUS, TIMES, DIVIDE -> parseOperation(currentToken.value);
 			default -> throw new Exception("UNEXPECTED TOKEN: " + currentToken + " in line " + currentToken.line);
 		};
 	}
@@ -144,7 +144,7 @@ public class Parser {
 			case "func" -> parseFUNC();
 			case "cond" -> parseCOND();
 			case "prog" -> parsePROG();
-			case "plus", "minus", "times", "divide" -> parseOperation(operatorToken.value, false, false);
+			case "plus", "minus", "times", "divide" -> parseOperation(operatorToken.value);
 			case "head" -> parseHeadOrTail("head");
 			case "tail" -> parseHeadOrTail("tail");
 			case "cons" -> parseCons();
@@ -224,11 +224,9 @@ public class Parser {
 		SymbolTable previousScope = currentScope;
 		currentScope = new SymbolTable(previousScope);
 
-		List<String> localVars = new ArrayList<>();
 		consume(TokenType.LPAREN, "EXPECTED ( AFTER prog");
 		while (!check(TokenType.RPAREN)) {
 			String varName = consume(TokenType.ATOM, "EXPECTED ATOM FOR LOCAL VARIABLE").value;
-			localVars.add(varName);
 			currentScope.define(varName, null);
 		}
 
@@ -318,7 +316,7 @@ public class Parser {
 		consume(TokenType.RPAREN, "EXPECTED ) AFTER LAMBDA PARAMETER LIST");
 
 		ASTNode body = parseExpr();
-		Token clo = consume(TokenType.RPAREN, "EXPECTED ) AFTER LAMBDA BODY");
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER LAMBDA BODY");
 		currentScope = previousScope;
 
 		ASTNode lambdanode = factory.createLambdaNode(parameters, body, op.line);
@@ -376,7 +374,7 @@ public class Parser {
 		Token op = advance();
 		ASTNode leftElement = parseExpr();
 		ASTNode rightElement = parseExpr();
-		Token line = consume(TokenType.RPAREN, "EXPECTED ) AFTER " + comparison);
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER " + comparison);
 
 		ASTNode compnode = factory.createComparisonNode(comparison, leftElement, rightElement, op.line);
 		compnode.addChild(leftElement);
@@ -425,7 +423,7 @@ public class Parser {
 		return consnode;
 	}
 
-	private ASTNode parseOperation(String operator, boolean isQuoted, boolean isEvaluated) throws Exception {
+	private ASTNode parseOperation(String operator) throws Exception {
 		Token op = advance();
 		List<ASTNode> operands = new ArrayList<>();
 
@@ -435,7 +433,7 @@ public class Parser {
 		}
 		consume(TokenType.RPAREN, "EXPECTED ) AFTER OPERATION");
 
-		if ((!isQuoted || isEvaluated) && (operands.size() < 2 && !(operator.equals("plus") || operator.equals("minus")))) {
+		if (operands.size() < 2 && !(operator.equals("plus") || operator.equals("minus"))) {
 			throw new Exception("IMPOSSIBLE OPERATION");
 		}
 		ASTNode opnode = factory.createOperationNode(operator, operands, false, op.line);
@@ -540,26 +538,13 @@ public class Parser {
 		return condnode;
 	}
 
-
-	private List<String> parseParameterList() throws Exception {
-		List<String> parameters = new ArrayList<>();
-		consume(TokenType.LPAREN, "EXPECTED ( BEFORE PARAMETER LIST");
-		while (!check(TokenType.RPAREN)) {
-			parameters.add(consume(TokenType.ATOM, "EXPECTED PARAMETER").value);
-		}
-		consume(TokenType.RPAREN, "EXPECTED ) AFTER PARAMETER LIST");
-		return parameters;
-	}
-
-	private ASTNode.NodeType determineReturnType(ASTNode node) throws Exception {
+	private void determineReturnType(ASTNode node) throws Exception {
 		if (Objects.requireNonNull(node.getType()) == ASTNode.NodeType.FUNCCALL) {
 			FunctionNode functionNode = (FunctionNode) globalScope.lookup(((FunctionNode) node).getFunctionName());
 			if (functionNode == null) {
 				throw new Exception("UNDEFINED FUNCTION " + ((FunctionNode) node).getFunctionName());
 			}
-			return functionNode.getReturnType();
 		}
-		return node.getType();
 	}
 
 }

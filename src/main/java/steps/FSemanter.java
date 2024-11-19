@@ -53,6 +53,7 @@ public class FSemanter {
 		}
 	}
 
+
 	public void analyze(ASTNode root) throws Exception {
 		traverseAndCheck(root);
 	}
