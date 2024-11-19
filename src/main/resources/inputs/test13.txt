@@ -9,7 +9,6 @@
 
 (func returnMultiplier (factor)
   (lambda (x) (times x factor)))
-(setq triple (returnMultiplier 3))
 (triple 4)
 
 (func square (x) (times x x))

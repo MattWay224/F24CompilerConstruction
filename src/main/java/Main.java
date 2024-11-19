@@ -1,10 +1,13 @@
 import ast.nodes.ASTNode;
+import ast.nodes.ProgNode;
 import steps.FSemanter;
 import things.ASTPrinter;
 import steps.Flexer;
 import steps.Parser;
 import steps.Token;
 import things.InputFileReader;
+import things.SymbolTable;
+import visitors.InterpreterVisitor;
 import visitors.PrettyVisitor;
 
 import java.io.File;
@@ -21,13 +24,17 @@ public class Main {
 		Flexer lexer = new Flexer();
 		Parser parser = new Parser();
 		FSemanter semanter = new FSemanter();
+		InterpreterVisitor interpreter;
 
 		for (int i = 1; i <= TOTAL_TESTS; i++) {
-			processTestFile(i, lexer, parser, visitor, semanter);
+			SymbolTable globalTable = new SymbolTable(null);
+			interpreter = new InterpreterVisitor(globalTable);
+			processTestFile(i, lexer, parser, visitor, semanter, interpreter);
 		}
 	}
 
-	private static void processTestFile(int testNumber, Flexer lexer, Parser parser, PrettyVisitor visitor, FSemanter semanter) {
+	private static void processTestFile(int testNumber, Flexer lexer, Parser parser, PrettyVisitor visitor,
+										FSemanter semanter, InterpreterVisitor interpreter) {
 		String inputPath = "src/main/resources/inputs/test" + testNumber + ".txt";
 		File outputLexerFile = new File("src/main/resources/flexer/outputs/output" + testNumber + ".txt");
 		File outputParserFile = new File("src/main/resources/fsyntaxer/outputs/output" + testNumber + ".txt");
@@ -46,6 +53,8 @@ public class Main {
 
 			semanter.analyze(ast);
 			ASTPrinter.printAST(writerSemantecer, ast, visitor, 0);
+
+			//interpreter.visitProgNode((ProgNode) ast);
 		} catch (IOException e) {
 			System.err.println("Error: " + e.getMessage() + " Test: " + testNumber);
 		} catch (Exception e) {

@@ -2,7 +2,6 @@ package visitors;
 
 import ast.nodes.*;
 import things.SymbolTable;
-import visitors.ASTVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,7 +97,7 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 
 	@Override
 	public Object visitBoolNode(BooleanNode booleanNode) {
-		return null;
+		return booleanNode.getValue();
 	}
 
 	@Override
@@ -133,8 +132,8 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 
 	@Override
 	public Object visitLogicalOperationNode(LogicalOperationNode node) {
-		Object left = visit(node.getLeftElement());
-		Object right = visit(node.getRightElement());
+		Object left = visit(node.getChildren().get(0));
+		Object right = visit(node.getChildren().get(1));
 		String operator = node.getOperator();
 
 		if (left instanceof Boolean && right instanceof Boolean) {
@@ -143,6 +142,10 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 			return switch (operator) {
 				case "and" -> l && r;
 				case "or" -> l || r;
+				case "xor" -> (l || r) && !(l && r);
+				case "nor" -> !(l || r);
+				case "nand" -> !(l && r);
+				case "xnor" -> !((l || r) && !(l && r));
 				default -> throw new RuntimeException("Unknown logical operator: " + operator);
 			};
 		}
