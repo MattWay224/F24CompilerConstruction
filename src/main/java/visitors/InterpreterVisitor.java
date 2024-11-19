@@ -36,7 +36,122 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 
 	@Override
 	public Object visitOperationNode(OperationNode node) {
-		return null; // since it is already done
+		List<ASTNode> operands = node.getOperands();
+
+		if (operands.stream().allMatch(ASTNode::isInt)) {
+			return evalInt(node.getOperator(), operands);
+		} else if (operands.stream().anyMatch(ASTNode::isReal)) {
+			return evalReal(node.getOperator(), operands);
+		}
+
+
+		throw new RuntimeException("Unsupported operand types for operator " + node.getOperator());
+	}
+
+	private Number evalInt(String operator, List<ASTNode> operands) {
+		switch (operator) {
+			case "plus" -> {
+				int count = 0;
+				for (ASTNode op : operands) {
+					LiteralNode opp = (LiteralNode) op;
+					count += Integer.parseInt(opp.getValue());
+				}
+				return count;
+			}
+			case "minus" -> {
+				int count = 0;
+				boolean flag = true;
+				for (ASTNode op : operands) {
+					LiteralNode opp = (LiteralNode) op;
+					if (flag) {
+						count += Integer.parseInt(opp.getValue());
+						flag = false;
+					} else {
+						count -= Integer.parseInt(opp.getValue());
+					}
+				}
+				return count;
+			}
+			case "times" -> {
+				int count = 1;
+				for (ASTNode op : operands) {
+					LiteralNode opp = (LiteralNode) op;
+					count *= Integer.parseInt(opp.getValue());
+				}
+				return count;
+			}
+			case "divide" -> {
+				double count = 1;
+				boolean flag = true;
+				for (ASTNode op : operands) {
+					LiteralNode opp = (LiteralNode) op;
+					if (flag) {
+						count = Integer.parseInt(opp.getValue());
+						flag = false;
+					} else {
+						if (Integer.parseInt(opp.getValue()) == 0) {
+							throw new RuntimeException("Division by zero: " + operator);
+						}
+						count /= Integer.parseInt(opp.getValue());
+					}
+				}
+				return count;
+			}
+			default -> throw new RuntimeException("Unknown operator: " + operator);
+		}
+	}
+
+	private Number evalReal(String operator, List<ASTNode> operands) {
+		switch (operator) {
+			case "plus" -> {
+				double count = 0;
+				for (ASTNode op : operands) {
+					LiteralNode opp = (LiteralNode) op;
+					count += Integer.parseInt(opp.getValue());
+				}
+				return count;
+			}
+			case "minus" -> {
+				double count = 0;
+				boolean flag = true;
+				for (ASTNode op : operands) {
+					LiteralNode opp = (LiteralNode) op;
+					if (flag) {
+						count += Integer.parseInt(opp.getValue());
+						flag = false;
+					} else {
+						count -= Integer.parseInt(opp.getValue());
+					}
+				}
+				return count;
+			}
+			case "times" -> {
+				double count = 1;
+				for (ASTNode op : operands) {
+					LiteralNode opp = (LiteralNode) op;
+					count *= Integer.parseInt(opp.getValue());
+				}
+				return count;
+			}
+			case "divide" -> {
+				double count = 1;
+				boolean flag = true;
+				for (ASTNode op : operands) {
+					LiteralNode opp = (LiteralNode) op;
+					if (flag) {
+						count = Integer.parseInt(opp.getValue());
+						flag = false;
+					} else {
+						if (Integer.parseInt(opp.getValue()) == 0) {
+							throw new RuntimeException("Division by zero: " + operator);
+						}
+						count /= Integer.parseInt(opp.getValue());
+					}
+				}
+				return count;
+			}
+			default -> throw new RuntimeException("Unknown operator: " + operator);
+		}
 	}
 
 	@Override

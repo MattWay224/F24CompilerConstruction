@@ -54,7 +54,7 @@ public class Main {
 			semanter.analyze(ast);
 			ASTPrinter.printAST(writerSemantecer, ast, visitor, 0);
 
-			//interpreter.visitProgNode((ProgNode) ast);
+			interpreter.visitProgNode((ProgNode) ast);
 		} catch (IOException e) {
 			System.err.println("Error: " + e.getMessage() + " Test: " + testNumber);
 		} catch (Exception e) {
