@@ -5,39 +5,48 @@ import visitors.ASTVisitor;
 import java.util.List;
 
 public class LambdaNode extends ASTNode {
-	private NodeType returnType;
-	List<String> parameters;
-	ASTNode body;
-	int line;
+    private NodeType returnType;
+    List<String> parameters;
+    ASTNode body;
+    int line;
 
-	public LambdaNode(List<String> parameters, ASTNode body, int line) {
-		this.parameters = parameters;
-		this.body = body;
-		this.line = line;
-	}
+    public LambdaNode(List<String> parameters, ASTNode body, int line) {
+        this.parameters = parameters;
+        this.body = body;
+        this.line = line;
+    }
 
-	@Override
-	public <R> R accept(ASTVisitor<R> visitor) {
-		return visitor.visitLambdaNode(this);
-	}
+    @Override
+    public <R> R accept(ASTVisitor<R> visitor) {
+        return visitor.visitLambdaNode(this);
+    }
 
-	public List<String> getParameters() {
-		return parameters;
-	}
+    @Override
+    public LambdaNode clone() {
+        LambdaNode clonedNode = new LambdaNode(parameters, body, line);
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
+    }
 
-	public ASTNode getBody() {
-		return body;
-	}
+    public List<String> getParameters() {
+        return parameters;
+    }
 
-	public int getLine() {
-		return line;
-	}
+    public ASTNode getBody() {
+        return body;
+    }
 
-	public NodeType getReturnType() {
-		return returnType;
-	}
+    public int getLine() {
+        return line;
+    }
 
-	public void setReturnType(NodeType returnType) {
-		this.returnType = returnType;
-	}
+    public NodeType getReturnType() {
+        return returnType;
+    }
+
+    public void setReturnType(NodeType returnType) {
+        this.returnType = returnType;
+    }
 }
