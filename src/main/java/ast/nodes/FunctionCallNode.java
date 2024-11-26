@@ -5,30 +5,51 @@ import visitors.ASTVisitor;
 import java.util.List;
 
 public class FunctionCallNode extends ASTNode {
-	String functionName;
-	List<ASTNode> parameters;
-	int line;
+    String functionName;
+    List<ASTNode> parameters;
+    int line;
 
-	public FunctionCallNode(String functionName, List<ASTNode> parameters, int line) {
-		this.functionName = functionName;
-		this.parameters = parameters;
-		this.line = line;
-	}
+    private ASTNode constantValue;
 
-	@Override
-	public <R> R accept(ASTVisitor<R> visitor) {
-		return visitor.visitFunctionCallNode(this);
-	}
+    public FunctionCallNode(String functionName, List<ASTNode> parameters, int line) {
+        this.functionName = functionName;
+        this.parameters = parameters;
+        this.line = line;
+    }
 
-	public String getFunctionName() {
-		return functionName;
-	}
+    @Override
+    public <R> R accept(ASTVisitor<R> visitor) {
+        return visitor.visitFunctionCallNode(this);
+    }
 
-	public List<ASTNode> getParameters() {
-		return parameters;
-	}
+    @Override
+    public FunctionCallNode clone() {
+        FunctionCallNode clonedNode = new FunctionCallNode(functionName, parameters, line);
+        for (ASTNode child : this.getChildren()) {
+            clonedNode.addChild(child.clone());
+        }
+        return clonedNode;
+    }
 
-	public int getLine() {
-		return line;
-	}
+    public String getFunctionName() {
+        return functionName;
+    }
+
+    public List<ASTNode> getParameters() {
+        return parameters;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public ASTNode getConstantValue() {
+        return constantValue;
+    }
+
+    @Override
+    public void setConstantValue(ASTNode constantValue) {
+        this.constantValue = constantValue;
+    }
+
 }

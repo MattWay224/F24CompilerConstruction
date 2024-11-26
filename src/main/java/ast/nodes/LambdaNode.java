@@ -5,6 +5,7 @@ import visitors.ASTVisitor;
 import java.util.List;
 
 public class LambdaNode extends ASTNode {
+
 	List<String> parameters;
 	ASTNode body;
 	int line;
@@ -31,5 +32,4 @@ public class LambdaNode extends ASTNode {
 	public int getLine() {
 		return line;
 	}
-
 }
