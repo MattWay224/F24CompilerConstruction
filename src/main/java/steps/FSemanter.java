@@ -2,6 +2,7 @@ package steps;
 
 import ast.nodes.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FSemanter {
@@ -53,11 +54,11 @@ public class FSemanter {
 	private void traverseAndCheck(ASTNode node) throws Exception {
 		if (node == null) return;
 
-		else if (node.getClass().getSimpleName().equals("OperationNode") && !node.isConstant()) {
+		else if (node.getClass().getSimpleName().equals("OperationNode")) {
 			checkArithmeticOperation(node);
 			simplifyExpression(node);
 
-		} else if (node.getClass().getSimpleName().equals("ComparisonNode") && !node.isConstant()) {
+		} else if (node.getClass().getSimpleName().equals("ComparisonNode")) {
 			checkComparisonOperation((ComparisonNode) node);
 
 		} else if (node.getClass().getSimpleName().equals("LogicalOperationNode")) {
@@ -65,26 +66,6 @@ public class FSemanter {
 		}
 		for (ASTNode child : node.getChildren()) {
 			traverseAndCheck(child);
-		}
-	}
-
-	//Constant Expression Simplification
-	private void simplifyExpression(ASTNode operation) throws Exception {
-		ASTNode parent = operation.getParent();
-
-		if (operation.getClass().getSimpleName().equals("OperationNode")) {
-			OperationNode opNode = (OperationNode) operation;
-			List<ASTNode> operands = opNode.getOperands();
-
-			if (operands.stream().allMatch(ASTNode::isInt)) {
-				Number result = evalInt(opNode.getOperator(), operands);
-				LiteralNode constantNode = new LiteralNode(result.toString());
-				replaceNodeInParent(parent, opNode, constantNode);
-			} else if (operands.stream().anyMatch(ASTNode::isReal)) {
-				Number result = evalReal(opNode.getOperator(), operands);
-				LiteralNode constantNode = new LiteralNode(result.toString());
-				replaceNodeInParent(parent, opNode, constantNode);
-			}
 		}
 	}
 
@@ -110,6 +91,10 @@ public class FSemanter {
 			}
 			default -> throw new Exception("Unsupported operator: " + operator);
 		}
+	}
+
+	private void simplifyExpression(ASTNode node) {
+
 	}
 
 	private double evalReal(String operator, List<ASTNode> operands) throws Exception {

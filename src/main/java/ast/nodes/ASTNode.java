@@ -11,11 +11,6 @@ public abstract class ASTNode {
 	private NodeType type;
 
 	private ASTNode parent;
-
-	private boolean isQuoted;
-
-	private boolean isEvaluated;
-
 	private final List<ASTNode> children;
 
 	public ASTNode() {
@@ -41,40 +36,12 @@ public abstract class ASTNode {
 
 	public abstract <R> R accept(ASTVisitor<R> visitor);
 
-	public void setQuoted(boolean quoted) {
-		isQuoted = quoted;
-	}
-
-	public boolean isQuoted() {
-		return isQuoted;
-	}
-
-	public void setEvaluated(boolean evaluated) {
-		isEvaluated = evaluated;
-	}
-
-	public boolean isEvaluated() {
-		return isEvaluated;
-	}
-
 	public NodeType getType() {
 		return type;
 	}
 
 	public void setType(NodeType type) {
 		this.type = type;
-	}
-
-	public boolean isConstant() {
-		return false;
-	}
-
-	public boolean isInt() {
-		return false;
-	}
-
-	public boolean isReal() {
-		return false;
 	}
 
 	public enum NodeType {

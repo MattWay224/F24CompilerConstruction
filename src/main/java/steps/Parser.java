@@ -90,7 +90,6 @@ public class Parser {
 	private ASTNode parseQuote() throws Exception {
 		Token quoteToken = advance();
 		ASTNode quotedExpr = parseExpr();
-		quotedExpr.setQuoted(true);
 		ASTNode quotednode = factory.createQuoteNode(quotedExpr, quoteToken.line);
 		quotednode.addChild(quotedExpr);
 		quotednode.setType(ASTNode.NodeType.QUOTE);
@@ -174,7 +173,6 @@ public class Parser {
 	private ASTNode parseEval() throws Exception {
 		Token op = advance();
 		ASTNode q = parseExpr();
-		q.setEvaluated(true);
 		consume(TokenType.RPAREN, "EXPECTED ) AFTER EVAL");
 		ASTNode evalnode = factory.createEvalNode(q, op.line);
 		evalnode.addChild(q);
@@ -254,7 +252,7 @@ public class Parser {
 
 		String functionName = consume(TokenType.ATOM, "MISSING FUNCTION NAME").value;
 
-		FunctionNode placeholderFunctionNode = new FunctionNode(functionName, new ArrayList<>(), null, op.line, op.line, ASTNode.NodeType.VOID);
+		FunctionNode placeholderFunctionNode = new FunctionNode(functionName, new ArrayList<>(), null, op.line, op.line);
 		placeholderFunctionNode.setType(ASTNode.NodeType.FUNC);
 
 		globalScope.define(functionName, placeholderFunctionNode);
@@ -267,22 +265,16 @@ public class Parser {
 			currentScope.define(varName, null);
 		}
 
-		placeholderFunctionNode = new FunctionNode(functionName, parameters, null, op.line, op.line, ASTNode.NodeType.VOID);
+		placeholderFunctionNode = new FunctionNode(functionName, parameters, null, op.line, op.line);
 		globalScope.define(functionName, placeholderFunctionNode);
 		currentScope.define(functionName, placeholderFunctionNode);
 
 		consume(TokenType.RPAREN, "EXPECTED ) AFTER FUNCTION PARAMETER LIST");
-
-		ASTNode.NodeType returnType = ASTNode.NodeType.VOID;
-
 		List<ASTNode> bodyExpressions = new ArrayList<>();
 
 		while (!check(TokenType.RPAREN)) {
 			ASTNode expr = parseExpr();
 			bodyExpressions.add(expr);
-			if (expr.getType() == ASTNode.NodeType.RETURN) {
-				returnType = ((ReturnNode) expr).getReturnValue().getType();
-			}
 		}
 		Token clo = consume(TokenType.RPAREN, "EXPECTED ) AFTER FUNCTION BODY");
 
@@ -290,7 +282,7 @@ public class Parser {
 		body.setType(ASTNode.NodeType.PROG);
 		currentScope = previousScope;
 
-		ASTNode functionNode = factory.createFunctionNode(functionName, parameters, body, op.line, clo.line, returnType);
+		ASTNode functionNode = factory.createFunctionNode(functionName, parameters, body, op.line, clo.line);
 		for (ASTNode expr : bodyExpressions) {
 			functionNode.addChild(expr);
 		}
@@ -469,9 +461,7 @@ public class Parser {
 		}
 
 		Token clo = consume(TokenType.RPAREN, "EXPECTED ) AFTER OPERATION");
-		ASTNode funccallnode = factory.createFunctionCallNode(functionName, operands, clo.line);
-		funccallnode.setType(((FunctionNode) functionNode).getReturnType());
-		return funccallnode;
+		return factory.createFunctionCallNode(functionName, operands, clo.line);
 	}
 
 	private ASTNode parseLambdaCall(String lambdaName) throws Exception {

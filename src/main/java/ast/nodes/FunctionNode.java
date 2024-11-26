@@ -6,20 +6,18 @@ import java.util.List;
 
 //func
 public class FunctionNode extends ASTNode {
-	private NodeType returnType;
 	String functionName;
 	List<String> parameters;
 	ASTNode body;
 	int lineOp;
 	int lineClo;
 
-	public FunctionNode(String functionName, List<String> parameters, ASTNode body, int lineOp, int lineClo, NodeType returnType) {
+	public FunctionNode(String functionName, List<String> parameters, ASTNode body, int lineOp, int lineClo) {
 		this.functionName = functionName;
 		this.parameters = parameters;
 		this.body = body;
 		this.lineOp = lineOp;
 		this.lineClo = lineClo;
-		this.returnType = returnType;
 	}
 
 	@Override
@@ -45,13 +43,5 @@ public class FunctionNode extends ASTNode {
 
 	public int getLineClo() {
 		return lineClo;
-	}
-
-	public void setReturnType(NodeType returnType) {
-		this.returnType = returnType;
-	}
-
-	public NodeType getReturnType() {
-		return returnType;
 	}
 }

@@ -56,7 +56,7 @@ public class Main {
 			ASTPrinter.printAST(writerSemantecer, ast, visitor, 0);
 
 			System.out.println("Test " + testNumber + " output:");
-			System.out.println(interpreter.visitProgNode((ProgNode) ast));
+			interpreter.visitProgNode((ProgNode) ast);
 		} catch (IOException e) {
 			System.err.println("Error: " + e.getMessage() + " Test: " + testNumber);
 		} catch (Exception e) {

@@ -58,8 +58,8 @@ public class ASTNodeFactory {
 		return new ProgNode(statements, lineOp, lineClo);
 	}
 
-	public FunctionNode createFunctionNode(String functionName, List<String> parameters, ASTNode body, int lineOp, int lineClo, ASTNode.NodeType returnType) {
-		return new FunctionNode(functionName, parameters, body, lineOp, lineClo, returnType);
+	public FunctionNode createFunctionNode(String functionName, List<String> parameters, ASTNode body, int lineOp, int lineClo) {
+		return new FunctionNode(functionName, parameters, body, lineOp, lineClo);
 	}
 
 	public FunctionCallNode createFunctionCallNode(String functionName, List<ASTNode> parameters, int line) {
