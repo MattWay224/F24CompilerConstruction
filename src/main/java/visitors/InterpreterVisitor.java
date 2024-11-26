@@ -62,6 +62,34 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 
 	@Override
 	public Object visitPredicateNode(PredicateNode node) {
+		switch (node.getPredicate()) {
+			case "isint" -> {
+				if (node.getElement().accept(this) instanceof Integer) {
+					return true;
+				} else return false;
+			}
+			case "isreal" -> {
+				if (node.getElement().accept(this) instanceof Double ||
+						node.getElement().accept(this) instanceof Integer) {
+					return true;
+				} else return false;
+			}
+			case "isbool" -> {
+				if (node.getElement().accept(this) instanceof Boolean) {
+					return true;
+				} else return false;
+			}
+			case "isnull" -> {
+				if (node.getElement().accept(this) instanceof NullNode) {
+					return true;
+				} else return false;
+			}
+			case "islist" -> {
+				if (node.getElement() instanceof ConsNode) {
+					return true;
+				} else return false;
+			}
+		}
 		Object value = visit(node.getElement());
 		return value != null;
 	}
@@ -129,7 +157,7 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 			for (ASTNode stmt : node.getBody()) {
 				result = visit(stmt);
 			}
-			if (result.toString() == "break") break;
+			if (result == "break") break;
 		}
 		return result;
 	}
@@ -268,7 +296,6 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 		} catch (Exception e) {
 			throw new RuntimeException("Lambda call exc: ");
 		}
-
 	}
 
 	@Override

@@ -8,123 +8,69 @@ import java.util.List;
 
 // Base class for AST nodes
 public abstract class ASTNode {
-    private NodeType type;
+	private NodeType type;
 
-    private ASTNode parent;
+	private ASTNode parent;
+	private final List<ASTNode> children;
 
-    private boolean isQuoted;
+	public ASTNode() {
+		this.children = new ArrayList<>();
+	}
 
-    private boolean isEvaluated;
+	public List<ASTNode> getChildren() {
+		return children;
+	}
 
-    private final List<ASTNode> children;
+	public void addChild(ASTNode child) {
+		child.setParent(this);
+		children.add(child);
+	}
 
-    public ASTNode() {
-        this.children = new ArrayList<>();
-    }
+	public ASTNode getParent() {
+		return parent;
+	}
 
-    public List<ASTNode> getChildren() {
-        return children;
-    }
+	public void setParent(ASTNode parent) {
+		this.parent = parent;
+	}
 
-    public void addChild(ASTNode child) {
-        child.setParent(this);
-        children.add(child);
-    }
+	public abstract <R> R accept(ASTVisitor<R> visitor);
 
-    public ASTNode getParent() {
-        return parent;
-    }
+	public NodeType getType() {
+		return type;
+	}
 
-    public void setParent(ASTNode parent) {
-        this.parent = parent;
-    }
+	public void setType(NodeType type) {
+		this.type = type;
+	}
 
-    public abstract <R> R accept(ASTVisitor<R> visitor);
-
-    public void setQuoted(boolean quoted) {
-        isQuoted = quoted;
-    }
-
-    public boolean isQuoted() {
-        return isQuoted;
-    }
-
-    public void setEvaluated(boolean evaluated) {
-        isEvaluated = evaluated;
-    }
-
-    public boolean isEvaluated() {
-        return isEvaluated;
-    }
-
-    public NodeType getType() {
-        return type;
-    }
-
-    public void setType(NodeType type) {
-        this.type = type;
-    }
-
-    public void setConstantValue(LiteralNode constantValue) {
-    }
-
-    public void setConstantValue(BooleanNode constantValue) {
-    }
-
-    public void setConstantValue(ListNode constantValue) {
-    }
-
-    public boolean isConstant() {
-        return false;
-    }
-
-    public boolean isInt() {
-        return false;
-    }
-
-    public boolean isReal() {
-        return false;
-    }
-
-    public void setConstantValue(ASTNode constantValue) {
-    }
-
-    ;
-
-    public void setConstantValue(Object constantValue) {
-    }
-
-    public abstract ASTNode clone();
-
-
-    public enum NodeType {
-        ASSIGNMENT,
-        ATOM,
-        BOOL,
-        BREAK,
-        COMP,
-        COND,
-        CONS,
-        EVAL,
-        FUNC,
-        FUNCCALL,
-        HEAD,
-        LAMBDA,
-        LAMBDACALL,
-        LIST,
-        LITERAL,
-        LOGICALOP,
-        NOT,
-        NULL,
-        OPERATION,
-        PREDICATE,
-        PROG,
-        QUOTE,
-        RETURN,
-        SIGN,
-        TAIL,
-        WHILE,
-        PRINT,
-        VOID
-    }
+	public enum NodeType {
+		ASSIGNMENT,
+		ATOM,
+		BOOL,
+		BREAK,
+		COMP,
+		COND,
+		CONS,
+		EVAL,
+		FUNC,
+		FUNCCALL,
+		HEAD,
+		LAMBDA,
+		LAMBDACALL,
+		LIST,
+		LITERAL,
+		LOGICALOP,
+		NOT,
+		NULL,
+		OPERATION,
+		PREDICATE,
+		PROG,
+		QUOTE,
+		RETURN,
+		SIGN,
+		TAIL,
+		WHILE,
+		VOID
+	}
 }
