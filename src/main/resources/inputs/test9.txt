@@ -1,5 +1,5 @@
-(func double (x) (lambda (x) (times x 2)))
-(double 4)
+(func Yelizar (x) (lambda (x) (times x 2)))
+(Yelizar 4)
 
 (func increment (x) (lambda (x) (plus x 1)))
 (increment 7)

@@ -159,7 +159,7 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 			}
 			if (result == "break") break;
 		}
-		return result;
+		return null;
 	}
 
 	@Override
@@ -181,7 +181,7 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 				functionScope.define(param, new LiteralNode(argValue.toString()));
 			}
 
-			InterpreterVisitor functionInterpreter = new InterpreterVisitor(functionScope);
+			InterpreterVisitor functionInterpreter = new InterpreterVisitor(functionScope, false);
 			return functionInterpreter.visit(function.getBody());
 		} catch (Exception e) {
 			throw new RuntimeException("Function call error: " + e.getMessage());
