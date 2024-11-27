@@ -2,7 +2,6 @@ package steps;
 
 import ast.nodes.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FSemanter {
@@ -22,11 +21,6 @@ public class FSemanter {
 
 		if (leftOperand == null || rightOperand == null) {
 			throw new Exception("LOGICAL OPERATION " + operator + " HAS NO OPERANDS");
-		}
-
-		if (leftOperand.getType() != ASTNode.NodeType.BOOL || rightOperand.getType() != ASTNode.NodeType.BOOL) {
-			throw new Exception("TYPE ERROR: LOGICAL OPERATORS REQUIRE BOOLEAN OPERANDS on line "
-					+ operation.getLineClo());
 		}
 	}
 

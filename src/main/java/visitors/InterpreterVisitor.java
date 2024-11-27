@@ -80,7 +80,7 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 				} else return false;
 			}
 			case "isnull" -> {
-				if (node.getElement().accept(this) instanceof NullNode) {
+				if (node.getElement() instanceof NullNode) {
 					return true;
 				} else return false;
 			}

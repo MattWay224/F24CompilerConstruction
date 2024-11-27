@@ -2,3 +2,6 @@
 (or true false)
 (xor true false)
 (not true)
+(xor (isint 42) (isbool (or false false)))
+(and (and true (isreal 42)) (or (isint (head (cons 1 (cons 2 ())))) true))
+(not (or false (isnull null)))
