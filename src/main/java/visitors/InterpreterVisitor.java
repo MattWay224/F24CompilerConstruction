@@ -157,7 +157,7 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 			for (ASTNode stmt : node.getBody()) {
 				result = visit(stmt);
 			}
-			if (result == "break") break;
+			if (result instanceof BreakNode) break;
 		}
 		return null;
 	}
@@ -319,7 +319,7 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 
 	@Override
 	public Object visitQuoteNode(QuoteNode node) {
-		return node.getQuotedExpr();
+		return null;
 	}
 
 	@Override
