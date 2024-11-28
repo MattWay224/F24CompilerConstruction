@@ -1,3 +1,4 @@
+(isint (plus 24 32))
 (isint 42)
 (isreal 3.14)
 (isbool true)
@@ -7,3 +8,4 @@
 (islist true)
 (isbool 42)
 (isreal 42)
+(isbool (and true true))

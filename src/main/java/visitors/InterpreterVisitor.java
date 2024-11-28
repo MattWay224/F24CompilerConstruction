@@ -80,7 +80,7 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 				} else return false;
 			}
 			case "isnull" -> {
-				if (node.getElement().accept(this) instanceof NullNode) {
+				if (node.getElement() instanceof NullNode) {
 					return true;
 				} else return false;
 			}
@@ -157,9 +157,9 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 			for (ASTNode stmt : node.getBody()) {
 				result = visit(stmt);
 			}
-			if (result == "break") break;
+			if (result instanceof BreakNode) break;
 		}
-		return result;
+		return null;
 	}
 
 	@Override
@@ -181,7 +181,7 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 				functionScope.define(param, new LiteralNode(argValue.toString()));
 			}
 
-			InterpreterVisitor functionInterpreter = new InterpreterVisitor(functionScope);
+			InterpreterVisitor functionInterpreter = new InterpreterVisitor(functionScope, false);
 			return functionInterpreter.visit(function.getBody());
 		} catch (Exception e) {
 			throw new RuntimeException("Function call error: " + e.getMessage());
@@ -319,7 +319,7 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 
 	@Override
 	public Object visitQuoteNode(QuoteNode node) {
-		return node.getQuotedExpr();
+		return null;
 	}
 
 	@Override

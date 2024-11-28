@@ -1,10 +1,10 @@
-(print (plus 3 3))
-(print (minus 3 6))
-(print (times 7 7))
-(print (divide 65 9))
+(plus 3 3)
+(minus 3 6)
+(times 7 7)
+(divide 65 9)
 
 (setq a (plus 1.5 2.5))
 (setq b (divide 9.0 3.0))
 
-(print a)
-(print b)
+a
+b

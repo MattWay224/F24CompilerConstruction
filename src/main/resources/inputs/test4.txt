@@ -1,2 +1,4 @@
-(print (head (cons 1 (cons 2 (cons 3 (cons 4 ()))))))
-(print (tail (tail (cons 1 (cons 2 (cons 3 (cons 4 ())))))))
+(head (cons 1 (cons 2 (cons 3 (cons 4 ())))))
+(tail (tail (cons 1 (cons 2 (cons 3 (cons 4 ()))))))
+(cons 1 (cons 23 (cons 43 ())))
+(head (tail (cons 2 (cons 3 (cons 4 (cons 5 ()))))))
