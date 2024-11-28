@@ -5,51 +5,30 @@ import visitors.ASTVisitor;
 import java.util.List;
 
 public class LambdaCallNode extends ASTNode {
-    String lambdaName;
-    List<ASTNode> parameters;
-    int line;
+	String lambdaName;
+	List<ASTNode> parameters;
+	int line;
 
+	public LambdaCallNode(String lambdaName, List<ASTNode> parameters, int line) {
+		this.lambdaName = lambdaName;
+		this.parameters = parameters;
+		this.line = line;
+	}
 
-    private ASTNode constantValue;
+	@Override
+	public <R> R accept(ASTVisitor<R> visitor) {
+		return visitor.visitLambdaCallNode(this);
+	}
 
-    public LambdaCallNode(String lambdaName, List<ASTNode> parameters, int line) {
-        this.lambdaName = lambdaName;
-        this.parameters = parameters;
-        this.line = line;
-    }
+	public String getLambdaName() {
+		return lambdaName;
+	}
 
-    @Override
-    public <R> R accept(ASTVisitor<R> visitor) {
-        return visitor.visitLambdaCallNode(this);
-    }
+	public List<ASTNode> getParameters() {
+		return parameters;
+	}
 
-    @Override
-    public LambdaCallNode clone() {
-        LambdaCallNode clonedNode = new LambdaCallNode(lambdaName, parameters, line);
-        for (ASTNode child : this.getChildren()) {
-            clonedNode.addChild(child.clone());
-        }
-        return clonedNode;
-    }
-
-    public String getLambdaName() {
-        return lambdaName;
-    }
-
-    public List<ASTNode> getParameters() {
-        return parameters;
-    }
-
-    public int getLine() {
-        return line;
-    }
-
-    public ASTNode getConstantValue() {
-        return constantValue;
-    }
-
-    @Override
-    public void setConstantValue(ASTNode constantValue) {
-        this.constantValue = constantValue;
-    }
+	public int getLine() {
+		return line;
+	}
 }
