@@ -49,17 +49,6 @@
   (setq result (multiplyByTwo c))
   result)
 
-
-(prog (code result)
-  (setq code (quote (plus 7 8)))
-  (setq result (eval code))
-  (prog (x y)
-    (setq x 5)
-    (setq y 10)
-    (setq result (plus result (times x y))))
-  result)
-
-
 (prog (a b result)
   (setq a 4)
   (setq b 6)

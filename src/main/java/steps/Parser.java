@@ -156,15 +156,7 @@ public class Parser {
 			case "not" -> parseNot();
 			case "lambda" -> parseLambda();
 			case ")" -> parseLiteralList();
-			case "quote" -> {
-				advance();
-				ASTNode quotedExpr = parseExpr();
-				advance();
-				ASTNode quotednode = factory.createQuoteNode(quotedExpr, operatorToken.line);
-				quotednode.addChild(quotedExpr);
-				quotednode.setType(ASTNode.NodeType.QUOTE);
-				yield quotednode;
-			}
+			case "quote" -> parseQuote();
 			case "eval" -> parseEval();
 			default -> parseFuncCall(operatorToken.value);
 		};
@@ -452,7 +444,6 @@ public class Parser {
 
 		while (!check(TokenType.RPAREN)) {
 			ASTNode expr = parseExpr();
-			determineReturnType(expr);
 			operands.add(expr);
 		}
 
@@ -527,14 +518,4 @@ public class Parser {
 		condnode.setType(ASTNode.NodeType.COND);
 		return condnode;
 	}
-
-	private void determineReturnType(ASTNode node) throws Exception {
-		if (Objects.requireNonNull(node.getType()) == ASTNode.NodeType.FUNCCALL) {
-			FunctionNode functionNode = (FunctionNode) globalScope.lookup(((FunctionNode) node).getFunctionName());
-			if (functionNode == null) {
-				throw new Exception("UNDEFINED FUNCTION " + ((FunctionNode) node).getFunctionName());
-			}
-		}
-	}
-
 }

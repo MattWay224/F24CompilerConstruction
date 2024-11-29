@@ -94,6 +94,10 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 		return value != null;
 	}
 
+	private boolean isInteger(double value) {
+		return value == Math.floor(value);
+	}
+
 	private Number evalOperation(String operator, List<Object> operands) {
 		List<Double> numericOperands = operands.stream()
 				.map(o -> ((Number) o).doubleValue()) // Ensure all are Numbers
@@ -101,21 +105,28 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 
 		switch (operator) {
 			case "plus" -> {
-				return numericOperands.stream().mapToDouble(Double::doubleValue).sum();
+				double result = numericOperands.stream().mapToDouble(Double::doubleValue).sum();
+				if (isInteger(result)) {
+					return (int) result;
+				} else return result;
 			}
 			case "minus" -> {
 				double result = numericOperands.get(0);
 				for (int i = 1; i < numericOperands.size(); i++) {
 					result -= numericOperands.get(i);
 				}
-				return result;
+				if (isInteger(result)) {
+					return (int) result;
+				} else return result;
 			}
 			case "times" -> {
 				double result = 1.0;
 				for (Double operand : numericOperands) {
 					result *= operand;
 				}
-				return result;
+				if (isInteger(result)) {
+					return (int) result;
+				} else return result;
 			}
 			case "divide" -> {
 				double result = numericOperands.get(0);
@@ -126,7 +137,9 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 					}
 					result /= divisor;
 				}
-				return result;
+				if (isInteger(result)) {
+					return (int) result;
+				} else return result;
 			}
 			default -> throw new RuntimeException("Unknown operator: " + operator);
 		}
@@ -147,7 +160,16 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 
 	@Override
 	public Object visitConditionNode(ConditionNode node) {
-		return node.getChildren().get(1);
+		List<ConditionBranch> branches = node.getBranches();
+
+		if ((boolean) branches.get(0).getCondition().accept(this)) {
+			return branches.get(0).getAction().accept(this);
+		} else try {
+			Object branch = branches.get(1).getAction().accept(this);
+			return branch;
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
 	}
 
 	@Override
