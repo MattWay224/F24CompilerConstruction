@@ -26,10 +26,6 @@ public abstract class ASTNode {
 		children.add(child);
 	}
 
-	public ASTNode getParent() {
-		return parent;
-	}
-
 	public void setParent(ASTNode parent) {
 		this.parent = parent;
 	}
