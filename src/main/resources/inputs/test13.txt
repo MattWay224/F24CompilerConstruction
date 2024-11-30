@@ -4,16 +4,12 @@
 (triple 3)
 
 (func double (x) (times x 2))
-(func applyFunction (f x) (f x))
-(applyFunction double 4)
+(func applyFunction (f) f)
+(applyFunction (double 4))
 
-(func returnMultiplier (factor)
-  (lambda (x) (times x factor)))
+(func returnMultiplier (factor x)
+  (times x factor))
 (triple 4)
 
 (func square (x) (times x x))
-
-(func applyReturnedFunction (f x factor)
-  (applyFunction (returnMultiplier factor) x))
-
-(applyReturnedFunction square 2 3)
+(square (triple 4))
