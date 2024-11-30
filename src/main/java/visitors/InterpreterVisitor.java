@@ -183,12 +183,16 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 
 	@Override
 	public Object visitWhileNode(WhileNode node) {
-		Object result = null;
+		boolean breakflag = false;
 		while ((Boolean) visit(node.getCondition())) {
+			if (breakflag) break;
 			for (ASTNode stmt : node.getBody()) {
-				result = visit(stmt);
+				visit(stmt);
+				if (stmt instanceof BreakNode) {
+					breakflag = true;
+					break;
+				}
 			}
-			if (result instanceof BreakNode) break;
 		}
 		return null;
 	}

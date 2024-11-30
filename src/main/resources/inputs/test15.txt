@@ -16,3 +16,8 @@
 
 (setq plusQuote '(plus 1 2 3))
 (eval plusQuote)
+(setq x 1)
+x
+'x
+
+(eval '(times 2 4))
