@@ -1,12 +1,11 @@
 (setq counter 0)
 (while (less counter 5)
   (setq counter (plus counter 1)))
-
 counter
+
 (setq count 0)
 (while (less count 3)
   (setq count (plus count 1)))
-
 count
 
 (setq sum 0)
@@ -14,5 +13,4 @@ count
 (while (less n 6)
   (setq sum (plus sum n))
   (setq n (plus n 1)))
-
 n
