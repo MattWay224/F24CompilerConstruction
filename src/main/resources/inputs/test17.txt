@@ -1,7 +1,6 @@
 (setq createPerson (lambda (name age) (cons name age)))
 (setq Alice 1)
 (setq person (createPerson Alice 30))
-(head person)
 
 (func getName (person)
   (head person))

@@ -21,9 +21,14 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 
 	@Override
 	public Object visitAssignmentNode(AssignmentNode node) {
-		Object value = visit(node.getChildren().getFirst());
-		symbolTable.define(node.getVariable(), new LiteralNode(value.toString()));
-		return value;
+		ASTNode action = node.getChildren().getFirst();
+		Object value = visit(action);
+		if (action instanceof QuoteNode) {
+			symbolTable.define(node.getVariable(), new QuoteNode((ASTNode) value, ((QuoteNode) action).getLine()));
+		} else {
+			symbolTable.define(node.getVariable(), new LiteralNode(value.toString()));
+		}
+		return null;
 	}
 
 	@Override
@@ -150,7 +155,12 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 	public Object visitProgNode(ProgNode node) {
 		Object result = null;
 		for (ASTNode statement : node.getStatements()) {
-			result = visit(statement);
+			if (statement instanceof ProgNode) {
+				InterpreterVisitor localVisitor = new InterpreterVisitor(symbolTable, false);
+				result = localVisitor.visit(statement);
+			} else {
+				result = visit(statement);
+			}
 			if (globalScope && result != null) { // Only print in global scope
 				System.out.println(result);
 			}
@@ -165,9 +175,8 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 		if ((boolean) branches.get(0).getCondition().accept(this)) {
 			return branches.get(0).getAction().accept(this);
 		} else try {
-			Object branch = branches.get(1).getAction().accept(this);
-			return branch;
-		} catch (IndexOutOfBoundsException e) {
+			return node.getDefaultAction().accept(this);
+		} catch (NullPointerException e) {
 			return null;
 		}
 	}
@@ -341,7 +350,7 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 
 	@Override
 	public Object visitQuoteNode(QuoteNode node) {
-		return null;
+		return node.getQuotedExpr();
 	}
 
 	@Override
