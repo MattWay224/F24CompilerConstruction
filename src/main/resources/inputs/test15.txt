@@ -1,4 +1,4 @@
-(setq code (quote (plus 7 8)))
+(setq code (quote (plus 7 8 9)))
 (eval code)
 
 (setq conditionCode (quote (cond (greater 4 3) (plus 1 1) (minus 5 2))))
@@ -7,5 +7,12 @@
 (setq nestedCode (quote (plus (times 3 4) (divide 12 3))))
 (eval nestedCode)
 
-(setq factorialCode (quote (factorial 4)))
+(func factorial (n)
+  (prog (result)
+    (cond (equal n 0) (return 1) (return (times n (factorial (minus n 1)))))))
+
+(setq factorialCode (quote (factorial 5)))
 (eval factorialCode)
+
+(setq plusQuote '(plus 1 2 3))
+(eval plusQuote)

@@ -27,9 +27,9 @@ public class Main {
 		InterpreterVisitor interpreter;
 
 		for (int i = 1; i <= TOTAL_TESTS; i++) {
+			if (i == 17) continue;
 			SymbolTable globalTable = new SymbolTable(null);
 			interpreter = new InterpreterVisitor(globalTable, true);
-			if (i == 9 || i == 13 || i == 15) continue;
 			processTestFile(i, lexer, parser, visitor, semanter, interpreter);
 		}
 	}

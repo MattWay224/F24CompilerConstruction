@@ -44,6 +44,7 @@ public class Parser {
 
 		return switch (currentToken.type) {
 			case LPAREN -> parseParenthesizedExpr();
+			case QUOTE -> parseQuoteWithoutBrackets();
 			case INTEGER -> {
 				advance();
 				ASTNode intnode = factory.createLiteralNode(currentToken.value);
@@ -79,19 +80,27 @@ public class Parser {
 					throw new Exception("Undefined variable " + currentToken.value + " in line " + currentToken.line);
 				}
 			}
-			case QUOTE -> parseQuote();
 			case LESS, LESSEQ, GREATER, GREATEREQ, EQUAL, NONEQUAL -> parseComparison(currentToken.value);
 			case PLUS, MINUS, TIMES, DIVIDE -> parseOperation(currentToken.value);
 			default -> throw new Exception("UNEXPECTED TOKEN: " + currentToken + " in line " + currentToken.line);
 		};
 	}
 
+	private ASTNode parseQuoteWithoutBrackets() throws Exception {
+		Token quoteToken = advance();
+		ASTNode quotedExpr = parseExpr();
+		ASTNode quotednode = factory.createQuoteNode(quotedExpr, quoteToken.line);
+		quotednode.addChild(quotedExpr);
+		quotednode.setType(ASTNode.NodeType.QUOTE);
+		return quotednode;
+	}
 	private ASTNode parseQuote() throws Exception {
 		Token quoteToken = advance();
 		ASTNode quotedExpr = parseExpr();
 		ASTNode quotednode = factory.createQuoteNode(quotedExpr, quoteToken.line);
 		quotednode.addChild(quotedExpr);
 		quotednode.setType(ASTNode.NodeType.QUOTE);
+		consume(TokenType.RPAREN, "EXPECTED ) AFTER QUOTE");
 		return quotednode;
 	}
 
