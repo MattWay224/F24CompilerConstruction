@@ -150,7 +150,12 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 	public Object visitProgNode(ProgNode node) {
 		Object result = null;
 		for (ASTNode statement : node.getStatements()) {
-			result = visit(statement);
+			if (statement instanceof ProgNode) {
+				InterpreterVisitor localVisitor = new InterpreterVisitor(symbolTable, false);
+				result = localVisitor.visit(statement);
+			} else {
+				result = visit(statement);
+			}
 			if (globalScope && result != null) { // Only print in global scope
 				System.out.println(result);
 			}
