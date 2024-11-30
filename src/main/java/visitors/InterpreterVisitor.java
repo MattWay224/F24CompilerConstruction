@@ -23,7 +23,7 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 	public Object visitAssignmentNode(AssignmentNode node) {
 		Object value = visit(node.getChildren().getFirst());
 		symbolTable.define(node.getVariable(), new LiteralNode(value.toString()));
-		return value;
+		return null;
 	}
 
 	@Override
@@ -165,9 +165,8 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 		if ((boolean) branches.get(0).getCondition().accept(this)) {
 			return branches.get(0).getAction().accept(this);
 		} else try {
-			Object branch = branches.get(1).getAction().accept(this);
-			return branch;
-		} catch (IndexOutOfBoundsException e) {
+			return node.getDefaultAction().accept(this);
+		}  catch (NullPointerException e) {
 			return null;
 		}
 	}

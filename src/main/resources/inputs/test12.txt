@@ -2,3 +2,5 @@
 (while (less counter 10)
   (cond (equal counter 5) (setq counter (plus counter 5)) (setq counter (plus counter 1)))
   )
+
+counter

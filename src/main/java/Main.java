@@ -29,7 +29,7 @@ public class Main {
 		for (int i = 1; i <= TOTAL_TESTS; i++) {
 			SymbolTable globalTable = new SymbolTable(null);
 			interpreter = new InterpreterVisitor(globalTable, true);
-			if (i == 9 || i == 12 || i == 13 || i == 15) continue;
+			if (i == 9 || i == 13 || i == 15) continue;
 			processTestFile(i, lexer, parser, visitor, semanter, interpreter);
 		}
 	}
