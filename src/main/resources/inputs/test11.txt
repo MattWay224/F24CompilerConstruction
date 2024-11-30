@@ -14,3 +14,9 @@ count
   (setq sum (plus sum n))
   (setq n (plus n 1)))
 n
+
+(setq counter 0)
+(while (less counter 10)
+    (setq counter (plus counter 1))
+    (break))
+counter
