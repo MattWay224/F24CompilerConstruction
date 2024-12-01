@@ -10,9 +10,6 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 	private final SymbolTable symbolTable;
 	private final boolean globalScope; // Flag to track whether in global scope
 
-	public InterpreterVisitor(SymbolTable symbolTable) {
-		this(symbolTable, true); // Default to global scope
-	}
 
 	public InterpreterVisitor(SymbolTable symbolTable, boolean globalScope) {
 		this.symbolTable = symbolTable;

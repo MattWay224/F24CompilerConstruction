@@ -102,7 +102,7 @@ public class ASTNodeFactory {
 		return new EvalNode(node, line);
 	}
 
-	public ASTNode createNullNode(String value, int line) {
+	public ASTNode createNullNode(int line) {
 		return new NullNode(line);
 	}
 

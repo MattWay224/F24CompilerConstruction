@@ -59,7 +59,7 @@ public class Parser {
 			}
 			case NULL -> {
 				advance();
-				ASTNode nullnode = factory.createNullNode(currentToken.value, currentToken.line);
+				ASTNode nullnode = factory.createNullNode(currentToken.line);
 				nullnode.setType(ASTNode.NodeType.NULL);
 				yield nullnode;
 			}
@@ -94,6 +94,7 @@ public class Parser {
 		quotednode.setType(ASTNode.NodeType.QUOTE);
 		return quotednode;
 	}
+
 	private ASTNode parseQuote() throws Exception {
 		Token quoteToken = advance();
 		ASTNode quotedExpr = parseExpr();
