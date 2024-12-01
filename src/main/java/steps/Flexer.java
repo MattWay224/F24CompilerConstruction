@@ -28,25 +28,25 @@ public class Flexer {
 			char curr = input.charAt(pos);
 
 			switch (curr) {
-				case '(':
+				case '(' -> {
 					tokens.add(new Token(TokenType.LPAREN, "(", line));
 					pos++;
-					break;
-				case ')':
+				}
+				case ')' -> {
 					tokens.add(new Token(TokenType.RPAREN, ")", line));
 					pos++;
-					break;
-				case '\'':
+				}
+				case '\'' -> {
 					tokens.add(new Token(TokenType.QUOTE, "'", line));
 					//single quote in front of element is the short form of function
 					//prevents evaluating
 					pos++;
-					break;
-				case '\n':
+				}
+				case '\n' -> {
 					line++;
 					pos++;
-					break;
-				default:
+				}
+				default -> {
 					if (Character.isWhitespace(curr)) {
 						pos++;
 					} else if (Character.isDigit(curr) || curr == '+' || curr == '-') {
@@ -56,6 +56,7 @@ public class Flexer {
 					} else {
 						throw new Exception("Unknown character: " + curr + "at line: " + line);
 					}
+				}
 			}
 		}
 		tokens.add(new Token(TokenType.EOF, "", line));
@@ -108,17 +109,9 @@ public class Flexer {
 
 		//search for keywords.
 		return switch (id) {
-			case "setq" ->
-				//2nd param gets evaluated and becomes the new value of atom from the first param replacing
-				//its previous value
-
-				// (setq Atom Element)
-
-					new Token(TokenType.SETQ, id, line);
+			case "setq" -> new Token(TokenType.SETQ, id, line);
 			case "null" -> new Token(TokenType.NULL, id, line);
-			case "func" ->
-				// func Atom List Element
-					new Token(TokenType.FUNC, id, line);
+			case "func" -> new Token(TokenType.FUNC, id, line);
 			case "lambda" -> new Token(TokenType.LAMBDA, id, line);
 			case "prog" -> new Token(TokenType.PROG, id, line);
 			case "cond" -> new Token(TokenType.COND, id, line);
