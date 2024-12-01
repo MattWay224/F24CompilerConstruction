@@ -25,6 +25,9 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 		Object value = visit(action);
 		if (action instanceof QuoteNode) {
 			symbolTable.define(node.getVariable(), new QuoteNode((ASTNode) value, ((QuoteNode) action).getLine()));
+		} else if (action instanceof LambdaNode) {
+			symbolTable.define(node.getVariable(), new LambdaNode(((LambdaNode) action).getParameters(),
+					((LambdaNode) action).getBody(), ((LambdaNode) action).getLine()));
 		} else {
 			symbolTable.define(node.getVariable(), new LiteralNode(value.toString()));
 		}
@@ -206,21 +209,35 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 	@Override
 	public Object visitFunctionCallNode(FunctionCallNode node) {
 		try {
-			FunctionNode function = (FunctionNode) symbolTable.lookup(node.getFunctionName());
+
+			Object function = symbolTable.lookup(node.getFunctionName());
 			SymbolTable functionScope = new SymbolTable(symbolTable);
 
-			// Bind arguments
-			for (int i = 0; i < function.getParameters().size(); i++) {
-				String param = function.getParameters().get(i);
-				Object argValue = visit(node.getParameters().get(i));
-				functionScope.define(param, new LiteralNode(argValue.toString()));
-			}
+			if (function instanceof LambdaNode) {
+				LambdaNode f = (LambdaNode) function;
+				for (int i = 0; i < f.getParameters().size(); i++) {
+					String param = f.getParameters().get(i);
+					Object argValue = visit(node.getParameters().get(i + 1));
+					functionScope.define(param, new LiteralNode(argValue.toString()));
+				}
 
-			InterpreterVisitor functionInterpreter = new InterpreterVisitor(functionScope, false);
-			return functionInterpreter.visit(function.getBody());
+				InterpreterVisitor functionInterpreter = new InterpreterVisitor(functionScope, false);
+				return functionInterpreter.visit(f.getBody());
+			} else if (function instanceof FunctionNode) {
+				FunctionNode f = (FunctionNode) function;
+				for (int i = 0; i < f.getParameters().size(); i++) {
+					String param = f.getParameters().get(i);
+					Object argValue = visit(node.getParameters().get(i));
+					functionScope.define(param, new LiteralNode(argValue.toString()));
+				}
+
+				InterpreterVisitor functionInterpreter = new InterpreterVisitor(functionScope, false);
+				return functionInterpreter.visit(f.getBody());
+			}
 		} catch (Exception e) {
 			throw new RuntimeException("Function call error: " + e.getMessage());
 		}
+		return null;
 	}
 
 	@Override
@@ -311,26 +328,12 @@ public class InterpreterVisitor implements ASTVisitor<Object> {
 
 	@Override
 	public Object visitLambdaNode(LambdaNode node) {
-		return node;
+		return null;
 	}
 
 	@Override
 	public Object visitLambdaCallNode(LambdaCallNode node) {
-		try {
-			LambdaNode lambda = (LambdaNode) visit(symbolTable.lookup(node.getLambdaName()));
-			SymbolTable lambdaScope = new SymbolTable(symbolTable);
-
-			for (int i = 0; i < lambda.getParameters().size(); i++) {
-				String param = lambda.getParameters().get(i);
-				Object argValue = visit(node.getParameters().get(i));
-				lambdaScope.define(param, new LiteralNode(argValue.toString()));
-			}
-
-			InterpreterVisitor lambdaInterpreter = new InterpreterVisitor(lambdaScope);
-			return lambdaInterpreter.visit(lambda.getBody());
-		} catch (Exception e) {
-			throw new RuntimeException("Lambda call exc: ");
-		}
+		return null;
 	}
 
 	@Override
