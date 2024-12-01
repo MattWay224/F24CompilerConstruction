@@ -24,7 +24,7 @@ public class SymbolTable {
 		} else if (parent != null) {
 			return parent.lookup(name);
 		} else {
-			throw new Exception("Undefined variable: " + name);
+			throw new Exception("ERROR: UNDEFINED VARIABLE: " + name);
 		}
 	}
 

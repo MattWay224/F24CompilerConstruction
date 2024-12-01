@@ -54,7 +54,7 @@ public class Flexer {
 					} else if (Character.isLetter(curr)) {
 						tokens.add(parseIdOrKeyword());
 					} else {
-						throw new Exception("Unknown character: " + curr + "at line: " + line);
+						throw new Exception("ERROR: UNKNOWN CHARACTER: " + curr + "at line: " + line);
 					}
 				}
 			}
@@ -73,12 +73,12 @@ public class Flexer {
 			isNegative = true;
 			pos++;
 			if (!Character.isDigit(input.charAt(pos))) {
-				throw new Exception("UNEXPECTED CHARACTER: - at line: " + line);
+				throw new Exception("ERROR: UNEXPECTED CHARACTER: - at line: " + line);
 			}
 		} else if (input.charAt(pos) == '+') {
 			pos++;
 			if (!Character.isDigit(input.charAt(pos))) {
-				throw new Exception("UNEXPECTED CHARACTER: + at line: " + line);
+				throw new Exception("ERROR: UNEXPECTED CHARACTER: + at line: " + line);
 			}
 		}
 		while (pos < length && (Character.isDigit(input.charAt(pos)) || input.charAt(pos) == '.')) {
@@ -89,7 +89,7 @@ public class Flexer {
 			pos++;
 		}
 		if (Character.isLetter(input.charAt(pos))) {
-			throw new Exception("NOT A NUMBER at line: " + line);
+			throw new Exception("ERROR: NOT A NUMBER at line: " + line);
 		}
 		if (isNegative) {
 			num.insert(0, '-');
