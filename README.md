@@ -1,6 +1,6 @@
 # F24CompilerConstruction
 ### Our team:
-- **Matthew Rusakov:** Responsible for writing the compiler code and testing it based on previously written tests.
+- **Matthew Rusakov:** Responsible for refactoring and optimizing code, organizing the codebase with design patterns, and developing automated unit tests.
 - **Aliia Bogapova:** Responsible for writing the compiler code and testing it based on previously written tests.
 - **Polina Pushkareva:** Responsible for organizational aspects, presentations, and reports.
 
@@ -21,7 +21,7 @@ The project will be implemented in four stages:
 
 1. Lexical Analyzer (Lexer)
 2. Syntax Analyzer (Parser)
-3. Semantic Analyzer
+3. Semantic Analyzer (Analyzer)
 4. Code Interpretation
 
 ### 1. *Lexical Analyser:*
@@ -85,7 +85,7 @@ The parser maintains a symbol table that stores information about each declared 
 - *Name:* The identifier used in the source code.
 - *Value:* The current value or expression associated with the entity.
 - *Span:* The range of source code covered by the entity (start and end positions).
-- *Extra Info:* Metadata like the line number, which is used for debugging and error reporting.
+- *Extra Info:* Metadata like the line number, which is used for error reporting.
 
 *Design Patterns:*
 
@@ -95,13 +95,94 @@ The parser maintains a symbol table that stores information about each declared 
 
 ### 3. *Semantic Analyser*
 
-To be written after this stage is implemented.
+**Purpose:**
+
+The semantic analyzer validates the correctness of operations in the code, ensuring type compatibility and logical integrity. It also simplifies the AST for efficient execution.
+
+**Technical Details:**
+
+*Key Features:*
+
+- Arithmetic Operations:
+    + Checks for operand presence and type compatibility.
+    + Simplifies constant expressions.
+- Logical Operations:
+    + Validates boolean operands.
+- Comparison Operations:
+    + Ensures type compatibility for comparisons.
+
+*Implementation Details:*
+- Operates directly on the AST without modifying its structure.
+- Optimizes constant expressions to enhance interpretation speed.
 
 ### 4. *Code Interpretation*
 
-To be written after this stage is implemented.
+**Purpose:**
 
-### Future Work
+The code interpreter processes the Abstract Syntax Tree (AST) to evaluate and execute the source code. It supports a wide range of language constructs, including variables, functions, loops, conditional statements, and arithmetic operations.
 
-- *Semantic analysis*, which will check the correctness of the code in terms of types, scopes, and function definitions.
-- *Code interpretation*, where the program will evaluate and run the functional language code.
+**Technical Details:**
+
+1. *Key Features:*
+
+    Core Language Constructs:
+    - Variables: 
+        - Supports declaration, assignment, and referencing.
+    - Functions:
+        - Handles function declarations and calls.
+        - Replaces function parameters with arguments during execution.
+    - Loops:
+        - Implements iteration constructs such as ```while``` loops.
+        - Includes robust handling for the ```break``` statement to enable early exit from loops.
+    - Conditional Statements:
+        - Supports ```cond``` constructs, allowing conditional branching.
+    - Arithmetic Operations:
+        - Evaluates mathematical expressions involving addition, subtraction, multiplication, division, and nested expressions.
+2. *Advanced Features:*
+
+    - Break Statement Handling:
+        - ```break``` statements are implemented using custom exceptions for controlled flow interruption.
+        - During loop execution, encountering a ```break``` statement raises a specific exception, terminating the loop gracefully and resuming execution outside the loop.
+    - Scope Management:
+        - Manages function parameters, local variables, and nested scopes.
+        - Provides proper isolation and ensures that variables in one scope do not affect others.
+        - Allows seamless management of nested function calls and iterative constructs.
+    - Expression Simplification:
+        - Replaces function parameters with actual arguments during calls.
+        - Pre-evaluates arithmetic operations and constant expressions during AST analysis, reducing runtime overhead.
+    - Execution Flow
+        - AST Traversal: Recursively evaluates nodes in the AST.
+            - **Leaf Nodes**: Directly resolved as literals or variables.
+            - **Composite Nodes**: Evaluates child nodes before combining their results.
+        - Error Handling:
+            - Provides clear and precise error messages for issues such as undefined variables, incorrect types, or invalid operations.
+            - Maintains execution stability even in the presence of recoverable errors.
+
+3. *Code Interpretation Process:*
+
+    1. AST Traversal:
+        - Interpretation begins at the root node (```ProgNode```) of the AST.
+        - The interpreter recursively visits all child nodes using the *Visitor pattern*.
+        - Each node type is evaluated based on its specific behavior and structure:
+            - **Literal Nodes**: Directly resolve to their values.
+            - **Variable Nodes**: Retrieve or assign values in the current scope.
+            - **Composite Nodes**: Combine results of child nodes (e.g., expressions, function calls).
+    2. Node Evaluation:
+        - ```ProgNode```:
+            - Acts as the entry point of interpretation.
+            - Evaluates child nodes and outputs their results to the terminal if they belong to the global scope.
+        - **Function Nodes**:
+            - Parameters are replaced with arguments during evaluation.
+            - Executed within their own local scope, maintaining isolation.
+        - **Control Flow Nodes**:
+            - Conditional statements (```cond```) directly execute based on evaluated conditions.
+            - Loops (```while```) repeatedly execute their body until the condition is no longer satisfied.
+        - **Break Handling**:
+            - ```break``` statement is implemented using exception handling to terminate loops cleanly.
+    3. Scope Handling:
+        - **Global Scope**:
+            - Stores global variables and function definitions.
+            - Outputs the final results of computations.
+        - **Local Scope**:
+            - Created for functions and control structures (e.g., loops).
+            - Ensures variables and computations are encapsulated and do not interfere with other scopes.
