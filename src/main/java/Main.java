@@ -17,7 +17,7 @@ import java.io.Writer;
 import java.util.List;
 
 public class Main {
-	private static final int TOTAL_TESTS = 17;
+	private static final int TOTAL_TESTS = 16;
 
 	public static void main(String[] args) {
 		PrettyVisitor visitor = new PrettyVisitor();
@@ -27,7 +27,6 @@ public class Main {
 		InterpreterVisitor interpreter;
 
 		for (int i = 1; i <= TOTAL_TESTS; i++) {
-			if (i == 17) continue;
 			SymbolTable globalTable = new SymbolTable(null);
 			interpreter = new InterpreterVisitor(globalTable, true);
 			processTestFile(i, lexer, parser, visitor, semanter, interpreter);

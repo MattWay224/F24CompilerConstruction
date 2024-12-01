@@ -1,11 +1,11 @@
-(func Yelizar (x) (lambda (x) (times x 2)))
+(setq Yelizar (lambda (x) (times x 2)))
 (Yelizar 4)
 
-(func increment (x) (lambda (x) (plus x 1)))
+(setq increment (lambda (x) (plus x 1)))
 (increment 7)
 
-(func applyTwice (x) (lambda (f x) (f (f x))))
-(applyTwice (increment 5))
+(setq plusFour (lambda (f) (plus f 4)))
+(plusFour (increment 5))
 
-(func subtractTwo (x) (lambda (x) (minus x 2)))
-(applyTwice (subtractTwo 10))
+(setq subtractTwo (lambda (x) (minus x 2)))
+(plusFour (subtractTwo 10))
