@@ -1,6 +1,9 @@
 (equal 5 5)
-(nonequal 5 4)
+(nonequal 5 5)
 (less 3 5)
 (lesseq 5 5)
 (greater 6 5)
 (greatereq 4 5)
+
+(greater (plus 3 3) (minus 4 3))
+(less (minus 99 1) (plus 5 5))

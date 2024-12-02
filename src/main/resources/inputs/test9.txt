@@ -1,5 +1,5 @@
-(setq Yelizar (lambda (x) (times x 2)))
-(Yelizar 4)
+(setq timesTwo (lambda (x) (times x 2)))
+(timesTwo 4)
 
 (setq increment (lambda (x) (plus x 1)))
 (increment 7)

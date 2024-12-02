@@ -9,10 +9,6 @@ public class Flexer {
 	private int length;
 	private int line;
 
-	public Flexer() {
-	}
-
-
 	public void setInput(String input) {
 		this.input = input;
 		this.pos = 0;
@@ -38,8 +34,6 @@ public class Flexer {
 				}
 				case '\'' -> {
 					tokens.add(new Token(TokenType.QUOTE, "'", line));
-					//single quote in front of element is the short form of function
-					//prevents evaluating
 					pos++;
 				}
 				case '\n' -> {

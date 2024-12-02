@@ -14,11 +14,13 @@ public class Parser {
     private final ASTNodeFactory factory;
     private List<Token> tokens;
     private int currentTokenIndex;
-    private final SymbolTable globalScope = new SymbolTable(null);
-    private SymbolTable currentScope = globalScope;
+    private final SymbolTable globalScope;
+    private SymbolTable currentScope;
 
     public Parser() {
         factory = new ASTNodeFactory();
+        this.globalScope = new SymbolTable(null);
+        this.currentScope = globalScope;
     }
 
     public void setTokens(List<Token> tokens) {
@@ -133,9 +135,7 @@ public class Parser {
 
     private ASTNode parseParenthesizedExpr() throws Exception {
         consume(TokenType.LPAREN, "ERROR: EXPECTED (");
-
         Token operatorToken = peek();
-
         if (operatorToken.type == TokenType.INTEGER ||
                 operatorToken.type == TokenType.REAL ||
                 operatorToken.type == TokenType.BOOLEAN) {
@@ -499,16 +499,11 @@ public class Parser {
 
     private ASTNode parseSETQ() throws Exception {
         Token op = advance();
-
         String variable = consume(TokenType.ATOM, "ERROR: EXPECTED VARIABLE FOR SETQ at line: " + op.getLine()).value;
-
         currentScope.define(variable, null);
         ASTNode value = parseExpr();
-
-        //add var to scope in symbol table
-        currentScope.define(variable, value);
-
-        consume(TokenType.RPAREN, "ERROR: EXPECTED ) AFTER SETQ ASSIGNMENT at line: " + op.getLine());
+        currentScope.define(variable, value); //add var to scope in symbol table
+		consume(TokenType.RPAREN, "ERROR: EXPECTED ) AFTER SETQ ASSIGNMENT at line: " + op.getLine());
         ASTNode assignmentnode = factory.createAssignmentNode(variable, value, op.line);
         assignmentnode.addChild(value);
         assignmentnode.setType(ASTNode.NodeType.ASSIGNMENT);

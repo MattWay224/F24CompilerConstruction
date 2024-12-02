@@ -49,7 +49,6 @@ public class FSemanter {
 
     private void traverseAndCheck(ASTNode node) throws Exception {
         if (node == null) return;
-
         else if (node.getClass().getSimpleName().equals("OperationNode")) {
             checkArithmeticOperation(node);
 
