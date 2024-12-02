@@ -29,10 +29,6 @@ Token{type=INTEGER, value='30'}
 Token{type=RPAREN, value=')'}
 Token{type=RPAREN, value=')'}
 Token{type=LPAREN, value='('}
-Token{type=HEAD, value='head'}
-Token{type=ATOM, value='person'}
-Token{type=RPAREN, value=')'}
-Token{type=LPAREN, value='('}
 Token{type=FUNC, value='func'}
 Token{type=ATOM, value='getName'}
 Token{type=LPAREN, value='('}

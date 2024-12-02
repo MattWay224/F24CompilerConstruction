@@ -25,7 +25,7 @@ Token{type=INTEGER, value='5'}
 Token{type=RPAREN, value=')'}
 Token{type=LPAREN, value='('}
 Token{type=GREATEREQ, value='greatereq'}
-Token{type=INTEGER, value='5'}
+Token{type=INTEGER, value='4'}
 Token{type=INTEGER, value='5'}
 Token{type=RPAREN, value=')'}
 Token{type=EOF, value=''}

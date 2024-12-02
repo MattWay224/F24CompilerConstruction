@@ -18,7 +18,13 @@ Token{type=ATOM, value='counter'}
 Token{type=INTEGER, value='5'}
 Token{type=RPAREN, value=')'}
 Token{type=LPAREN, value='('}
-Token{type=BREAK, value='break'}
+Token{type=SETQ, value='setq'}
+Token{type=ATOM, value='counter'}
+Token{type=LPAREN, value='('}
+Token{type=PLUS, value='plus'}
+Token{type=ATOM, value='counter'}
+Token{type=INTEGER, value='5'}
+Token{type=RPAREN, value=')'}
 Token{type=RPAREN, value=')'}
 Token{type=LPAREN, value='('}
 Token{type=SETQ, value='setq'}
@@ -31,4 +37,5 @@ Token{type=RPAREN, value=')'}
 Token{type=RPAREN, value=')'}
 Token{type=RPAREN, value=')'}
 Token{type=RPAREN, value=')'}
+Token{type=ATOM, value='counter'}
 Token{type=EOF, value=''}

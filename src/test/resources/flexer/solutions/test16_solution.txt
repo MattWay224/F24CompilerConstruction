@@ -13,8 +13,6 @@ Token{type=INTEGER, value='0'}
 Token{type=RPAREN, value=')'}
 Token{type=INTEGER, value='1'}
 Token{type=LPAREN, value='('}
-Token{type=BOOLEAN, value='true'}
-Token{type=LPAREN, value='('}
 Token{type=TIMES, value='times'}
 Token{type=ATOM, value='n'}
 Token{type=LPAREN, value='('}
@@ -23,7 +21,6 @@ Token{type=LPAREN, value='('}
 Token{type=MINUS, value='minus'}
 Token{type=ATOM, value='n'}
 Token{type=INTEGER, value='1'}
-Token{type=RPAREN, value=')'}
 Token{type=RPAREN, value=')'}
 Token{type=RPAREN, value=')'}
 Token{type=RPAREN, value=')'}
@@ -52,8 +49,6 @@ Token{type=INTEGER, value='2'}
 Token{type=RPAREN, value=')'}
 Token{type=ATOM, value='n'}
 Token{type=LPAREN, value='('}
-Token{type=BOOLEAN, value='true'}
-Token{type=LPAREN, value='('}
 Token{type=PLUS, value='plus'}
 Token{type=LPAREN, value='('}
 Token{type=ATOM, value='fibonacci'}
@@ -69,7 +64,6 @@ Token{type=LPAREN, value='('}
 Token{type=MINUS, value='minus'}
 Token{type=ATOM, value='n'}
 Token{type=INTEGER, value='2'}
-Token{type=RPAREN, value=')'}
 Token{type=RPAREN, value=')'}
 Token{type=RPAREN, value=')'}
 Token{type=RPAREN, value=')'}
@@ -98,8 +92,6 @@ Token{type=INTEGER, value='0'}
 Token{type=RPAREN, value=')'}
 Token{type=INTEGER, value='0'}
 Token{type=LPAREN, value='('}
-Token{type=BOOLEAN, value='true'}
-Token{type=LPAREN, value='('}
 Token{type=PLUS, value='plus'}
 Token{type=ATOM, value='n'}
 Token{type=LPAREN, value='('}
@@ -108,7 +100,6 @@ Token{type=LPAREN, value='('}
 Token{type=MINUS, value='minus'}
 Token{type=ATOM, value='n'}
 Token{type=INTEGER, value='1'}
-Token{type=RPAREN, value=')'}
 Token{type=RPAREN, value=')'}
 Token{type=RPAREN, value=')'}
 Token{type=RPAREN, value=')'}

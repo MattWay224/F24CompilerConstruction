@@ -1,5 +1,6 @@
-ProgNode(statements=[AssignmentNode(variable=counter, value=LiteralNode(0)), WhileNode(condition=ComparisonNode(comparison=less, leftElement=AtomNode(counter), rightElement=LiteralNode(5)), body=AssignmentNode(variable=counter, value=OperationNode(operator=plus, operands=[AtomNode(counter), LiteralNode(1)]))), AssignmentNode(variable=count, value=LiteralNode(0)), WhileNode(condition=ComparisonNode(comparison=less, leftElement=AtomNode(count), rightElement=LiteralNode(3)), body=AssignmentNode(variable=count, value=OperationNode(operator=plus, operands=[AtomNode(count), LiteralNode(1)]))), AssignmentNode(variable=sum, value=LiteralNode(0)), AssignmentNode(variable=n, value=LiteralNode(1)), WhileNode(condition=ComparisonNode(comparison=less, leftElement=AtomNode(n), rightElement=LiteralNode(6)), body=AssignmentNode(variable=sum, value=OperationNode(operator=plus, operands=[AtomNode(sum), AtomNode(n)])),
-AssignmentNode(variable=n, value=OperationNode(operator=plus, operands=[AtomNode(n), LiteralNode(1)])))])
+ProgNode(statements=[AssignmentNode(variable=counter, value=LiteralNode(0)), WhileNode(condition=ComparisonNode(comparison=less, leftElement=AtomNode(counter), rightElement=LiteralNode(5)), body=AssignmentNode(variable=counter, value=OperationNode(operator=plus, operands=[AtomNode(counter), LiteralNode(1)]))), AtomNode(counter), AssignmentNode(variable=count, value=LiteralNode(0)), WhileNode(condition=ComparisonNode(comparison=less, leftElement=AtomNode(count), rightElement=LiteralNode(3)), body=AssignmentNode(variable=count, value=OperationNode(operator=plus, operands=[AtomNode(count), LiteralNode(1)]))), AtomNode(count), AssignmentNode(variable=sum, value=LiteralNode(0)), AssignmentNode(variable=n, value=LiteralNode(1)), WhileNode(condition=ComparisonNode(comparison=less, leftElement=AtomNode(n), rightElement=LiteralNode(6)), body=AssignmentNode(variable=sum, value=OperationNode(operator=plus, operands=[AtomNode(sum), AtomNode(n)])),
+AssignmentNode(variable=n, value=OperationNode(operator=plus, operands=[AtomNode(n), LiteralNode(1)]))), AtomNode(n), AssignmentNode(variable=counter, value=LiteralNode(0)), WhileNode(condition=ComparisonNode(comparison=less, leftElement=AtomNode(counter), rightElement=LiteralNode(10)), body=AssignmentNode(variable=counter, value=OperationNode(operator=plus, operands=[AtomNode(counter), LiteralNode(1)])),
+BreakNode()), AtomNode(counter)])
   AssignmentNode(variable=counter, value=LiteralNode(0))
     LiteralNode(0)
   WhileNode(condition=ComparisonNode(comparison=less, leftElement=AtomNode(counter), rightElement=LiteralNode(5)), body=AssignmentNode(variable=counter, value=OperationNode(operator=plus, operands=[AtomNode(counter), LiteralNode(1)])))
@@ -10,6 +11,7 @@ AssignmentNode(variable=n, value=OperationNode(operator=plus, operands=[AtomNode
       OperationNode(operator=plus, operands=[AtomNode(counter), LiteralNode(1)])
         AtomNode(counter)
         LiteralNode(1)
+  AtomNode(counter)
   AssignmentNode(variable=count, value=LiteralNode(0))
     LiteralNode(0)
   WhileNode(condition=ComparisonNode(comparison=less, leftElement=AtomNode(count), rightElement=LiteralNode(3)), body=AssignmentNode(variable=count, value=OperationNode(operator=plus, operands=[AtomNode(count), LiteralNode(1)])))
@@ -20,6 +22,7 @@ AssignmentNode(variable=n, value=OperationNode(operator=plus, operands=[AtomNode
       OperationNode(operator=plus, operands=[AtomNode(count), LiteralNode(1)])
         AtomNode(count)
         LiteralNode(1)
+  AtomNode(count)
   AssignmentNode(variable=sum, value=LiteralNode(0))
     LiteralNode(0)
   AssignmentNode(variable=n, value=LiteralNode(1))
@@ -37,3 +40,17 @@ AssignmentNode(variable=n, value=OperationNode(operator=plus, operands=[AtomNode
       OperationNode(operator=plus, operands=[AtomNode(n), LiteralNode(1)])
         AtomNode(n)
         LiteralNode(1)
+  AtomNode(n)
+  AssignmentNode(variable=counter, value=LiteralNode(0))
+    LiteralNode(0)
+  WhileNode(condition=ComparisonNode(comparison=less, leftElement=AtomNode(counter), rightElement=LiteralNode(10)), body=AssignmentNode(variable=counter, value=OperationNode(operator=plus, operands=[AtomNode(counter), LiteralNode(1)])),
+BreakNode())
+    ComparisonNode(comparison=less, leftElement=AtomNode(counter), rightElement=LiteralNode(10))
+      AtomNode(counter)
+      LiteralNode(10)
+    AssignmentNode(variable=counter, value=OperationNode(operator=plus, operands=[AtomNode(counter), LiteralNode(1)]))
+      OperationNode(operator=plus, operands=[AtomNode(counter), LiteralNode(1)])
+        AtomNode(counter)
+        LiteralNode(1)
+    BreakNode()
+  AtomNode(counter)
